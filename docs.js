@@ -1,0 +1,289 @@
+class DocsSystem {
+    constructor() {
+        this.currentDoc = null;
+        this.docs = [];
+        this.init();
+    }
+
+    async init() {
+        console.log('Initializing docs system...');
+        await this.loadDocsList();
+        this.setupEventListeners();
+        
+        // Load first doc by default
+        if (this.docs.length > 0) {
+            await this.loadDoc(this.docs[0].slug);
+        }
+    }
+
+    async loadDocsList() {
+        const docFiles = [
+            { title: 'Dedicated Servers', slug: 'dedicated-servers', order: 1 },
+            { title: 'Console Commands', slug: 'console-commands', order: 2 },
+            { title: 'Item Wiki', slug: 'item-wiki', order: 3 }
+        ];
+
+        this.docs = docFiles.sort((a, b) => a.order - b.order);
+        this.renderDocsList();
+    }
+
+    renderDocsList() {
+        const sidebar = document.getElementById('docsSidebar');
+        if (!sidebar) return;
+
+        const docsListHtml = this.docs.map(doc => `
+            <li class="docs-nav-item">
+                <a href="#" class="docs-nav-link" data-slug="${doc.slug}">
+                    ${doc.title}
+                </a>
+            </li>
+        `).join('');
+
+        sidebar.innerHTML = `
+            <div class="docs-sidebar-content">
+                <ul class="docs-nav-list">
+                    ${docsListHtml}
+                </ul>
+            </div>
+        `;
+    }
+
+    setupEventListeners() {
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('.docs-nav-link')) {
+                e.preventDefault();
+                const slug = e.target.dataset.slug;
+                this.loadDoc(slug);
+                this.setActiveNavItem(e.target);
+            }
+        });
+    }
+
+    setActiveNavItem(activeLink) {
+        document.querySelectorAll('.docs-nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        activeLink.classList.add('active');
+    }
+
+    async loadDoc(slug) {
+        try {
+            console.log(`Loading doc: ${slug}`);
+            const response = await fetch(`docs/${slug}.md`);
+            
+            if (!response.ok) {
+                throw new Error(`Failed to load doc: ${response.status}`);
+            }
+
+            const markdown = await response.text();
+            const { frontmatter, content } = this.parseFrontmatter(markdown);
+            
+            this.currentDoc = {
+                slug,
+                title: frontmatter.title || slug,
+                content: content
+            };
+
+            this.renderDoc();
+            
+        } catch (error) {
+            console.error('Error loading doc:', error);
+            this.renderError(`Failed to load documentation: ${slug}`);
+        }
+    }
+
+    parseFrontmatter(markdown) {
+        const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
+        const match = markdown.match(frontmatterRegex);
+        
+        if (!match) {
+            return { frontmatter: {}, content: markdown };
+        }
+
+        const frontmatterText = match[1];
+        const content = match[2];
+        
+        const frontmatter = {};
+        frontmatterText.split('\n').forEach(line => {
+            const colonIndex = line.indexOf(':');
+            if (colonIndex > 0) {
+                const key = line.substring(0, colonIndex).trim();
+                const value = line.substring(colonIndex + 1).trim().replace(/^["']|["']$/g, '');
+                if (key && value) {
+                    frontmatter[key] = value;
+                }
+            }
+        });
+
+        return { frontmatter, content };
+    }
+
+    renderDoc() {
+        const content = document.getElementById('docsContent');
+        if (!content) return;
+
+        const htmlContent = this.markdownToHtml(this.currentDoc.content);
+        content.innerHTML = `
+            <div class="docs-content-wrapper">
+                <article class="docs-article">
+                    ${htmlContent}
+                </article>
+            </div>
+        `;
+
+        // Scroll to top
+        content.scrollTop = 0;
+    }
+
+    renderError(message) {
+        const content = document.getElementById('docsContent');
+        if (!content) return;
+
+        content.innerHTML = `
+            <div class="docs-error">
+                <h2>Error</h2>
+                <p>${message}</p>
+                <p>Please try again or contact support if the problem persists.</p>
+            </div>
+        `;
+    }
+
+    markdownToHtml(markdown) {
+        // Simple markdown parser - enhanced version of blog parser
+        let html = markdown;
+
+        // Code blocks first (to protect from other processing)
+        html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+            const language = lang || '';
+            return `<div class="code-block"><pre><code class="language-${language}">${this.escapeHtml(code.trim())}</code></pre></div>`;
+        });
+
+        // Tables
+        html = this.parseMarkdownTables(html);
+
+        // Headers
+        html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+        html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+        html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+
+        // Inline code
+        html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+        // Bold and italic
+        html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+        // Links
+        html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+
+        // Lists
+        html = html.replace(/^\- (.+)$/gm, '<li>$1</li>');
+        html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+        html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+
+        // Paragraphs
+        html = html.split('\n\n').map(paragraph => {
+            paragraph = paragraph.trim();
+            if (paragraph && 
+                !paragraph.includes('<h') && 
+                !paragraph.includes('<ul') && 
+                !paragraph.includes('<ol') && 
+                !paragraph.includes('<div') &&
+                !paragraph.includes('<table')) {
+                return `<p>${paragraph}</p>`;
+            }
+            return paragraph;
+        }).join('\n\n');
+
+        return html;
+    }
+
+    parseMarkdownTables(html) {
+        // Match markdown tables with the pattern: |header|header| followed by |---|---| followed by data rows
+        const lines = html.split('\n');
+        let result = [];
+        let i = 0;
+
+        while (i < lines.length) {
+            const line = lines[i];
+            
+            // Check if this line looks like a table header (starts and ends with |)
+            if (line.trim().startsWith('|') && line.trim().endsWith('|') && line.includes('|')) {
+                // Check if the next line is a separator line
+                if (i + 1 < lines.length) {
+                    const nextLine = lines[i + 1];
+                    if (nextLine.trim().match(/^\|[\s\-:|]+\|$/)) {
+                        // This is a table, parse it
+                        const tableLines = [line, nextLine];
+                        let j = i + 2;
+                        
+                        // Collect all table rows
+                        while (j < lines.length && lines[j].trim().startsWith('|') && lines[j].trim().endsWith('|')) {
+                            tableLines.push(lines[j]);
+                            j++;
+                        }
+                        
+                        // Convert table lines to HTML
+                        const tableHtml = this.convertTableToHtml(tableLines);
+                        result.push(tableHtml);
+                        
+                        // Skip the processed lines
+                        i = j;
+                        continue;
+                    }
+                }
+            }
+            
+            result.push(line);
+            i++;
+        }
+        
+        return result.join('\n');
+    }
+
+    convertTableToHtml(tableLines) {
+        if (tableLines.length < 3) return tableLines.join('\n');
+        
+        const headerLine = tableLines[0];
+        const dataLines = tableLines.slice(2);
+        
+        // Parse header
+        const headers = headerLine.split('|').slice(1, -1).map(h => h.trim());
+        
+        // Parse data rows
+        const rows = dataLines.map(line => 
+            line.split('|').slice(1, -1).map(cell => cell.trim())
+        );
+
+        let tableHtml = '<table class="docs-table">\n';
+        tableHtml += '<thead><tr>';
+        headers.forEach(header => {
+            tableHtml += `<th>${header}</th>`;
+        });
+        tableHtml += '</tr></thead>\n<tbody>';
+        
+        rows.forEach(row => {
+            tableHtml += '<tr>';
+            row.forEach(cell => {
+                tableHtml += `<td>${cell}</td>`;
+            });
+            tableHtml += '</tr>';
+        });
+        
+        tableHtml += '</tbody></table>';
+        return tableHtml;
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+}
+
+// Initialize docs system when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('docsContainer')) {
+        window.docsSystem = new DocsSystem();
+    }
+});
