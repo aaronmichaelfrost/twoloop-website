@@ -1,5 +1,6 @@
 // Image loading handlers
 function handleImageLoad(img) {
+    console.log('Image loaded successfully:', img.src);
     img.classList.add('loaded');
     const loadingElement = img.parentElement.querySelector('.image-loading');
     if (loadingElement) {
@@ -8,12 +9,30 @@ function handleImageLoad(img) {
 }
 
 function handleImageError(img) {
+    console.error('Failed to load image:', img.src);
+    console.error('Image element:', img);
+    console.error('Parent container:', img.parentElement);
     const container = img.parentElement;
     const loadingElement = container.querySelector('.image-loading');
     if (loadingElement) {
-        loadingElement.innerHTML = '<span style="color: rgba(255,255,255,0.4);">Failed to load image</span>';
+        loadingElement.innerHTML = '<span style="color: rgba(255,255,255,0.4);">Failed to load image: ' + img.src + '</span>';
+    } else {
+        // For content images without loading elements, show error in the container
+        container.innerHTML = '<span style="color: rgba(255,255,255,0.4); font-size: 0.9rem; padding: 20px; display: block;">Failed to load image: ' + img.src + '</span>';
     }
     img.style.display = 'none';
+}
+
+// Simple handlers for content images
+function handleContentImageLoad(img) {
+    console.log('Content image loaded successfully:', img.src);
+    img.style.opacity = '1';
+}
+
+function handleContentImageError(img) {
+    console.error('Content image failed to load:', img.src);
+    const container = img.parentElement;
+    container.innerHTML = '<div style="color: rgba(255,255,255,0.4); font-size: 0.9rem; padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">Failed to load image: ' + img.src + '</div>';
 }
 
 // Simple markdown parser for blog posts
@@ -50,6 +69,7 @@ class MarkdownParser {
 
     // Simple markdown to HTML conversion
     markdownToHtml(markdown) {
+        console.log('markdownToHtml called with:', markdown.length, 'characters');
         let html = markdown;
 
         // Store code blocks temporarily to protect them
@@ -61,8 +81,13 @@ class MarkdownParser {
             return placeholder;
         });
 
-        // Images
-        html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<div class="blog-content-image"><img src="$2" alt="$1"></div>');
+        // Images - fix paths to include blog-posts/ directory
+        html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, src) => {
+            // If the image path doesn't start with http, https, or /, prepend blog-posts/
+            const imageSrc = (src.startsWith('http') || src.startsWith('/')) ? src : `blog-posts/${src}`;
+            console.log('Processing image:', src, '→', imageSrc);
+            return `<div class="blog-content-image"><img src="${imageSrc}" alt="${alt}" style="opacity: 0; transition: opacity 0.3s ease;" onload="handleContentImageLoad(this)" onerror="handleContentImageError(this)"></div>`;
+        });
 
         // Author attribution inline with headers (e.g., ## Title *by Author*)
         html = html.replace(/^(#{1,4})\s+(.+?)\s+\*by ([^*]+)\*$/gm, '$1 $2<span class="author-attribution">by $3</span>');
@@ -89,7 +114,7 @@ class MarkdownParser {
         html = html.replace(/(<li>.*?<\/li>(?:\s*<li>.*?<\/li>)*)/gs, '<ul>$1</ul>');
 
         // Paragraphs
-        html = html.replace(/^(?!<[hup]|<li|<\/[uo]|<pre|<code|<div class="blog-content-image|<div class="author-attribution|__CODE_BLOCK_)(.+$)/gm, '<p>$1</p>');
+        html = html.replace(/^(?!<[hup]|<li|<\/[uo]|<pre|<code|<div class="blog-content-image"|<div class="author-attribution"|__CODE_BLOCK_)(.+$)/gm, '<p>$1</p>');
 
         // Clean up empty paragraphs
         html = html.replace(/<p>\s*<\/p>/g, '');
@@ -102,6 +127,7 @@ class MarkdownParser {
             html = html.replace(`__CODE_BLOCK_${index}__`, block);
         });
 
+        console.log('markdownToHtml finished, result length:', html.length);
         return html;
     }
 
@@ -175,7 +201,7 @@ class MarkdownParser {
                             <div class="loading-spinner"></div>
                             Loading...
                         </div>
-                        <img src="${post.metadata['cover-image']}" alt="${post.metadata.title}" onload="handleImageLoad(this)" onerror="handleImageError(this)">` : 
+                        <img src="${post.metadata['cover-image'].startsWith('http') || post.metadata['cover-image'].startsWith('/') ? post.metadata['cover-image'] : 'blog-posts/' + post.metadata['cover-image']}" alt="${post.metadata.title}" onload="handleImageLoad(this)" onerror="handleImageError(this)">` : 
                         '<div class="blog-png-placeholder">No cover image</div>'
                     }
                 </div>
@@ -212,13 +238,18 @@ function showBlogPost(slug) {
 
     // Update the blog page content
     const blogContent = document.querySelector('.blog-content');
-    const coverImage = post.metadata['cover-image'] ? 
+    const coverImageSrc = post.metadata['cover-image'] ? 
+        (post.metadata['cover-image'].startsWith('http') || post.metadata['cover-image'].startsWith('/') ? 
+         post.metadata['cover-image'] : 
+         `blog-posts/${post.metadata['cover-image']}`) : '';
+    
+    const coverImage = coverImageSrc ? 
         `<div class="blog-post-cover">
             <div class="image-loading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; display: flex; align-items: center; color: rgba(255,255,255,0.4); font-size: 0.8rem;">
                 <div class="loading-spinner"></div>
                 Loading...
             </div>
-            <img src="${post.metadata['cover-image']}" alt="${post.metadata.title}" onload="handleImageLoad(this)" onerror="handleImageError(this)">
+            <img src="${coverImageSrc}" alt="${post.metadata.title}" onload="handleImageLoad(this)" onerror="handleImageError(this)">
         </div>` : 
         '';
 
@@ -236,9 +267,9 @@ function showBlogPost(slug) {
 
     // Update background for individual post
     const backgroundContainer = document.querySelector('.background-container');
-    if (post.metadata['cover-image']) {
+    if (coverImageSrc) {
         backgroundContainer.style.background = "";
-        backgroundContainer.style.backgroundImage = `url('${post.metadata['cover-image']}')`;
+        backgroundContainer.style.backgroundImage = `url('${coverImageSrc}')`;
         backgroundContainer.style.backgroundSize = "cover";
         backgroundContainer.style.backgroundPosition = "center";
         backgroundContainer.style.backgroundRepeat = "no-repeat";
@@ -276,7 +307,10 @@ function showBlogList() {
     markdownParser.posts.forEach(post => {
         if (post.metadata['cover-image']) {
             const img = new Image();
-            img.src = post.metadata['cover-image'];
+            const imageSrc = post.metadata['cover-image'].startsWith('http') || post.metadata['cover-image'].startsWith('/') ? 
+                post.metadata['cover-image'] : 
+                `blog-posts/${post.metadata['cover-image']}`;
+            img.src = imageSrc;
         }
     });
 

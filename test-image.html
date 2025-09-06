@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Test</title>
+</head>
+<body>
+    <h1>Image Loading Test</h1>
+    
+    <h2>Direct Image Paths:</h2>
+    <img src="blog-posts/devblog1-images/cover.png" alt="Cover" style="max-width: 200px;">
+    <img src="blog-posts/devblog1-images/browser.png" alt="Browser" style="max-width: 200px;">
+    <img src="blog-posts/devblog1-images/custom_editor.png" alt="Editor" style="max-width: 200px;">
+    <img src="blog-posts/devblog1-images/eac.png" alt="EAC" style="max-width: 200px;">
+    <img src="blog-posts/devblog1-images/asyncload.gif" alt="Async" style="max-width: 200px;">
+    
+    <h2>JavaScript Generated:</h2>
+    <div id="js-images"></div>
+    
+    <script>
+        // Test JavaScript image generation
+        const images = [
+            'devblog1-images/cover.png',
+            'devblog1-images/browser.png',
+            'devblog1-images/custom_editor.png',
+            'devblog1-images/eac.png',
+            'devblog1-images/asyncload.gif'
+        ];
+        
+        const container = document.getElementById('js-images');
+        images.forEach(src => {
+            const imageSrc = src.startsWith('http') || src.startsWith('/') ? src : `blog-posts/${src}`;
+            console.log('Processing image:', src, '→', imageSrc);
+            const img = document.createElement('img');
+            img.src = imageSrc;
+            img.alt = src;
+            img.style.maxWidth = '200px';
+            img.style.margin = '5px';
+            img.onload = () => console.log('Loaded:', imageSrc);
+            img.onerror = () => console.error('Failed to load:', imageSrc);
+            container.appendChild(img);
+        });
+    </script>
+</body>
+</html>

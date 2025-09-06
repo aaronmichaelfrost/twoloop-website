@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Markdown Test</title>
+</head>
+<body>
+    <h1>Markdown Processing Test</h1>
+    
+    <h2>Input Markdown:</h2>
+    <pre id="input"></pre>
+    
+    <h2>Processed HTML:</h2>
+    <div id="output" style="border: 1px solid #ccc; padding: 10px; background: #f9f9f9;"></div>
+    
+    <h2>Raw HTML:</h2>
+    <pre id="raw"></pre>
+    
+    <script>
+        // Test markdown processing with the same logic as blog.js
+        function markdownToHtml(markdown) {
+            let html = markdown;
+
+            // Store code blocks temporarily to protect them
+            const codeBlocks = [];
+            html = html.replace(/```[\s\S]*?```/g, (match) => {
+                const code = match.replace(/```/g, '').trim();
+                const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
+                codeBlocks.push(`<pre><code>${code}</code></pre>`);
+                return placeholder;
+            });
+
+            // Images - fix paths to include blog-posts/ directory
+            html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, src) => {
+                // If the image path doesn't start with http, https, or /, prepend blog-posts/
+                const imageSrc = (src.startsWith('http') || src.startsWith('/')) ? src : `blog-posts/${src}`;
+                console.log('Processing image:', src, '→', imageSrc);
+                return `<div class="blog-content-image"><img src="${imageSrc}" alt="${alt}"></div>`;
+            });
+
+            // Author attribution inline with headers (e.g., ## Title *by Author*)
+            html = html.replace(/^(#{1,4})\s+(.+?)\s+\*by ([^*]+)\*$/gm, '$1 $2<span class="author-attribution">by $3</span>');
+
+            // Headers
+            html = html.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
+            html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+            html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+            html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+
+            // Bold and italic
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+            // Inline code
+            html = html.replace(/`(.+?)`/g, '<code>$1</code>');
+
+            // Lists
+            html = html.replace(/^\* (.+$)/gm, '<li>$1</li>');
+            html = html.replace(/^(\d+)\. (.+$)/gm, '<li>$2</li>');
+            
+            // Wrap consecutive list items in ul/ol tags
+            html = html.replace(/(<li>.*<\/li>)\s*(<li>.*<\/li>)/g, '$1\n$2');
+            html = html.replace(/(<li>.*?<\/li>(?:\s*<li>.*?<\/li>)*)/gs, '<ul>$1</ul>');
+
+            // Paragraphs
+            html = html.replace(/^(?!<[hup]|<li|<\/[uo]|<pre|<code|<div class="blog-content-image"|<div class="author-attribution"|__CODE_BLOCK_)(.+$)/gm, '<p>$1</p>');
+
+            // Clean up empty paragraphs
+            html = html.replace(/<p>\s*<\/p>/g, '');
+
+            // Links
+            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+
+            // Restore code blocks
+            codeBlocks.forEach((block, index) => {
+                html = html.replace(`__CODE_BLOCK_${index}__`, block);
+            });
+
+            return html;
+        }
+        
+        // Test with a sample markdown
+        const testMarkdown = `## GAME SERVERS
+Fractium needs dedicated servers. Our first game server is a dedicated bare-metal at $130/mo. 128GB RAM and a decent CPU. Not bad.
+
+I also set up CI/CD with automated setup scripts for future us and community server owners.
+
+![Server Browser](devblog1-images/browser.png)
+
+Working multiplayer, server browser, and PVP clips are all functioning well.`;
+
+        document.getElementById('input').textContent = testMarkdown;
+        
+        const processedHtml = markdownToHtml(testMarkdown);
+        document.getElementById('output').innerHTML = processedHtml;
+        document.getElementById('raw').textContent = processedHtml;
+    </script>
+</body>
+</html>

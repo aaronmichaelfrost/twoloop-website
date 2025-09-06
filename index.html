@@ -1205,6 +1205,12 @@
             min-height: 100vh;
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            overflow-y: auto;
         }
 
         .docs-layout {
@@ -1619,7 +1625,7 @@
     <script>
         // Aggressive image preloading for better background performance
         function preloadCriticalImages() {
-            const criticalImages = ['7.gif', 'dload2.png', 'rload3.png'];
+            const criticalImages = ['7.gif', 'dload2.png', 'rload3.png', 'main-bg-static.png'];
             
             criticalImages.forEach(src => {
                 const img = new Image();
@@ -1646,6 +1652,7 @@
 
         // Navigation functionality with preloading
         function showPage(pageId) {
+            console.log('showPage called with:', pageId, 'from:', new Error().stack);
             // Reset scroll position to top
             window.scrollTo(0, 0);
             
@@ -1684,7 +1691,7 @@
                 const loadingOverlay = document.querySelector('.page-loading');
                 if (loadingOverlay) {
                     loadingOverlay.style.opacity = '0';
-                    setTimeout(() => loadingOverlay.remove(), 200);
+                    setTimeout(() => loadingOverlay.remove(), 100);
                 }
             }
             
@@ -1799,13 +1806,13 @@
                     backgroundContainer.style.filter = "";
                     backgroundContainer.style.transform = "";
                     
-                    // Show arrow after delay if user hasn't scrolled down
+                    // Show arrow after shorter delay if user hasn't scrolled down
                     if (window.arrowCanBeVisible && window.scrollY <= 100) {
                         setTimeout(() => {
                             if (window.scrollY <= 100 && !body.classList.contains('blog-active') && !body.classList.contains('docs-active')) {
                                 scrollArrow.classList.add('visible');
                             }
-                        }, 300);
+                        }, 100);
                     }
                     
                     // Hide the fixed sidebar
@@ -2004,7 +2011,7 @@
                 backgroundContainer.style.backgroundImage = "url('7.gif')";
             }
             
-            // Show scroll arrow after 2 seconds
+            // Show scroll arrow after shorter delay
             const scrollArrow = document.getElementById('scrollArrow');
             window.arrowCanBeVisible = false;
             
@@ -2013,7 +2020,7 @@
                 if (window.scrollY <= 100) {
                     scrollArrow.classList.add('visible');
                 }
-            }, 2000);
+            }, 800);
             
             // Cycle between background GIFs (only on desktop and only on about page)
             const backgroundOverlay = document.getElementById('backgroundOverlay');

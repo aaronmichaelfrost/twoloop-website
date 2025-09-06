@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blog Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #ffe6e6; }
+        .success { background: #e6ffe6; }
+    </style>
+</head>
+<body>
+    <h1>Blog Loading Debug</h1>
+    
+    <div id="status">Loading...</div>
+    
+    <h2>Posts Data:</h2>
+    <div id="posts-data"></div>
+    
+    <h2>Generated HTML:</h2>
+    <div id="generated-html"></div>
+    
+    <h2>Rendered Output:</h2>
+    <div id="rendered-output"></div>
+    
+    <script>
+        class DebugMarkdownParser {
+            constructor() {
+                this.posts = [];
+            }
+
+            parseFrontmatter(content) {
+                const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
+                const match = content.match(frontmatterRegex);
+                
+                if (!match) {
+                    return { metadata: {}, content: content };
+                }
+
+                const frontmatterStr = match[1];
+                const markdownContent = match[2];
+                const metadata = {};
+
+                frontmatterStr.split('\n').forEach(line => {
+                    const colonIndex = line.indexOf(':');
+                    if (colonIndex > -1) {
+                        const key = line.substring(0, colonIndex).trim();
+                        const value = line.substring(colonIndex + 1).trim();
+                        metadata[key] = value;
+                    }
+                });
+
+                return { metadata, content: markdownContent };
+            }
+
+            markdownToHtml(markdown) {
+                console.log('Starting markdown processing...');
+                let html = markdown;
+
+                // Store code blocks temporarily to protect them
+                const codeBlocks = [];
+                html = html.replace(/```[\s\S]*?```/g, (match) => {
+                    const code = match.replace(/```/g, '').trim();
+                    const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
+                    codeBlocks.push(`<pre><code>${code}</code></pre>`);
+                    return placeholder;
+                });
+
+                // Images - fix paths to include blog-posts/ directory
+                console.log('Processing images...');
+                html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, src) => {
+                    const imageSrc = (src.startsWith('http') || src.startsWith('/')) ? src : `blog-posts/${src}`;
+                    console.log('Processing image:', src, '→', imageSrc);
+                    const result = `<div class="blog-content-image"><img src="${imageSrc}" alt="${alt}" onload="console.log('Image loaded:', '${imageSrc}')" onerror="console.error('Image failed:', '${imageSrc}')"></div>`;
+                    console.log('Generated image HTML:', result);
+                    return result;
+                });
+
+                // Author attribution inline with headers
+                html = html.replace(/^(#{1,4})\s+(.+?)\s+\*by ([^*]+)\*$/gm, '$1 $2<span class="author-attribution">by $3</span>');
+
+                // Headers
+                html = html.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
+                html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+                html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+                html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+
+                // Bold and italic
+                html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+                html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+                // Inline code
+                html = html.replace(/`(.+?)`/g, '<code>$1</code>');
+
+                // Lists
+                html = html.replace(/^\* (.+$)/gm, '<li>$1</li>');
+                html = html.replace(/^(\d+)\. (.+$)/gm, '<li>$2</li>');
+                
+                html = html.replace(/(<li>.*<\/li>)\s*(<li>.*<\/li>)/g, '$1\n$2');
+                html = html.replace(/(<li>.*?<\/li>(?:\s*<li>.*?<\/li>)*)/gs, '<ul>$1</ul>');
+
+                // Paragraphs
+                console.log('Processing paragraphs...');
+                html = html.replace(/^(?!<[hup]|<li|<\/[uo]|<pre|<code|<div class="blog-content-image"|<div class="author-attribution"|__CODE_BLOCK_)(.+$)/gm, '<p>$1</p>');
+
+                // Clean up empty paragraphs
+                html = html.replace(/<p>\s*<\/p>/g, '');
+
+                // Links
+                html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+
+                // Restore code blocks
+                codeBlocks.forEach((block, index) => {
+                    html = html.replace(`__CODE_BLOCK_${index}__`, block);
+                });
+
+                console.log('Final HTML:', html);
+                return html;
+            }
+
+            async loadBlogPosts() {
+                console.log('Loading blog posts...');
+                
+                try {
+                    console.log('Fetching devblog-1.md...');
+                    const response = await fetch('blog-posts/devblog-1.md');
+                    console.log('Response:', response.status, response.ok);
+                    
+                    if (response.ok) {
+                        const content = await response.text();
+                        console.log('Content length:', content.length);
+                        console.log('Content preview:', content.substring(0, 500));
+                        
+                        const { metadata, content: markdownContent } = this.parseFrontmatter(content);
+                        console.log('Metadata:', metadata);
+                        console.log('Markdown content preview:', markdownContent.substring(0, 500));
+                        
+                        const htmlContent = this.markdownToHtml(markdownContent);
+                        
+                        this.posts.push({
+                            filename: 'devblog-1',
+                            metadata,
+                            content: htmlContent,
+                            slug: 'devblog-1'
+                        });
+                        
+                        return this.posts;
+                    } else {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                } catch (error) {
+                    console.error('Error loading blog posts:', error);
+                    document.getElementById('status').innerHTML = `<div class="debug error">Error: ${error.message}</div>`;
+                    return [];
+                }
+            }
+        }
+        
+        // Initialize and test
+        async function runDebug() {
+            const parser = new DebugMarkdownParser();
+            
+            document.getElementById('status').innerHTML = '<div class="debug">Loading blog posts...</div>';
+            
+            const posts = await parser.loadBlogPosts();
+            
+            if (posts.length > 0) {
+                const post = posts[0];
+                document.getElementById('status').innerHTML = '<div class="debug success">Blog post loaded successfully!</div>';
+                document.getElementById('posts-data').innerHTML = `<div class="debug">
+                    <strong>Title:</strong> ${post.metadata.title}<br>
+                    <strong>Date:</strong> ${post.metadata.date}<br>
+                    <strong>Cover Image:</strong> ${post.metadata['cover-image']}<br>
+                    <strong>Content Length:</strong> ${post.content.length} chars
+                </div>`;
+                
+                document.getElementById('generated-html').innerHTML = `<pre>${post.content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+                document.getElementById('rendered-output').innerHTML = post.content;
+            } else {
+                document.getElementById('status').innerHTML = '<div class="debug error">Failed to load blog posts</div>';
+            }
+        }
+        
+        // Run the debug
+        runDebug();
+    </script>
+</body>
+</html>
