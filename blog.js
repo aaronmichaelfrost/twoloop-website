@@ -89,6 +89,16 @@ class MarkdownParser {
             return `<div class="blog-content-image"><img src="${imageSrc}" alt="${alt}" style="opacity: 0; transition: opacity 0.3s ease;" onload="handleContentImageLoad(this)" onerror="handleContentImageError(this)"></div>`;
         });
 
+        // Process discord-images-row divs specially
+        html = html.replace(/<div class="discord-images-row">([\s\S]*?)<\/div>/g, (match, content) => {
+            // Extract all images from within the div and process them
+            const processedContent = content.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (imgMatch, alt, src) => {
+                const imageSrc = (src.startsWith('http') || src.startsWith('/')) ? src : `blog-posts/${src}`;
+                return `<div class="blog-content-image"><img src="${imageSrc}" alt="${alt}" style="opacity: 0; transition: opacity 0.3s ease;" onload="handleContentImageLoad(this)" onerror="handleContentImageError(this)"></div>`;
+            });
+            return `<div class="discord-images-row">${processedContent}</div>`;
+        });
+
         // Author attribution inline with headers (e.g., ## Title *by Author*)
         html = html.replace(/^(#{1,4})\s+(.+?)\s+\*by ([^*]+)\*$/gm, '$1 $2<span class="author-attribution">by $3</span>');
 
@@ -114,7 +124,7 @@ class MarkdownParser {
         html = html.replace(/(<li>.*?<\/li>(?:\s*<li>.*?<\/li>)*)/gs, '<ul>$1</ul>');
 
         // Paragraphs
-        html = html.replace(/^(?!<[hup]|<li|<\/[uo]|<pre|<code|<div class="blog-content-image"|<div class="author-attribution"|__CODE_BLOCK_)(.+$)/gm, '<p>$1</p>');
+        html = html.replace(/^(?!<[hup]|<li|<\/[uo]|<pre|<code|<div class="blog-content-image"|<div class="author-attribution"|<div class="discord-images-row"|__CODE_BLOCK_)(.+$)/gm, '<p>$1</p>');
 
         // Clean up empty paragraphs
         html = html.replace(/<p>\s*<\/p>/g, '');
@@ -135,10 +145,7 @@ class MarkdownParser {
     async loadBlogPosts() {
         console.log('Loading blog posts...');
         const blogPosts = [
-            'the-journey-begins.md',
-            'devblog-1.md',
-            'fractal-rendering.md',
-            'community-feedback.md'
+            'devblog-1.md'
         ];
 
         this.posts = [];

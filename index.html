@@ -814,6 +814,39 @@
             object-fit: cover;
         }
 
+        /* Discord images row styling */
+        .discord-images-row {
+            display: flex;
+            gap: 10px;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .discord-images-row .blog-content-image {
+            flex: 1;
+            margin: 0;
+            min-width: 200px;
+        }
+
+        .discord-images-row .blog-content-image img {
+            width: 100%;
+            height: auto;
+            max-height: 200px;
+            object-fit: cover;
+        }
+
+        /* Mobile responsive for discord images */
+        @media (max-width: 768px) {
+            .discord-images-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .discord-images-row .blog-content-image {
+                min-width: auto;
+            }
+        }
+
         .blog-post-content h1 {
             font-size: 2.4rem;
             margin: 1rem 0 0.5rem 0;
