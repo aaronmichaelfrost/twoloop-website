@@ -67,6 +67,9 @@ class DocsSystem {
     }
 
     async loadDoc(slug) {
+        // Show loading spinner
+        this.renderLoading();
+        
         try {
             console.log(`Loading doc: ${slug}`);
             const response = await fetch(`docs/${slug}.md`);
@@ -118,6 +121,18 @@ class DocsSystem {
         return { frontmatter, content };
     }
 
+    renderLoading() {
+        const content = document.getElementById('docsContent');
+        if (!content) return;
+
+        content.innerHTML = `
+            <div class="docs-loading">
+                <div class="docs-spinner"></div>
+                <span>Loading documentation...</span>
+            </div>
+        `;
+    }
+
     renderDoc() {
         const content = document.getElementById('docsContent');
         if (!content) return;
@@ -152,26 +167,30 @@ class DocsSystem {
         // Simple markdown parser - enhanced version of blog parser
         let html = markdown;
 
-        // Code blocks first (to protect from other processing)
+        // Store code blocks temporarily to protect them
+        const codeBlocks = [];
         html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
             const language = lang || '';
-            return `<div class="code-block"><pre><code class="language-${language}">${this.escapeHtml(code.trim())}</code></pre></div>`;
+            const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
+            codeBlocks.push(`<div class="code-block"><pre><code class="language-${language}">${this.escapeHtml(code.trim())}</code></pre></div>`);
+            return placeholder;
         });
 
         // Tables
         html = this.parseMarkdownTables(html);
 
         // Headers
+        html = html.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
         html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
         html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
         html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
 
         // Inline code
-        html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+        html = html.replace(/`([^`\n]+)`/g, '<code>$1</code>');
 
         // Bold and italic
-        html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-        html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+        html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
 
         // Links
         html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
@@ -189,11 +208,17 @@ class DocsSystem {
                 !paragraph.includes('<ul') && 
                 !paragraph.includes('<ol') && 
                 !paragraph.includes('<div') &&
-                !paragraph.includes('<table')) {
+                !paragraph.includes('<table') &&
+                !paragraph.includes('__CODE_BLOCK_')) {
                 return `<p>${paragraph}</p>`;
             }
             return paragraph;
         }).join('\n\n');
+
+        // Restore code blocks
+        codeBlocks.forEach((block, index) => {
+            html = html.replace(`__CODE_BLOCK_${index}__`, block);
+        });
 
         return html;
     }
@@ -255,7 +280,7 @@ class DocsSystem {
             line.split('|').slice(1, -1).map(cell => cell.trim())
         );
 
-        let tableHtml = '<table class="docs-table">\n';
+        let tableHtml = '<div class="table-container"><table class="docs-table">\n';
         tableHtml += '<thead><tr>';
         headers.forEach(header => {
             tableHtml += `<th>${header}</th>`;
@@ -270,7 +295,7 @@ class DocsSystem {
             tableHtml += '</tr>';
         });
         
-        tableHtml += '</tbody></table>';
+        tableHtml += '</tbody></table></div>';
         return tableHtml;
     }
 

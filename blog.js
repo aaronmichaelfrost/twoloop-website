@@ -1,3 +1,21 @@
+// Image loading handlers
+function handleImageLoad(img) {
+    img.classList.add('loaded');
+    const loadingElement = img.parentElement.querySelector('.image-loading');
+    if (loadingElement) {
+        loadingElement.style.display = 'none';
+    }
+}
+
+function handleImageError(img) {
+    const container = img.parentElement;
+    const loadingElement = container.querySelector('.image-loading');
+    if (loadingElement) {
+        loadingElement.innerHTML = '<span style="color: rgba(255,255,255,0.4);">Failed to load image</span>';
+    }
+    img.style.display = 'none';
+}
+
 // Simple markdown parser for blog posts
 class MarkdownParser {
     constructor() {
@@ -34,13 +52,23 @@ class MarkdownParser {
     markdownToHtml(markdown) {
         let html = markdown;
 
+        // Store code blocks temporarily to protect them
+        const codeBlocks = [];
+        html = html.replace(/```[\s\S]*?```/g, (match) => {
+            const code = match.replace(/```/g, '').trim();
+            const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
+            codeBlocks.push(`<pre><code>${code}</code></pre>`);
+            return placeholder;
+        });
+
         // Images
         html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<div class="blog-content-image"><img src="$2" alt="$1"></div>');
 
         // Author attribution inline with headers (e.g., ## Title *by Author*)
-        html = html.replace(/^(#{1,3})\s+(.+?)\s+\*by ([^*]+)\*$/gm, '$1 $2<span class="author-attribution">by $3</span>');
+        html = html.replace(/^(#{1,4})\s+(.+?)\s+\*by ([^*]+)\*$/gm, '$1 $2<span class="author-attribution">by $3</span>');
 
         // Headers
+        html = html.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
         html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
         html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
         html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
@@ -48,12 +76,6 @@ class MarkdownParser {
         // Bold and italic
         html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
         html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-
-        // Code blocks
-        html = html.replace(/```[\s\S]*?```/g, (match) => {
-            const code = match.replace(/```/g, '').trim();
-            return `<pre><code>${code}</code></pre>`;
-        });
 
         // Inline code
         html = html.replace(/`(.+?)`/g, '<code>$1</code>');
@@ -67,13 +89,18 @@ class MarkdownParser {
         html = html.replace(/(<li>.*?<\/li>(?:\s*<li>.*?<\/li>)*)/gs, '<ul>$1</ul>');
 
         // Paragraphs
-        html = html.replace(/^(?!<[hup]|<li|<\/[uo]|<pre|<code|<div class="blog-content-image|<div class="author-attribution")(.+$)/gm, '<p>$1</p>');
+        html = html.replace(/^(?!<[hup]|<li|<\/[uo]|<pre|<code|<div class="blog-content-image|<div class="author-attribution|__CODE_BLOCK_)(.+$)/gm, '<p>$1</p>');
 
         // Clean up empty paragraphs
         html = html.replace(/<p>\s*<\/p>/g, '');
 
         // Links
         html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+
+        // Restore code blocks
+        codeBlocks.forEach((block, index) => {
+            html = html.replace(`__CODE_BLOCK_${index}__`, block);
+        });
 
         return html;
     }
@@ -144,7 +171,11 @@ class MarkdownParser {
                 <div class="blog-post-meta">${this.formatDate(post.metadata.date)}</div>
                 <div class="blog-png-container">
                     ${post.metadata['cover-image'] ? 
-                        `<img src="${post.metadata['cover-image']}" alt="${post.metadata.title}">` : 
+                        `<div class="image-loading" style="display: flex; align-items: center; color: rgba(255,255,255,0.4); font-size: 0.8rem;">
+                            <div class="loading-spinner"></div>
+                            Loading...
+                        </div>
+                        <img src="${post.metadata['cover-image']}" alt="${post.metadata.title}" onload="handleImageLoad(this)" onerror="handleImageError(this)">` : 
                         '<div class="blog-png-placeholder">No cover image</div>'
                     }
                 </div>
@@ -179,7 +210,13 @@ function showBlogPost(slug) {
     // Update the blog page content
     const blogContent = document.querySelector('.blog-content');
     const coverImage = post.metadata['cover-image'] ? 
-        `<div class="blog-post-cover"><img src="${post.metadata['cover-image']}" alt="${post.metadata.title}"></div>` : 
+        `<div class="blog-post-cover">
+            <div class="image-loading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; display: flex; align-items: center; color: rgba(255,255,255,0.4); font-size: 0.8rem;">
+                <div class="loading-spinner"></div>
+                Loading...
+            </div>
+            <img src="${post.metadata['cover-image']}" alt="${post.metadata.title}" onload="handleImageLoad(this)" onerror="handleImageError(this)">
+        </div>` : 
         '';
 
     blogContent.innerHTML = `
@@ -203,14 +240,18 @@ function showBlogPost(slug) {
         backgroundContainer.style.backgroundPosition = "center";
         backgroundContainer.style.backgroundRepeat = "no-repeat";
         backgroundContainer.style.backgroundAttachment = "fixed";
+        backgroundContainer.style.filter = "blur(25px) grayscale(0%) saturate(100%)";
+        backgroundContainer.style.transform = "scale(1.1)";
     } else {
-        // Fallback to rload3 grayscale if no cover image
+        // Fallback to rload3 if no cover image
         backgroundContainer.style.backgroundImage = "url('rload3.png')";
         backgroundContainer.style.background = "";
         backgroundContainer.style.backgroundSize = "cover";
         backgroundContainer.style.backgroundPosition = "center";
         backgroundContainer.style.backgroundRepeat = "no-repeat";
         backgroundContainer.style.backgroundAttachment = "fixed";
+        backgroundContainer.style.filter = "blur(25px) grayscale(0%) saturate(100%)";
+        backgroundContainer.style.transform = "scale(1.1)";
     }
 }
 
@@ -228,7 +269,15 @@ function showBlogList() {
         </div>
     `;
 
-    // Set dload2 background with grayscale and blur for blog list
+    // Preload all blog post images
+    markdownParser.posts.forEach(post => {
+        if (post.metadata['cover-image']) {
+            const img = new Image();
+            img.src = post.metadata['cover-image'];
+        }
+    });
+
+    // Set dload2 background with blur for blog list
     const backgroundContainer = document.querySelector('.background-container');
     backgroundContainer.style.backgroundImage = "url('dload2.png')";
     backgroundContainer.style.background = "";
@@ -236,6 +285,8 @@ function showBlogList() {
     backgroundContainer.style.backgroundPosition = "center";
     backgroundContainer.style.backgroundRepeat = "no-repeat";
     backgroundContainer.style.backgroundAttachment = "fixed";
+    backgroundContainer.style.filter = "blur(25px) grayscale(0%) saturate(100%)";
+    backgroundContainer.style.transform = "scale(1.1)";
 
     // Animate blog header
     const blogHeader = document.querySelector('.blog-content h1');

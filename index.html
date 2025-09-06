@@ -3,7 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twoloop - Game Development Studio</title>
+    <title>twoloop</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="twoloop_pattern.png">
+    <link rel="shortcut icon" type="image/png" href="twoloop_pattern.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Preload critical background images -->
     <link rel="preload" as="image" href="7.gif">
@@ -45,7 +54,7 @@
             animation: slowZoom 20s ease-in-out infinite;
         }
     </style>
-    <title>Twoloop - Game Development Studio</title>
+    <title>twoloop</title>
     <style>
         /* Custom scrollbar */
         ::-webkit-scrollbar {
@@ -80,14 +89,10 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             color: #ffffff;
             overflow-x: hidden;
             background: #000;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
         }
 
         /* Scroll arrow */
@@ -224,11 +229,20 @@
         }
 
         .logo {
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 600;
             color: #ffffff;
             text-decoration: none;
             letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            opacity: 0.9;
         }
 
         .nav-links {
@@ -256,14 +270,14 @@
         .steam-icon {
             width: 24px;
             height: 24px;
-            opacity: 0.8;
+            opacity: 0.5;
             transition: all 0.3s ease;
             cursor: pointer;
             filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
         }
 
         .steam-icon:hover {
-            opacity: 1;
+            opacity: 0.8;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
             transform: scale(1.05);
         }
@@ -392,6 +406,16 @@
             }
         }
 
+        /* Fade in animation for back button */
+        @keyframes fadeInDelay {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
         .section-content {
             max-width: 800px;
             text-align: center;
@@ -481,7 +505,7 @@
 
         /* Blog page background blur */
         body.blog-active .background-container {
-            filter: blur(25px) grayscale(85%) saturate(200%) !important;
+            filter: blur(25px) grayscale(0%) saturate(100%) !important;
             background-image: url('dload2.png') !important;
             background-size: cover !important;
             background-position: center !important;
@@ -499,9 +523,25 @@
             right: 0;
             bottom: 0;
             background: linear-gradient(to bottom, 
-                rgba(0, 0, 0, 0.4) 0%, 
-                rgba(0, 0, 0, 0.6) 50%, 
-                rgba(0, 0, 0, 0.9) 100%);
+                rgba(0, 0, 0, 0.2) 0%, 
+                rgba(0, 0, 0, 0.4) 50%, 
+                rgba(0, 0, 0, 0.7) 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Docs page overlay for better readability */
+        body.docs-active::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, 
+                rgba(0, 0, 0, 0.2) 0%, 
+                rgba(0, 0, 0, 0.4) 50%, 
+                rgba(0, 0, 0, 0.7) 100%);
             pointer-events: none;
             z-index: 0;
         }
@@ -528,14 +568,15 @@
             width: 100%;
             aspect-ratio: 4.6;
             height: 180px;
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
             border-radius: 12px;
             margin: 1rem 0;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            position: relative;
         }
 
         .blog-png-container img {
@@ -543,6 +584,35 @@
             height: 100%;
             object-fit: cover;
             border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .blog-png-container img.loaded {
+            opacity: 1;
+        }
+
+        .blog-png-container .image-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255,255,255,0.4);
+            font-size: 0.8rem;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .blog-png-container .loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-top: 2px solid rgba(255,255,255,0.6);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            flex-shrink: 0;
         }
 
         .blog-png-placeholder {
@@ -625,39 +695,64 @@
         }
 
         .back-to-blog {
-            background: transparent;
-            border: none;
-            color: rgba(255,255,255,0.6);
+            position: fixed;
+            top: 120px;
+            left: calc(66.67% + 250px);
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.8);
             padding: 8px 16px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 0.9rem;
-            margin-bottom: 2rem;
             transition: all 0.3s ease;
             text-transform: lowercase;
+            opacity: 0;
+            animation: fadeInDelay 0.5s ease-in-out 1s forwards;
         }
 
-        /* Hide go back button on mobile */
+        /* Mobile back button styling */
         @media (max-width: 768px) {
             .back-to-blog {
-                display: none;
+                top: 100px !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                font-size: 0.85rem !important;
+                padding: 6px 12px !important;
             }
         }
 
         .back-to-blog:hover {
-            background: rgba(255,255,255,0.2);
-            border-color: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.4);
+            color: rgba(255,255,255,1);
         }
 
         .blog-post-cover {
             margin: 1rem 0;
             text-align: center;
+            position: relative;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .blog-post-cover img {
             max-width: 100%;
             border-radius: 12px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .blog-post-cover img.loaded {
+            opacity: 1;
         }
 
         .blog-post-author {
@@ -684,6 +779,11 @@
             font-weight: 300;
             font-size: 0.95rem;
             margin-bottom: 4rem;
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            cursor: text;
         }
 
         /* Style the first paragraph (intro text) */
@@ -741,6 +841,15 @@
             align-items: baseline;
         }
 
+        .blog-post-content h4 {
+            font-size: 1.2rem;
+            margin: 0.6rem 0 0.3rem 0;
+            color: rgba(255,255,255,0.8);
+            font-weight: 600;
+            display: flex;
+            align-items: baseline;
+        }
+
         .blog-post-content p {
             margin-bottom: 0.6rem;
             color: rgba(255,255,255,0.8);
@@ -764,7 +873,7 @@
             background: rgba(255,255,255,0.1);
             padding: 2px 6px;
             border-radius: 4px;
-            font-family: 'Courier New', monospace;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Courier New', monospace;
             color: rgba(255,255,255,0.9);
         }
 
@@ -781,6 +890,10 @@
             background: none;
             padding: 0;
             color: rgba(255,255,255,0.9);
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
         }
 
         .blog-post-content strong {
@@ -805,22 +918,71 @@
             border-bottom-color: white;
         }
 
+        /* Loading states */
+        .page-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .page-loading::after {
+            content: '';
+            width: 32px;
+            height: 32px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .loading-post {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.1rem;
+            padding: 3rem;
+        }
+        
+        .error {
+            text-align: center;
+            color: #ff6b6b;
+            font-size: 1.1rem;
+            padding: 2rem;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 8px;
+            margin: 2rem;
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
             .header {
-                padding: 15px 25px;
+                padding: 10px 20px;
             }
             
             .nav-links {
-                gap: 20px;
+                gap: 15px;
             }
             
             .nav-links a {
-                font-size: 1.05rem !important;
+                font-size: 0.95rem !important;
             }
             
             .logo {
-                font-size: 1.15rem !important;
+                font-size: 1.1rem !important;
+            }
+            
+            .logo-icon {
+                width: 20px !important;
+                height: 20px !important;
             }
             
             .section {
@@ -893,7 +1055,7 @@
             }
             
             .blog-post-content p:first-child {
-                border-bottom: 2px solid rgba(255,255,255,0.2) !important;
+                border-bottom: none !important;
                 padding-bottom: 0.6rem !important;
             }
             
@@ -930,12 +1092,110 @@
             
             .blog-post-cover {
                 height: 110px !important;
-                margin: 0.6rem 0 !important;
+                margin: 0.6rem 0 1.5rem 0 !important;
                 width: 100% !important;
+                background: transparent !important;
+                min-height: auto !important;
             }
             
             .blog-post-meta {
                 font-size: 0.85rem !important;
+            }
+            
+            .blog-post-header {
+                padding-bottom: 0.5rem !important;
+            }
+            
+            .blog-post-header h1 {
+                margin-top: 0.5rem !important;
+                position: relative !important;
+                z-index: 10 !important;
+                font-size: 1.6rem !important;
+            }
+            
+            /* Mobile-specific blog and docs text styling */
+            .blog-post-content p {
+                font-size: 0.85rem !important;
+                color: rgba(255,255,255,0.7) !important;
+                line-height: 1.4 !important;
+            }
+            
+            .blog-post-content h1 {
+                font-size: 1.6rem !important;
+            }
+            
+            .blog-post-content h2 {
+                font-size: 1.2rem !important;
+            }
+            
+            .blog-post-content h3 {
+                font-size: 1rem !important;
+            }
+            
+            .blog-post-content h4 {
+                font-size: 0.9rem !important;
+            }
+            
+            .blog-post-content li {
+                font-size: 0.85rem !important;
+                color: rgba(255,255,255,0.7) !important;
+            }
+            
+            .docs-article p {
+                font-size: 0.85rem !important;
+                color: rgba(255,255,255,0.7) !important;
+            }
+            
+            .docs-article h1 {
+                font-size: 1.8rem !important;
+                margin-top: 1.5rem !important;
+            }
+            
+            .docs-article h2 {
+                font-size: 1.3rem !important;
+            }
+            
+            .docs-article h3 {
+                font-size: 1.1rem !important;
+            }
+            
+            .docs-article h4 {
+                font-size: 1rem !important;
+            }
+            
+            .docs-article li {
+                font-size: 0.85rem !important;
+                color: rgba(255,255,255,0.7) !important;
+            }
+            
+            /* Mobile docs navigation spacing */
+            .docs-nav-item {
+                margin-bottom: 0.1rem !important;
+            }
+            
+            .docs-nav-link {
+                padding: 0.3rem 0 !important;
+                font-size: 0.9rem !important;
+            }
+            
+            /* Mobile table horizontal scroll */
+            .table-container {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                margin: 1rem -25px !important;
+                padding: 0 25px !important;
+            }
+            
+            .docs-table {
+                min-width: 500px !important;
+                font-size: 0.8rem !important;
+            }
+            
+            .docs-table th,
+            .docs-table td {
+                white-space: nowrap !important;
+                padding: 0.5rem !important;
+                min-width: 100px !important;
             }
         }
 
@@ -943,10 +1203,8 @@
         .docs-container {
             display: none;
             min-height: 100vh;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
-            position: relative;
-            z-index: 1;
         }
 
         .docs-layout {
@@ -954,12 +1212,36 @@
             min-height: 100vh;
             max-width: 1400px;
             margin: 0 auto;
-            padding-top: 80px;
+            padding-top: 160px;
+        }
+
+        #docsSidebar {
+            width: 250px !important;
+            padding: 2rem 0rem 2rem .7rem !important;
+            position: fixed !important;
+            top: 39px !important;
+            left: 0px !important;
+            height: calc(100vh - 120px) !important;
+            overflow-y: auto !important;
+            z-index: 99999 !important;
+            background: none !important;
+            backdrop-filter: none !important;
+            border: none !important;
         }
 
         .docs-sidebar {
             width: 250px;
             padding: 2rem 1rem 2rem 2rem;
+            position: fixed !important;
+            top: 120px !important;
+            left: 50px !important;
+            height: calc(100vh - 120px) !important;
+            overflow-y: auto !important;
+            z-index: 9999 !important;
+            background: none !important;
+            backdrop-filter: none !important;
+            margin: 0 !important;
+            transform: none !important;
         }
 
         .docs-nav-list {
@@ -969,14 +1251,14 @@
         }
 
         .docs-nav-item {
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.15rem;
         }
 
         .docs-nav-link {
             display: block;
             color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
-            padding: 0.5rem 0;
+            padding: 0.4rem 0;
             transition: color 0.3s ease;
             font-size: 1rem;
         }
@@ -992,6 +1274,7 @@
         .docs-content {
             flex: 1;
             padding: 2rem;
+            margin-left: 250px;
         }
 
         .docs-content-wrapper {
@@ -1000,49 +1283,82 @@
         }
 
         .docs-article {
-            color: white;
-            line-height: 1.7;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.4;
+            font-weight: 300;
+            font-size: 0.95rem;
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            cursor: text;
         }
 
         .docs-article h1 {
             font-size: 2.5rem;
             margin-bottom: 0.5rem;
-            color: #ff0000;
+            color: white;
+            font-weight: bold;
         }
 
         .docs-article h2 {
             font-size: 2rem;
             margin: 1rem 0 0.5rem 0;
-            color: #ff0000;
+            color: white;
+            font-weight: bold;
         }
 
         .docs-article h3 {
             font-size: 1.5rem;
             margin: 0.75rem 0 0.25rem 0;
-            color: #ff0000;
+            color: white;
+            font-weight: bold;
+        }
+
+        .docs-article h4 {
+            font-size: 1.2rem;
+            margin: 0.6rem 0 0.2rem 0;
+            color: white;
+            font-weight: 600;
         }
 
         .docs-article p {
-            margin-bottom: 1rem;
-            color: white;
+            margin-bottom: 0.6rem;
+            color: rgba(255,255,255,0.8);
+            font-weight: 300;
+            font-size: 0.95rem;
         }
 
         .docs-article ul, .docs-article ol {
             margin-bottom: 1rem;
             padding-left: 2rem;
+            color: rgba(255,255,255,0.8);
+            font-weight: 300;
+            font-size: 0.95rem;
         }
 
         .docs-article li {
-            margin-bottom: 0.5rem;
-            color: white;
+            margin-bottom: 0.2rem;
+            color: rgba(255,255,255,0.8);
+            font-weight: 300;
         }
 
         .docs-article code {
             background: rgba(255, 255, 255, 0.1);
             padding: 0.2rem 0.4rem;
             border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            color: #A5D6A7;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Courier New', monospace;
+            color: #C07070;
+        }
+
+        .docs-article a {
+            color: #7CB9E8;
+            text-decoration: none;
+        }
+
+        .docs-article a:hover {
+            color: #A8D0F0;
+            text-decoration: underline;
         }
 
         .code-block {
@@ -1051,6 +1367,10 @@
             border-radius: 8px;
             margin: 1rem 0;
             overflow-x: auto;
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
         }
 
         .code-block pre {
@@ -1061,8 +1381,12 @@
         .code-block code {
             background: none;
             padding: 0;
-            color: #A5D6A7;
+            color: #C07070;
             white-space: pre;
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
         }
 
         .docs-table {
@@ -1074,9 +1398,15 @@
             overflow: hidden;
         }
 
+        .table-container {
+            overflow-x: auto;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+
         .docs-table th {
-            background: rgba(255, 0, 0, 0.2);
-            color: white;
+            background: rgba(255, 0, 0, 0.3);
+            color: #ff0000;
             padding: 0.75rem;
             text-align: left;
             font-weight: bold;
@@ -1104,6 +1434,30 @@
             margin-bottom: 1rem;
         }
 
+        /* Loading spinner for docs */
+        .docs-loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .docs-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @media (max-width: 768px) {
             .docs-layout {
                 flex-direction: column;
@@ -1111,13 +1465,34 @@
             }
 
             .docs-sidebar {
-                width: 100%;
-                padding: 1rem 25px;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                width: 100% !important;
+                padding: 0 !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+                position: fixed !important;
+                top: 60px !important;
+                left: 0 !important;
+                background: rgba(0, 0, 0, 0.9) !important;
+                backdrop-filter: blur(15px) !important;
+                z-index: 1000 !important;
+                height: auto !important;
+                max-height: none !important;
+                overflow-y: visible !important;
+            }
+
+            .docs-sidebar ul {
+                margin: 0 !important;
+                padding: 0.5rem !important;
+            }
+
+            .docs-sidebar li {
+                margin: 0 !important;
+                padding: 0rem 0.5rem !important;
             }
 
             .docs-content {
                 padding: 1rem 25px;
+                margin-left: 0;
+                margin-top: 110px;
             }
 
             .docs-article h1 {
@@ -1173,13 +1548,16 @@
     <!-- Header -->
     <header class="header">
         <div class="nav-container">
-            <a href="#" class="logo">twoloop</a>
+            <a href="#" class="logo">
+                <img src="twoloop_pattern.png" alt="Twoloop" class="logo-icon">
+                twoloop
+            </a>
             <nav class="nav-links">
                 <a href="#" class="nav-link active" id="aboutLink">about</a>
                 <a href="#" class="nav-link" id="blogLink">blog</a>
                 <a href="#" class="nav-link" id="docsLink">docs</a>
-                <svg class="steam-icon" viewBox="0 0 24 24" fill="white" onclick="window.open('https://store.steampowered.com/', '_blank')">
-                    <path d="M11.979 0C5.678 0 0.511 4.86 0.022 11.037l6.432 2.658c0.545-0.371 1.203-0.59 1.912-0.59 0.063 0 0.125 0.004 0.188 0.006l2.861-4.142c0-0.016-0.002-0.032-0.002-0.049 0-2.68 2.198-4.854 4.904-4.854 2.701 0 4.898 2.174 4.898 4.854 0 2.684-2.197 4.854-4.898 4.854-0.025 0-0.049-0.002-0.074-0.002l-4.104 2.918c0.002 0.046 0.003 0.091 0.003 0.137 0 1.872-1.543 3.389-3.441 3.389-1.614 0-2.969-1.118-3.332-2.621L0.427 14.27C0.778 21.637 6.344 24 11.979 24c6.624 0 11.999-5.375 11.999-12S18.603 0 11.979 0zM7.54 18.21l-1.473-0.61c0.262 0.543 0.714 0.999 1.314 1.25 1.297 0.544 2.796-0.061 3.342-1.357 0.263-0.628 0.263-1.326 0-1.953s-0.714-1.108-1.342-1.371c-0.628-0.263-1.297-0.263-1.925 0l1.52 0.628c0.956 0.397 1.406 1.505 1.009 2.461-0.397 0.956-1.505 1.406-2.445 1.009v-0.057zM17.615 8.717c0-1.786-1.421-3.24-3.168-3.24s-3.168 1.454-3.168 3.24c0 1.786 1.421 3.24 3.168 3.24s3.168-1.454 3.168-3.24zm-5.284 0c0-1.166 0.946-2.112 2.116-2.112 1.17 0 2.116 0.946 2.116 2.112 0 1.166-0.946 2.112-2.116 2.112-1.17 0-2.116-0.946-2.116-2.112z"/>
+                <svg class="steam-icon" viewBox="0 0 24 24" fill="white" onclick="window.open('https://store.steampowered.com/app/1551700/Fractium', '_blank')">
+                    <path d="M11.979 0C5.678 0 0.511 4.86 0.022 11.037l6.432 2.658c0.545-0.371 1.203-0.59 1.912-0.59 0.063 0 0.125 0.004 0.188 0.006l2.861-4.142c0-0.016-0.002-0.032-0.002-0.049 0-2.68 2.198-4.854 4.904-4.854 2.701 0 4.898 2.174 4.898 4.854 0 2.684-2.197 4.854-4.898 4.854-0.025 0-0.049-0.002-0.074-0.002l-4.104 2.918c0.002 0.046 0.003 0.091 0.003 0.137 0 1.872-1.543 3.389-3.441 3.389-1.614 0-2.969-1.118-3.332-2.621L0.427 14.27C0.778 21.637 6.344 24 11.979 24c6.624 0 11.999-5.375 11.999-12S18.603 0 11.979 0zM7.54 18.21l-1.473-0.61c0.262 0.543 0.714 0.999 1.314 1.25 1.297 0.544 2.796-0.061 3.342-1.357 0.263-0.628 0.263-1.326 0-1.953s-0.714-1.108-1.342-1.371c-0.628-0.263-1.297-0.263-1.925 0l1.52 0.628c0.956 0.397 1.406 1.505 1.009 2.461-0.397 0.956-1.505 1.406-2.445 1.009v-0.057zM17.615 8.717c0-1.786-1.421-3.24-3.168-3.24s-3.168 1.454-3.168 3.24c0 1.786 1.421 3.24 3.168 3.24s3.168-1.454 3.168-3.240zm-5.284 0c0-1.166 0.946-2.112 2.116-2.112 1.17 0 2.116 0.946 2.116 2.112 0 1.166-0.946 2.112-2.116 2.112-1.17 0-2.116-0.946-2.116-2.112z"/>
                 </svg>
             </nav>
         </div>
@@ -1190,9 +1568,9 @@
         <!-- Hero section -->
         <section class="section">
             <div class="section-content">
-                <img src="fract_128.png" alt="Fractium" class="game-icon">
+                <img src="fra.png" alt="Fractium" class="game-icon">
                 <p>Fractium is a hardcore multiplayer game that aims to create breathtakingly original multiplayer experiences.</p>
-                <a href="#" class="wishlist-button">add to wishlist</a>
+                <a href="https://store.steampowered.com/app/1551700/Fractium/#game_area_purchase" class="wishlist-button">add to wishlist</a>
             </div>
         </section>
 
@@ -1257,7 +1635,7 @@
             bottomGradient.style.opacity = opacity;
         }
 
-        // Navigation functionality
+        // Navigation functionality with preloading
         function showPage(pageId) {
             const mainContent = document.getElementById('mainContent');
             const blogPage = document.getElementById('blogPage');
@@ -1267,63 +1645,164 @@
             const backgroundContainer = document.querySelector('.background-container');
             const backgroundOverlay = document.getElementById('backgroundOverlay');
             
+            // Show loading state during transition
+            function showLoadingState() {
+                // Add a subtle loading overlay
+                if (!document.querySelector('.page-loading')) {
+                    const loadingOverlay = document.createElement('div');
+                    loadingOverlay.className = 'page-loading';
+                    loadingOverlay.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: rgba(0, 0, 0, 0.3);
+                        z-index: 9999;
+                        pointer-events: none;
+                        opacity: 0;
+                        transition: opacity 0.2s ease;
+                    `;
+                    document.body.appendChild(loadingOverlay);
+                    setTimeout(() => loadingOverlay.style.opacity = '1', 10);
+                }
+            }
+            
+            function hideLoadingState() {
+                const loadingOverlay = document.querySelector('.page-loading');
+                if (loadingOverlay) {
+                    loadingOverlay.style.opacity = '0';
+                    setTimeout(() => loadingOverlay.remove(), 200);
+                }
+            }
+            
+            // Preload background image before switching
+            function preloadAndSwitch(backgroundUrl, callback) {
+                if (!backgroundUrl) {
+                    callback();
+                    return;
+                }
+                
+                const img = new Image();
+                img.onload = () => {
+                    // Image loaded, safe to switch
+                    backgroundContainer.style.backgroundImage = `url('${backgroundUrl}')`;
+                    callback();
+                };
+                img.onerror = () => {
+                    // Fallback if image fails
+                    callback();
+                };
+                img.src = backgroundUrl;
+            }
+            
             // Remove all page classes
             body.classList.remove('blog-active', 'docs-active');
             
             if (pageId === 'blog') {
-                mainContent.style.display = 'none';
-                blogPage.style.display = 'block';
-                docsContainer.style.display = 'none';
-                body.classList.add('blog-active');
-                scrollArrow.classList.remove('visible');
-                scrollArrow.style.display = 'none'; // Completely hide on blog page
+                showLoadingState();
                 
-                // Set static background for blog page
-                backgroundContainer.style.backgroundImage = "url('bg.png')";
-                backgroundOverlay.style.opacity = '0'; // Hide overlay
-                
-                // Animate blog header
-                const blogHeader = document.querySelector('.blog-content h1');
-                if (blogHeader) {
-                    blogHeader.classList.remove('animate-in');
-                    setTimeout(() => {
-                        blogHeader.classList.add('animate-in');
-                    }, 100);
-                }
+                // Preload blog background
+                preloadAndSwitch('dload2.png', () => {
+                    mainContent.style.display = 'none';
+                    blogPage.style.display = 'block';
+                    docsContainer.style.display = 'none';
+                    body.classList.add('blog-active');
+                    scrollArrow.classList.remove('visible');
+                    scrollArrow.style.display = 'none';
+                    
+                    // Set background properties
+                    backgroundContainer.style.background = "";
+                    backgroundContainer.style.backgroundSize = "cover";
+                    backgroundContainer.style.backgroundPosition = "center";
+                    backgroundContainer.style.backgroundRepeat = "no-repeat";
+                    backgroundContainer.style.backgroundAttachment = "fixed";
+                    backgroundContainer.style.filter = "blur(25px) grayscale(0%) saturate(100%)";
+                    backgroundContainer.style.transform = "scale(1.1)";
+                    backgroundOverlay.style.opacity = '0';
+                    
+                    // Animate blog header
+                    const blogHeader = document.querySelector('.blog-content h1');
+                    if (blogHeader) {
+                        blogHeader.classList.remove('animate-in');
+                        setTimeout(() => {
+                            blogHeader.classList.add('animate-in');
+                            hideLoadingState();
+                        }, 100);
+                    } else {
+                        hideLoadingState();
+                    }
+                    
+                    // Hide the fixed sidebar
+                    if (window.updateSidebarVisibility) {
+                        window.updateSidebarVisibility();
+                    }
+                });
             } else if (pageId === 'docs') {
-                mainContent.style.display = 'none';
-                blogPage.style.display = 'none';
-                docsContainer.style.display = 'block';
-                body.classList.add('docs-active');
-                scrollArrow.classList.remove('visible');
-                scrollArrow.style.display = 'none'; // Completely hide on docs page
+                showLoadingState();
                 
-                // Set same background as blog page for consistency
-                backgroundContainer.style.backgroundImage = "url('bg.png')";
-                backgroundOverlay.style.opacity = '0'; // Hide overlay
+                // Preload docs background  
+                preloadAndSwitch('bg.png', () => {
+                    mainContent.style.display = 'none';
+                    blogPage.style.display = 'none';
+                    docsContainer.style.display = 'block';
+                    body.classList.add('docs-active');
+                    scrollArrow.classList.remove('visible');
+                    scrollArrow.style.display = 'none';
+                    
+                    // Set background properties
+                    backgroundContainer.style.background = "";
+                    backgroundContainer.style.backgroundSize = "cover";
+                    backgroundContainer.style.backgroundPosition = "center";
+                    backgroundContainer.style.backgroundRepeat = "no-repeat";
+                    backgroundContainer.style.backgroundAttachment = "fixed";
+                    backgroundContainer.style.filter = "blur(25px) grayscale(0%) saturate(100%)";
+                    backgroundContainer.style.transform = "scale(1.1)";
+                    backgroundOverlay.style.opacity = '0';
+                    
+                    // Show the fixed sidebar
+                    if (window.updateSidebarVisibility) {
+                        window.updateSidebarVisibility();
+                    }
+                    
+                    hideLoadingState();
+                });
             } else {
-                // About page (default)
-                mainContent.style.display = 'block';
-                blogPage.style.display = 'none';
-                docsContainer.style.display = 'none';
-                scrollArrow.style.display = 'block'; // Show on about page
+                // About page
+                const aboutBg = window.innerWidth <= 768 ? 'main-bg-static.png' : '7.gif';
+                showLoadingState();
                 
-                // Reset all background properties and resume GIF cycling for about page
-                backgroundContainer.style.background = "";
-                backgroundContainer.style.backgroundImage = "url('7.gif')";
-                backgroundContainer.style.backgroundSize = "cover";
-                backgroundContainer.style.backgroundPosition = "center";
-                backgroundContainer.style.backgroundRepeat = "no-repeat";
-                backgroundContainer.style.backgroundAttachment = "fixed";
-                
-                // Show arrow after delay if user hasn't scrolled down
-                if (window.arrowCanBeVisible && window.scrollY <= 100) {
-                    setTimeout(() => {
-                        if (window.scrollY <= 100 && !body.classList.contains('blog-active') && !body.classList.contains('docs-active')) {
-                            scrollArrow.classList.add('visible');
-                        }
-                    }, 300); // Small delay to ensure smooth transition
-                }
+                preloadAndSwitch(aboutBg, () => {
+                    mainContent.style.display = 'block';
+                    blogPage.style.display = 'none';
+                    docsContainer.style.display = 'none';
+                    scrollArrow.style.display = 'block';
+                    
+                    // Reset background properties
+                    backgroundContainer.style.background = "";
+                    backgroundContainer.style.backgroundSize = "cover";
+                    backgroundContainer.style.backgroundPosition = "center";
+                    backgroundContainer.style.backgroundRepeat = "no-repeat";
+                    backgroundContainer.style.backgroundAttachment = "fixed";
+                    backgroundContainer.style.filter = "";
+                    backgroundContainer.style.transform = "";
+                    
+                    // Show arrow after delay if user hasn't scrolled down
+                    if (window.arrowCanBeVisible && window.scrollY <= 100) {
+                        setTimeout(() => {
+                            if (window.scrollY <= 100 && !body.classList.contains('blog-active') && !body.classList.contains('docs-active')) {
+                                scrollArrow.classList.add('visible');
+                            }
+                        }, 300);
+                    }
+                    
+                    // Hide the fixed sidebar
+                    if (window.updateSidebarVisibility) {
+                        window.updateSidebarVisibility();
+                    }
+                    
+                    hideLoadingState();
+                });
             }
         }
 
@@ -1409,7 +1888,109 @@
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             const bottomGradient = document.querySelector('.gradient-overlay-bottom');
+            const backgroundContainer = document.querySelector('.background-container');
             bottomGradient.style.opacity = 0.6;
+            
+            // COMPLETELY RECREATE the sidebar outside all containers
+            const originalSidebar = document.getElementById('docsSidebar');
+            let fixedSidebar = null;
+            
+            if (originalSidebar) {
+                // Wait for docs.js to load the content, then clone it
+                const cloneSidebarContent = () => {
+                    if (originalSidebar.innerHTML.trim() === '' || originalSidebar.innerHTML.includes('<!-- Sidebar navigation will be loaded dynamically -->')) {
+                        // Content not loaded yet, try again in 100ms
+                        setTimeout(cloneSidebarContent, 100);
+                        return;
+                    }
+                    
+                    // Now we have content, clone it
+                    fixedSidebar.innerHTML = originalSidebar.innerHTML;
+                    console.log('CLONED ACTUAL SIDEBAR CONTENT');
+                };
+                
+                // Create the fixed sidebar
+                fixedSidebar = document.createElement('div');
+                fixedSidebar.id = 'docsSidebarFixed';
+                fixedSidebar.className = 'docs-sidebar-fixed';
+                
+                // Apply the same working positioning as the test
+                Object.assign(fixedSidebar.style, {
+                    position: 'fixed',
+                    top: '120px',
+                    left: '370px',
+                    width: '250px',
+                    height: 'calc(100vh - 120px)',
+                    zIndex: '999999',
+                    background: 'none',
+                    border: 'none',
+                    overflow: 'auto',
+                    padding: '2rem 1rem 2rem 2rem',
+                    display: 'none',
+                    pointerEvents: 'auto',
+                    color: 'white',
+                    fontFamily: "'Poppins', sans-serif"
+                });
+                
+                // Add to body as first child
+                document.body.insertBefore(fixedSidebar, document.body.firstChild);
+                console.log('FIXED SIDEBAR CREATED - WAITING FOR CONTENT');
+                
+                // Start trying to clone content
+                cloneSidebarContent();
+                
+                // Function to show/hide sidebar based on page
+                window.updateSidebarVisibility = function() {
+                    const isMobile = window.innerWidth <= 768;
+                    console.log('Updating sidebar visibility, mobile:', isMobile, 'docs-active:', document.body.classList.contains('docs-active'));
+                    
+                    if (document.body.classList.contains('docs-active')) {
+                        if (isMobile) {
+                            // On mobile, hide fixed sidebar, show original
+                            if (fixedSidebar) {
+                                fixedSidebar.style.display = 'none';
+                                console.log('HIDING FIXED SIDEBAR ON MOBILE');
+                            }
+                            if (originalSidebar) {
+                                originalSidebar.style.display = 'block';
+                                console.log('SHOWING ORIGINAL SIDEBAR ON MOBILE');
+                            }
+                        } else {
+                            // On desktop, show fixed sidebar, hide original
+                            if (fixedSidebar) {
+                                fixedSidebar.style.display = 'block';
+                                console.log('SHOWING FIXED SIDEBAR ON DESKTOP');
+                            }
+                            if (originalSidebar) {
+                                originalSidebar.style.display = 'none';
+                                console.log('HIDING ORIGINAL SIDEBAR ON DESKTOP');
+                            }
+                        }
+                    } else {
+                        // Hide both sidebars on other pages
+                        if (fixedSidebar) {
+                            fixedSidebar.style.display = 'none';
+                            console.log('HIDING FIXED SIDEBAR - NOT ON DOCS PAGE');
+                        }
+                        if (originalSidebar) {
+                            originalSidebar.style.display = 'block'; // Reset to default for mobile
+                        }
+                    }
+                };
+                
+                // Also listen for window resize to update visibility
+                window.addEventListener('resize', window.updateSidebarVisibility);
+                
+                // Initial visibility check
+                window.updateSidebarVisibility();
+            }
+            
+            // Set initial background based on screen size
+            if (window.innerWidth <= 768) {
+                backgroundContainer.style.backgroundImage = "url('main-bg-static.png')";
+            } else {
+                backgroundContainer.style.backgroundImage = "url('7.gif')";
+            }
             
             // Show scroll arrow after 2 seconds
             const scrollArrow = document.getElementById('scrollArrow');
@@ -1422,15 +2003,16 @@
                 }
             }, 2000);
             
-            // Cycle between background GIFs
-            const backgroundContainer = document.querySelector('.background-container');
+            // Cycle between background GIFs (only on desktop and only on about page)
             const backgroundOverlay = document.getElementById('backgroundOverlay');
             const gifs = ['7.gif', '2.gif', 'build1.gif', '9.gif'];
             let currentGifIndex = 0;
             
             function cycleBackground() {
-                // Don't cycle if on blog page
-                if (document.body.classList.contains('blog-active')) {
+                // Don't cycle if on blog page, docs page, or mobile device
+                if (document.body.classList.contains('blog-active') || 
+                    document.body.classList.contains('docs-active') ||
+                    window.innerWidth <= 768) {
                     return;
                 }
                 
@@ -1451,8 +2033,22 @@
                 }, 800); // Match the transition duration
             }
             
-            // Change background every 5 seconds (5000ms)
+            // Change background every 5 seconds (5000ms) - only on desktop about page
             setInterval(cycleBackground, 5000);
+            
+            // Handle window resize for background switching
+            window.addEventListener('resize', function() {
+                if (!document.body.classList.contains('blog-active') && 
+                    !document.body.classList.contains('docs-active')) {
+                    // On about page, switch background based on screen size
+                    const backgroundContainer = document.querySelector('.background-container');
+                    if (window.innerWidth <= 768) {
+                        backgroundContainer.style.backgroundImage = "url('main-bg-static.png')";
+                    } else {
+                        backgroundContainer.style.backgroundImage = `url('${gifs[currentGifIndex]}')`;
+                    }
+                }
+            });
             
             // Wishlist button hover effects
             const wishlistButton = document.querySelector('.wishlist-button');
