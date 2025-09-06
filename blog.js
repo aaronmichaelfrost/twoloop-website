@@ -207,6 +207,9 @@ function showBlogPost(slug) {
         return;
     }
 
+    // Reset scroll position to top
+    window.scrollTo(0, 0);
+
     // Update the blog page content
     const blogContent = document.querySelector('.blog-content');
     const coverImage = post.metadata['cover-image'] ? 
