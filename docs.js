@@ -62,7 +62,7 @@ class DocsSystem {
 
         sidebar.innerHTML = `
             <div class="docs-sidebar-content">
-                <div class="docs-sidebar-header">Documentation (placeholder)</div>
+                <div class="docs-sidebar-header">Docs (placeholder)</div>
                 <ul class="docs-nav-list">
                     ${docsListHtml}
                 </ul>
