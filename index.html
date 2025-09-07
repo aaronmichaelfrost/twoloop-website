@@ -1060,6 +1060,7 @@
             margin: 1rem 0 0.5rem 0;
             position: relative;
             padding-left: 15px;
+            background: red; /* TEMPORARY TEST */
         }
 
         .changelog-date::before {
@@ -1068,22 +1069,9 @@
             left: -13px;
             top: 50%;
             width: 12px;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.3);
-            z-index: 1; /* Ensure visibility */
-        }
-
-        .changelog-date::after {
-            content: '';
-            position: absolute;
-            left: -3px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
+            height: 2px;
             background: rgba(255, 255, 255, 0.8);
-            z-index: 2; /* Ensure visibility */
+            z-index: 1; /* Ensure visibility */
         }
 
         .changelog-items {
@@ -1105,6 +1093,7 @@
             position: relative;
             margin-bottom: 0.3rem;
             padding-left: 15px;
+            background: blue; /* TEMPORARY TEST */
         }
 
         .changelog-items li::before {
@@ -1113,22 +1102,9 @@
             left: -10px;
             top: 0.6rem;
             width: 15px;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.3);
+            height: 2px;
+            background: rgba(255, 255, 255, 0.8);
             z-index: 1; /* Ensure visibility */
-        }
-
-        .changelog-items li::after {
-            content: '';
-            position: absolute;
-            left: 3px;
-            top: 0.6rem;
-            transform: translateY(-50%);
-            width: 4px;
-            height: 4px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.6);
-            z-index: 2; /* Ensure visibility */
         }
 
         .changelog-content {
@@ -1505,22 +1481,9 @@
                 left: -13px !important;
                 top: 50% !important;
                 width: 12px !important;
-                height: 1px !important;
-                background: rgba(255, 255, 255, 0.3) !important;
-                z-index: 1 !important;
-            }
-
-            .changelog-date::after {
-                content: '' !important;
-                position: absolute !important;
-                left: -3px !important;
-                top: 50% !important;
-                transform: translateY(-50%) !important;
-                width: 6px !important;
-                height: 6px !important;
-                border-radius: 50% !important;
+                height: 2px !important;
                 background: rgba(255, 255, 255, 0.8) !important;
-                z-index: 2 !important;
+                z-index: 1 !important;
             }
 
             .changelog-items li::before {
@@ -1529,22 +1492,9 @@
                 left: -10px !important;
                 top: 0.6rem !important;
                 width: 15px !important;
-                height: 1px !important;
-                background: rgba(255, 255, 255, 0.3) !important;
+                height: 2px !important;
+                background: rgba(255, 255, 255, 0.8) !important;
                 z-index: 1 !important;
-            }
-
-            .changelog-items li::after {
-                content: '' !important;
-                position: absolute !important;
-                left: 3px !important;
-                top: 0.6rem !important;
-                transform: translateY(-50%) !important;
-                width: 4px !important;
-                height: 4px !important;
-                border-radius: 50% !important;
-                background: rgba(255, 255, 255, 0.6) !important;
-                z-index: 2 !important;
             }
 
             .changelog-header {
