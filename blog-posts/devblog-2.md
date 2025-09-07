@@ -24,21 +24,13 @@ Next, we’ll rent machines to aim for 250 players. The server held up great—o
 It looked suitably chaotic, we'll share some footage soon.
 
 #### Implemented
-✔️ move, sprint, jump, crouch, shoot, melee  
-✔️ look up/down  
-✔️ reload  
-✔️ receive loot 
+✔️ move, sprint, jump, crouch, shoot, melee, reload 
+✔️ receive loot   
 ✔️ text chat 
 
+
 #### In progress
-◦ spam transfer loot slots
-◦ voice chat  
-◦ open chests, craft, build  
-◦ rocket building destruction  
-◦ loot spill
-◦ crowded/dispersed groups  
-◦ PvP firing  
-◦ all of above on flatworld & procedural  
+spam transfer loot slots  ◦ voice chat   ◦ open chests, craft, build  ◦ rocket building destruction  ◦ loot spill  ◦ crowded/dispersed groups  ◦ PvP  ◦ all of above on flatworld & procedural  
 
 ### ROCKS
 *by Rylan*
