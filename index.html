@@ -49,7 +49,7 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            filter: blur(5px);
+            filter: blur(5px) grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(5) brightness(-19);
             transition: filter 0.8s ease, transform 0.3s ease;
             transform: scale(1);
         }
@@ -178,6 +178,7 @@
             /* Prevent progressive loading appearance */
             opacity: 0;
             transition: opacity 0.3s ease;
+            filter: grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(3) brightness(0.4);
         }
 
         .background-container.loaded {
@@ -185,18 +186,18 @@
         }
 
         .background-container.scrolled {
-            filter: blur(8px);
+            filter: blur(8px) grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(3) brightness(0.4);
         }
 
         .background-container.wishlist-hover {
-            filter: blur(25px) !important;
+            filter: blur(25px) grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(3) brightness(0.4) !important;
             transform: scale(1.05) !important;
             transition: filter 0.8s ease, transform 2s ease !important;
             animation: none !important;
         }
 
         .background-overlay.wishlist-hover {
-            filter: blur(25px) !important;
+            filter: blur(25px) grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(3) brightness(0.4) !important;
             transform: scale(1.05) !important;
             transition: filter 0.8s ease, transform 2s ease !important;
             animation: none !important;
@@ -550,7 +551,7 @@
 
         /* Blog page background blur */
         body.blog-active .background-container {
-            filter: blur(8px) grayscale(0%) saturate(100%) !important;
+            filter: blur(8px) grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(3) brightness(0.4) !important;
             background-image: url('dload2.png') !important;
             background-size: cover !important;
             background-position: center !important;
@@ -577,7 +578,7 @@
 
         /* Docs page overlay for better readability */
         body.docs-active .background-container {
-            filter: blur(8px) grayscale(0%) saturate(100%) !important;
+            filter: blur(8px) grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(3) brightness(0.4) !important;
             background-image: url('bg.png') !important;
             background-size: cover !important;
             background-position: center !important;
@@ -2300,7 +2301,7 @@
                     backgroundContainer.style.backgroundPosition = "center";
                     backgroundContainer.style.backgroundRepeat = "no-repeat";
                     backgroundContainer.style.backgroundAttachment = "fixed";
-                    backgroundContainer.style.filter = "blur(8px) grayscale(0%) saturate(100%)";
+                    backgroundContainer.style.filter = "blur(8px) grayscale(100%) sepia(50%) hue-rotate(-50deg) saturate(6) brightness(0.4)";
                     // Remove static transform to allow zoom animation
                     backgroundContainer.style.transform = "";
                     backgroundOverlay.style.opacity = '0';
@@ -2342,8 +2343,8 @@
                     backgroundContainer.style.backgroundPosition = "center";
                     backgroundContainer.style.backgroundRepeat = "no-repeat";
                     backgroundContainer.style.backgroundAttachment = "fixed";
-                    backgroundContainer.style.filter = "blur(8px) grayscale(0%) saturate(100%)";
-                    // Remove static transform to allow zoom animation  
+                    backgroundContainer.style.filter = "blur(8px) grayscale(100%) sepia(50%) hue-rotate(-50deg) saturate(6) brightness(0.4)";
+                    // Remove static transform to allow zoom animation
                     backgroundContainer.style.transform = "";
                     backgroundOverlay.style.opacity = '0';
                     
@@ -2376,7 +2377,7 @@
                     backgroundContainer.style.backgroundPosition = "center";
                     backgroundContainer.style.backgroundRepeat = "no-repeat";
                     backgroundContainer.style.backgroundAttachment = "fixed";
-                    backgroundContainer.style.filter = "";
+                    backgroundContainer.style.filter = "grayscale(100%) sepia(50%) hue-rotate(-50deg) saturate(6) brightness(0.4)";
                     backgroundContainer.style.transform = "";
                     
                     // Add zoom animation for static backgrounds (non-GIF) on all devices
@@ -2607,8 +2608,8 @@
             
             // Gradual blur: starts at 5px, increases to 10px
             const blurAmount = 5 + (scrollProgress * 5);
-            backgroundContainer.style.filter = `blur(${blurAmount}px)`;
-            
+            backgroundContainer.style.filter = `blur(${blurAmount}px) grayscale(100%) sepia(50%) hue-rotate(-50deg) saturate(6) brightness(0.4)`;
+
             // Bottom gradient opacity: starts at 0.6, increases to 0.8
             const gradientOpacity = 0.6 + (scrollProgress * 0.2);
             bottomGradient.style.opacity = gradientOpacity;
