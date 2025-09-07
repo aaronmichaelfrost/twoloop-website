@@ -178,7 +178,7 @@
             /* Prevent progressive loading appearance */
             opacity: 0;
             transition: opacity 0.3s ease;
-            filter: grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(3) brightness(0.4);
+            filter: grayscale(100%) sepia(50%) hue-rotate(-50deg) saturate(6) brightness(0.6);
         }
 
         .background-container.loaded {
@@ -186,18 +186,18 @@
         }
 
         .background-container.scrolled {
-            filter: blur(8px) grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(3) brightness(0.4);
+            filter: blur(8px) grayscale(100%) sepia(50%) hue-rotate(-50deg) saturate(6) brightness(0.6);
         }
 
         .background-container.wishlist-hover {
-            filter: blur(25px) grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(3) brightness(0.4) !important;
+            filter: blur(25px) grayscale(100%) sepia(50%) hue-rotate(-50deg) saturate(6) brightness(0.6) !important;
             transform: scale(1.05) !important;
             transition: filter 0.8s ease, transform 2s ease !important;
             animation: none !important;
         }
 
         .background-overlay.wishlist-hover {
-            filter: blur(25px) grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(3) brightness(0.4) !important;
+            filter: blur(25px) grayscale(100%) sepia(50%) hue-rotate(-50deg) saturate(6) brightness(0.6) !important;
             transform: scale(1.05) !important;
             transition: filter 0.8s ease, transform 2s ease !important;
             animation: none !important;
@@ -551,7 +551,7 @@
 
         /* Blog page background blur */
         body.blog-active .background-container {
-            filter: blur(8px) grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(3) brightness(0.4) !important;
+            filter: blur(8px) grayscale(100%) sepia(50%) hue-rotate(-50deg) saturate(6) brightness(0.6) !important;
             background-image: url('dload2.png') !important;
             background-size: cover !important;
             background-position: center !important;
@@ -578,7 +578,7 @@
 
         /* Docs page overlay for better readability */
         body.docs-active .background-container {
-            filter: blur(8px) grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(3) brightness(0.4) !important;
+            filter: blur(8px) grayscale(100%) sepia(50%) hue-rotate(-50deg) saturate(6) brightness(0.6) !important;
             background-image: url('bg.png') !important;
             background-size: cover !important;
             background-position: center !important;
@@ -903,7 +903,7 @@
 
         /* Inline images within blog content */
         .blog-content-image {
-            margin: 0.5rem 0;
+            margin: 1.5rem 0;
             text-align: center;
         }
 
