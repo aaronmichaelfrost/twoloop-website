@@ -1882,11 +1882,11 @@
             .docs-table td {
                 padding: 0.4rem;
             }
+        }
 
-            /* Mobile background zoom animation for about page */
-            .background-container.mobile-zoom {
-                animation: slowZoom 20s ease-in-out infinite !important;
-            }
+        /* Background zoom animation for all pages that need it */
+        .background-container.mobile-zoom {
+            animation: slowZoom 20s ease-in-out infinite !important;
         }
     </style>
 </head>
@@ -2088,8 +2088,8 @@
                     backgroundContainer.style.transform = "scale(1.1)";
                     backgroundOverlay.style.opacity = '0';
                     
-                    // Remove mobile zoom class for blog page
-                    backgroundContainer.classList.remove('mobile-zoom');
+                    // Add background zoom animation for blog page
+                    backgroundContainer.classList.add('mobile-zoom');
                     
                     // Animate blog header
                     const blogHeader = document.querySelector('.blog-content h1');
@@ -2129,8 +2129,8 @@
                     backgroundContainer.style.transform = "scale(1.1)";
                     backgroundOverlay.style.opacity = '0';
                     
-                    // Remove mobile zoom class for docs page
-                    backgroundContainer.classList.remove('mobile-zoom');
+                    // Add background zoom animation for docs page
+                    backgroundContainer.classList.add('mobile-zoom');
                     
                     // Show the fixed sidebar
                     if (window.updateSidebarVisibility) {
@@ -2211,11 +2211,34 @@
                 </section>
             `;
             
-            // Add visible class to trigger animation after a brief delay
+            // Reset and trigger footer animation with more robust approach
+            // First, wait for DOM to be ready
             setTimeout(() => {
                 const footerSection = document.querySelector('.footer-section');
                 if (footerSection) {
-                    footerSection.classList.add('visible');
+                    // Ensure elements start in non-visible state
+                    const h2 = footerSection.querySelector('h2');
+                    const p = footerSection.querySelector('p');
+                    
+                    if (h2) {
+                        h2.style.opacity = '0';
+                        h2.style.transform = 'translateX(-30px)';
+                    }
+                    if (p) {
+                        p.style.opacity = '0';
+                        p.style.transform = 'translateX(-30px)';
+                    }
+                    
+                    // Remove any existing visible class
+                    footerSection.classList.remove('visible');
+                    
+                    // Force reflow
+                    footerSection.offsetHeight;
+                    
+                    // Add visible class to trigger animation
+                    setTimeout(() => {
+                        footerSection.classList.add('visible');
+                    }, 150);
                 }
             }, 100);
         }
