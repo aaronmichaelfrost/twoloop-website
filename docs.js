@@ -88,6 +88,10 @@ class DocsSystem {
         // Show loading spinner
         this.renderLoading();
         
+        // Update URL and meta tags
+        updateUrl('docs', slug);
+        updateMetaTags('docs', slug);
+        
         try {
             console.log(`Loading doc: ${slug}`);
             const response = await fetch(`docs/${slug}.md`);

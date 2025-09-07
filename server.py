@@ -28,6 +28,32 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         if path.endswith('.md'):
             return 'text/plain'
         return super().guess_type(path)
+    
+    def do_GET(self):
+        # Handle SPA routing - serve index.html for routes that don't correspond to actual files
+        path = self.path.split('?')[0]  # Remove query parameters
+        
+        # Routes that should serve index.html
+        spa_routes = ['/blog', '/docs']
+        
+        # Check if it's a SPA route or a sub-route of a SPA route
+        should_serve_index = False
+        
+        if path in spa_routes:
+            should_serve_index = True
+        else:
+            # Check for sub-routes like /blog/post-name or /docs/doc-name
+            for route in spa_routes:
+                if path.startswith(route + '/'):
+                    should_serve_index = True
+                    break
+        
+        if should_serve_index:
+            # Serve index.html instead
+            self.path = '/index.html'
+        
+        # Let the parent class handle the request
+        super().do_GET()
 
 def main():
     try:
