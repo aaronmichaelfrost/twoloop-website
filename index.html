@@ -1065,7 +1065,7 @@
         .changelog-date::before {
             content: '';
             position: absolute;
-            left: -13px;
+            left: -11px;
             top: 50%;
             width: 12px;
             height: 1px;
@@ -1089,6 +1089,7 @@
         .changelog-items {
             margin-left: 15px;
             position: relative;
+            list-style: none;
         }
 
         .changelog-items::before {
@@ -1105,6 +1106,7 @@
             position: relative;
             margin-bottom: 0.3rem;
             padding-left: 15px;
+            list-style: none;
         }
 
         .changelog-items li::before {
@@ -1121,14 +1123,14 @@
         .changelog-items li::after {
             content: '';
             position: absolute;
-            left: 3px;
+            left: -4px;
             top: 0.6rem;
             transform: translateY(-50%);
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            background: rgba(0, 0, 0, 0.3);
             box-sizing: border-box;
             z-index: 2; /* Ensure visibility */
         }
@@ -1489,11 +1491,13 @@
 
             .changelog-items {
                 margin-left: 15px !important;
+                list-style: none !important;
             }
 
             .changelog-items li {
                 padding-left: 15px !important;
                 font-size: 0.85rem !important;
+                list-style: none !important;
             }
 
             .changelog-date {
@@ -1504,7 +1508,7 @@
             .changelog-date::before {
                 content: '' !important;
                 position: absolute !important;
-                left: -13px !important;
+                left: -6px !important;
                 top: 50% !important;
                 width: 12px !important;
                 height: 1px !important;
@@ -1515,7 +1519,7 @@
             .changelog-date::after {
                 content: '' !important;
                 position: absolute !important;
-                left: -3px !important;
+                left: 3px !important;
                 top: 50% !important;
                 transform: translateY(-50%) !important;
                 width: 6px !important;
@@ -1539,14 +1543,15 @@
             .changelog-items li::after {
                 content: '' !important;
                 position: absolute !important;
-                left: 3px !important;
+                left: -4px !important;
                 top: 0.6rem !important;
                 transform: translateY(-50%) !important;
-                width: 4px !important;
-                height: 4px !important;
+                width: 8px !important;
+                height: 8px !important;
                 border-radius: 50% !important;
-                border: 1px solid rgba(255, 255, 255, 0.6) !important;
-                background: transparent !important;
+                border: 2px solid rgba(255, 255, 255, 0.9) !important;
+                background: rgba(0, 0, 0, 0.3) !important;
+                box-sizing: border-box !important;
                 z-index: 2 !important;
             }
 
