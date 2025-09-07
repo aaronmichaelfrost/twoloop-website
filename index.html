@@ -1527,15 +1527,15 @@
             padding-left: 20px;
         }
 
-        /* Vertical line from "Documentation" header - use JavaScript to set precise height */
+        /* Vertical line from "Documentation" header */
         .docs-nav-list::before {
             content: '';
             position: absolute;
             left: 8px;
             top: 0;
+            bottom: 20px; /* End 20px before the bottom */
             width: 1px;
             background: rgba(255, 255, 255, 0.3);
-            /* Height will be set by JavaScript to end at last item */
         }
 
         .docs-sidebar-header {
@@ -2190,36 +2190,6 @@
             document.getElementById(linkId).classList.add('active');
         }
 
-        function fixDocsNavigationLineHeight() {
-            // Fix the docs navigation vertical line to end at the last navigation item
-            const docsList = document.querySelector('.docs-nav-list');
-            if (docsList) {
-                const listBefore = window.getComputedStyle(docsList, '::before');
-                const navItems = docsList.querySelectorAll('.docs-nav-item');
-                if (navItems.length > 0) {
-                    const lastItem = navItems[navItems.length - 1];
-                    const listRect = docsList.getBoundingClientRect();
-                    const lastItemRect = lastItem.getBoundingClientRect();
-                    const height = lastItemRect.bottom - listRect.top;
-                    
-                    // Set a CSS custom property that we can use
-                    docsList.style.setProperty('--nav-line-height', `${height}px`);
-                    
-                    // Update the CSS rule dynamically
-                    const style = document.createElement('style');
-                    style.textContent = `
-                        .docs-nav-list::before {
-                            height: var(--nav-line-height, auto) !important;
-                        }
-                    `;
-                    document.head.appendChild(style);
-                }
-            }
-        }
-
-        // Expose the function globally so docs.js can call it
-        window.fixDocsNavigationLineHeight = fixDocsNavigationLineHeight;
-
         // Event listeners
         window.addEventListener('scroll', updateGradients);
 
@@ -2414,12 +2384,7 @@
                 if (doc && window.docsSystem) {
                     setTimeout(() => {
                         window.docsSystem.loadDoc(doc);
-                        // Fix navigation line height after docs load
-                        setTimeout(fixDocsNavigationLineHeight, 200);
                     }, 100);
-                } else {
-                    // Fix navigation line height after docs load
-                    setTimeout(fixDocsNavigationLineHeight, 300);
                 }
             } else {
                 setActiveLink('aboutLink');
