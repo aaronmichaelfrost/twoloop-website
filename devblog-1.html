@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>twoloop</title>
+    <title>Devblog 1 - twoloop</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="twoloop_pattern.png">
@@ -12,27 +12,27 @@
     <!-- Open Graph / Social Media meta tags -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="twoloop">
-    <meta property="og:title" content="twoloop">
-    <meta property="og:description" content="twoloop games - Fractium development">
-    <meta property="og:image" content="https://twoloop.net/playtest.png">
-    <meta property="og:image:secure_url" content="https://twoloop.net/playtest.png">
+    <meta property="og:title" content="Devblog 1 - twoloop">
+    <meta property="og:description" content="Covers first two weeks of work on Fractium after a long break.">
+    <meta property="og:image" content="https://twoloop.net/blog-posts/devblog1-images/cover.png">
+    <meta property="og:image:secure_url" content="https://twoloop.net/blog-posts/devblog1-images/cover.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:type" content="image/png">
-    <meta property="og:url" content="https://twoloop.net/">
+    <meta property="og:url" content="https://twoloop.net/?page=blog&post=devblog-1">
     <meta property="og:locale" content="en_US">
     
     <!-- Twitter Card meta tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@twoloop">
     <meta name="twitter:creator" content="@twoloop">
-    <meta name="twitter:title" content="twoloop">
-    <meta name="twitter:description" content="twoloop games - Fractium development">
-    <meta name="twitter:image" content="https://twoloop.net/playtest.png">
+    <meta name="twitter:title" content="Devblog 1 - twoloop">
+    <meta name="twitter:description" content="Covers first two weeks of work on Fractium after a long break.">
+    <meta name="twitter:image" content="https://twoloop.net/blog-posts/devblog1-images/cover.png">
     <meta name="twitter:image:alt" content="twoloop games preview">
     
     <!-- Additional meta tags for better SEO -->
-    <meta name="description" content="twoloop games - Fractium development">
+    <meta name="description" content="Covers first two weeks of work on Fractium after a long break.">
     <meta name="keywords" content="twoloop, games, Fractium, game development">
     <meta name="author" content="twoloop">
     
@@ -87,7 +87,7 @@
             animation: slowZoom 20s ease-in-out infinite;
         }
     </style>
-    <title>twoloop</title>
+    <title>Devblog 1 - twoloop</title>
     <style>
         /* Custom scrollbar */
         ::-webkit-scrollbar {
@@ -3077,5 +3077,13 @@
             setTimeout(checkFooterVisibility, 100);
         });
     </script>
-</body>
+
+    <script>
+        // Auto-redirect to blog post view for social media crawlers
+        if (window.location.search === '' && window.location.hash === '') {
+            // Only redirect if no query params - this means direct access
+            window.location.href = '/?page=blog&post=devblog-1';
+        }
+    </script>
+    </body>
 </html>
