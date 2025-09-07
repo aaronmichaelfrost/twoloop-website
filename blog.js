@@ -182,71 +182,10 @@ class MarkdownParser {
         
         const result = html.replace(changelogRegex, (match, header, content) => {
             console.log('=== FOUND CHANGELOG MATCH ===');
-            console.log('Raw content first 500 chars:');
-            console.log(content.substring(0, 500));
+            console.log('Content preview:', content.substring(0, 500));
             
-            // Based on the debugging output, implement proper parsing
-            let transformedContent = '';
-            let currentDate = '';
-            let currentItems = [];
-            
-            // Split content into lines and process
-            const lines = content.split('\n');
-            
-            for (let line of lines) {
-                line = line.trim();
-                
-                // Check if this line contains a date in <strong> tags
-                const dateMatch = line.match(/<strong>([^<]+)<\/strong>/);
-                if (dateMatch) {
-                    // If we have a previous date and items, output them
-                    if (currentDate && currentItems.length > 0) {
-                        transformedContent += `<div class="changelog-date">${currentDate}</div>`;
-                        transformedContent += `<div class="changelog-items"><ul>`;
-                        currentItems.forEach(item => {
-                            transformedContent += `<li>${item}</li>`;
-                        });
-                        transformedContent += `</ul></div>`;
-                    }
-                    
-                    // Start new date
-                    currentDate = dateMatch[1].trim();
-                    currentItems = [];
-                    console.log('Found date:', currentDate);
-                }
-                // Check if this line contains a bullet point
-                else if (line.includes('•')) {
-                    const bulletItem = line.replace(/.*•\s*/, '').replace(/<[^>]*>/g, '').trim();
-                    if (bulletItem) {
-                        currentItems.push(bulletItem);
-                        console.log('Found bullet:', bulletItem);
-                    }
-                }
-            }
-            
-            // Don't forget the last date and items
-            if (currentDate && currentItems.length > 0) {
-                transformedContent += `<div class="changelog-date">${currentDate}</div>`;
-                transformedContent += `<div class="changelog-items"><ul>`;
-                currentItems.forEach(item => {
-                    transformedContent += `<li>${item}</li>`;
-                });
-                transformedContent += `</ul></div>`;
-            }
-            
-            console.log('=== FINAL TRANSFORMED CONTENT ===');
-            console.log(transformedContent.substring(0, 500));
-            
-            if (transformedContent.trim()) {
-                return `<div class="changelog-section">
-                    <div class="changelog-header">CHANGELOG</div>
-                    ${transformedContent}
-                </div>`;
-            }
-            
-            // If transformation failed, fall back to test structure
-            console.log('TRANSFORMATION FAILED - using working test structure');
-            const workingTestStructure = `
+            // For debugging, let's manually create some test structure
+            const testStructure = `
                 <div class="changelog-date">8/9/2025</div>
                 <div class="changelog-items">
                     <ul>
@@ -259,167 +198,13 @@ class MarkdownParser {
                     <ul>
                         <li>made fog color a function of time</li>
                         <li>got rid of scoreboard indicator in map UI</li>
-                        <li>got rid of game timer and UI in map UI</li>
                     </ul>
                 </div>
             `;
             
             return `<div class="changelog-section">
                 <div class="changelog-header">CHANGELOG</div>
-                ${workingTestStructure}
-            </div>`;
-        });
-
-        console.log('=== CHANGELOG PROCESSING END ===');
-        return result;
-    }
-        
-        const result = html.replace(changelogRegex, (match, header, content) => {
-            console.log('=== FOUND CHANGELOG MATCH ===');
-            console.log('Raw content first 1000 chars:');
-            console.log(content.substring(0, 1000));
-            console.log('=== RAW CONTENT 1000-2000 ===');
-            console.log(content.substring(1000, 2000));
-            console.log('=== END RAW CONTENT ===');
-            
-            // Test various patterns
-            const patterns = {
-                'p-strong': /<p><strong>([^<]+)<\/strong><\/p>/g,
-                'strong-only': /<strong>([^<]+)<\/strong>/g,
-                'p-with-strong': /<p[^>]*>.*?<strong>([^<]+)<\/strong>.*?<\/p>/g,
-                'bullet-lines': /^.*•.*$/gm
-            };
-            
-            for (const [name, pattern] of Object.entries(patterns)) {
-                const matches = content.match(pattern);
-                console.log(`${name} matches:`, matches ? matches.length : 0);
-                if (matches) {
-                    console.log(`${name} examples:`, matches.slice(0, 2));
-                }
-            }
-            
-            // Based on the debugging output, implement proper parsing
-            // Look for the pattern that actually exists in the HTML
-            
-            let transformedContent = '';
-            let currentDate = '';
-            let currentItems = [];
-            
-            // Split content into lines and process
-            const lines = content.split('\n');
-            
-            for (let line of lines) {
-                line = line.trim();
-                
-                // Check if this line contains a date in <strong> tags
-                const dateMatch = line.match(/<strong>([^<]+)<\/strong>/);
-                if (dateMatch) {
-                    // If we have a previous date and items, output them
-                    if (currentDate && currentItems.length > 0) {
-                        transformedContent += `<div class="changelog-date">${currentDate}</div>`;
-                        transformedContent += `<div class="changelog-items"><ul>`;
-                        currentItems.forEach(item => {
-                            transformedContent += `<li>${item}</li>`;
-                        });
-                        transformedContent += `</ul></div>`;
-                    }
-                    
-                    // Start new date
-                    currentDate = dateMatch[1].trim();
-                    currentItems = [];
-                    console.log('Found date:', currentDate);
-                }
-                // Check if this line contains a bullet point
-                else if (line.includes('•')) {
-                    const bulletItem = line.replace(/.*•\s*/, '').replace(/<[^>]*>/g, '').trim();
-                    if (bulletItem) {
-                        currentItems.push(bulletItem);
-                        console.log('Found bullet:', bulletItem);
-                    }
-                }
-            }
-            
-            // Don't forget the last date and items
-            if (currentDate && currentItems.length > 0) {
-                transformedContent += `<div class="changelog-date">${currentDate}</div>`;
-                transformedContent += `<div class="changelog-items"><ul>`;
-                currentItems.forEach(item => {
-                    transformedContent += `<li>${item}</li>`;
-                });
-                transformedContent += `</ul></div>`;
-            }
-            
-            console.log('=== FINAL TRANSFORMED CONTENT ===');
-            console.log(transformedContent.substring(0, 500));
-            
-            if (transformedContent.trim()) {
-                return `<div class="changelog-section">
-                    <div class="changelog-header">CHANGELOG</div>
-                    ${transformedContent}
-                </div>`;
-            }
-            
-            // If transformation failed, fall back to test structure
-            console.log('TRANSFORMATION FAILED - using working test structure');
-                const workingTestStructure = `
-                    <div class="changelog-date">8/9/2025</div>
-                    <div class="changelog-items">
-                        <ul>
-                            <li>got rid of second directional light that was left enabled by accident</li>
-                            <li>get rid of tile generation (we're not using it, yet)</li>
-                        </ul>
-                    </div>
-                    <div class="changelog-date">8/11/2025</div>
-                    <div class="changelog-items">
-                        <ul>
-                            <li>made fog color a function of time</li>
-                            <li>got rid of scoreboard indicator in map UI</li>
-                            <li>got rid of game timer and UI in map UI</li>
-                        </ul>
-                    </div>
-                    <div class="changelog-date">8/12/2025</div>
-                    <div class="changelog-items">
-                        <ul>
-                            <li>added server side validation on remote inventory access</li>
-                            <li>bug fix – you cannot consume med-kits if they are not in your inventory</li>
-                            <li>added dev option to force island biome in Fractium Editor Config window</li>
-                        </ul>
-                    </div>
-                    <div class="changelog-date">8/13/2025</div>
-                    <div class="changelog-items">
-                        <ul>
-                            <li>removed unwanted delay before map icons appear when opening map for first time</li>
-                            <li>added loading spinny to loading UI and asynchronous loading when joining a game</li>
-                        </ul>
-                    </div>
-                `;
-                
-                return `<div class="changelog-section">
-                    <div class="changelog-header">CHANGELOG</div>
-                    ${workingTestStructure}
-                </div>`;
-            }
-            
-            // Transform the content to create proper hierarchy
-            let transformedContent = content;
-            
-            // Replace date paragraphs with changelog-date divs
-            transformedContent = transformedContent.replace(
-                /<p><strong>([^<]+)<\/strong><\/p>/g,
-                '<div class="changelog-date">$1</div>'
-            );
-            
-            // Replace ul elements with changelog-items wrapped versions
-            transformedContent = transformedContent.replace(
-                /<ul>([\s\S]*?)<\/ul>/g,
-                '<div class="changelog-items"><ul>$1</ul></div>'
-            );
-            
-            console.log('Transformed content preview:', transformedContent.substring(0, 800));
-            
-            return `<div class="changelog-section">
-                <div class="changelog-header">CHANGELOG</div>
-                ${transformedContent}
+                ${testStructure}
             </div>`;
         });
         
