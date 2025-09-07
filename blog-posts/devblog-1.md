@@ -115,10 +115,7 @@ More random clips coming soon!
 ◦ feedback dialog should send discord webhook + create Unity Cloud user report
 
 **8/17/2025**
-◦ unified dev workflows into single editor; transitioned:
-  — SO workflows (game balance, itemDB, art asset management)
-  — cryptic scene/component tooling
-  — context menu utilities
+◦ unified dev workflows into single editor; transitioned SO workflows (game balance, itemDB, art asset management), cryptic scene/component tooling, and context menu utilities
 ◦ set managed stripping to HIGH to reduce build size, load time, and attack surface
 ◦ created README with best practices and "how to build the game" info
 

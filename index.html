@@ -333,6 +333,7 @@
             opacity: 0;
             transform: scale(0.5);
             animation: punchIn 0.6s ease-out 0.3s forwards;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
         }
 
         /* Text content */
@@ -654,17 +655,17 @@
             transition: opacity 0.6s ease, transform 0.6s ease;
             background: linear-gradient(
                 90deg,
-                rgba(255, 255, 255, 0.6) 0%,
-                rgba(255, 255, 255, 0.6) 45%,
+                rgba(255, 255, 255, 0.15) 0%,
+                rgba(255, 255, 255, 0.15) 45%,
                 rgba(255, 255, 255, 1) 50%,
-                rgba(255, 255, 255, 0.6) 55%,
-                rgba(255, 255, 255, 0.6) 100%
+                rgba(255, 255, 255, 0.15) 55%,
+                rgba(255, 255, 255, 0.15) 100%
             );
             background-size: 150% 100%;
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: textShimmer 2s linear infinite;
+            animation: textShimmer 4s linear infinite;
         }
         
         @keyframes textShimmer {
@@ -979,17 +980,6 @@
             padding-bottom: 0.3rem;
             font-weight: 300;
             position: relative;
-        }
-
-        .blog-post-content li:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            bottom: -0.1rem;
-            transform: translateX(-50%);
-            width: 1px;
-            height: 0.6rem;
-            background: rgba(255, 255, 255, 0.3);
         }
 
         .blog-post-content li::marker {
@@ -1358,17 +1348,6 @@
                 position: relative !important;
             }
 
-            .blog-post-content li:not(:last-child)::after {
-                content: '' !important;
-                position: absolute !important;
-                left: 50% !important;
-                bottom: -0.1rem !important;
-                transform: translateX(-50%) !important;
-                width: 1px !important;
-                height: 0.6rem !important;
-                background: rgba(255, 255, 255, 0.3) !important;
-            }
-
             .blog-post-content li::marker {
                 content: '◦ ' !important;
                 color: rgba(255, 255, 255, 0.8) !important;
@@ -1434,17 +1413,6 @@
                 padding-bottom: 0.3rem !important;
                 color: rgba(255,255,255,0.7) !important;
                 position: relative !important;
-            }
-
-            .blog-post-content li:not(:last-child)::after {
-                content: '' !important;
-                position: absolute !important;
-                left: 50% !important;
-                bottom: -0.1rem !important;
-                transform: translateX(-50%) !important;
-                width: 1px !important;
-                height: 0.6rem !important;
-                background: rgba(255, 255, 255, 0.3) !important;
             }
 
             .blog-post-content li::marker {
@@ -1777,17 +1745,17 @@
             font-weight: bold;
             background: linear-gradient(
                 90deg,
-                rgba(255, 255, 255, 0.6) 0%,
-                rgba(255, 255, 255, 0.6) 45%,
+                rgba(255, 255, 255, 0.15) 0%,
+                rgba(255, 255, 255, 0.15) 45%,
                 rgba(255, 255, 255, 1) 50%,
-                rgba(255, 255, 255, 0.6) 55%,
-                rgba(255, 255, 255, 0.6) 100%
+                rgba(255, 255, 255, 0.15) 55%,
+                rgba(255, 255, 255, 0.15) 100%
             );
             background-size: 150% 100%;
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: docsTextShimmer 4s linear infinite;
+            animation: docsTextShimmer 6s linear infinite;
         }
         
         @keyframes docsTextShimmer {
@@ -2435,10 +2403,8 @@
                     // Force reflow
                     footerSection.offsetHeight;
                     
-                    // Add visible class to trigger animation
-                    setTimeout(() => {
-                        footerSection.classList.add('visible');
-                    }, 150);
+                    // Check footer visibility to trigger animation if needed
+                    setTimeout(checkFooterVisibility, 100);
                 }
             }, 100);
         }
@@ -2491,9 +2457,8 @@
         // Initialize
         updateGradients();
         
-        // Footer scroll animation - triggers EVERY time you scroll down to it
+        // Footer scroll animation - triggers EVERY time footer comes into view
         let lastScrollY = 0;
-        let footerAnimated = false;
         
         function checkFooterVisibility() {
             const footerSection = document.querySelector('.footer-section');
@@ -2503,41 +2468,51 @@
             const rect = footerSection.getBoundingClientRect();
             const windowHeight = window.innerHeight;
             
-            // Check if footer is visible in viewport
-            const isFooterVisible = rect.top < windowHeight * 0.8;
+            // Check if footer is visible in viewport (more generous threshold)
+            const isFooterVisible = rect.top < windowHeight * 0.9 && rect.bottom > 0;
             
-            // If scrolling down and footer becomes visible, trigger animation
-            if (currentScrollY > lastScrollY && isFooterVisible && !footerAnimated) {
-                footerAnimated = true;
-                
-                // Reset animation elements
-                const h2 = footerSection.querySelector('h2');
-                const p = footerSection.querySelector('p');
-                
-                if (h2) {
-                    h2.style.opacity = '0';
-                    h2.style.transform = 'translateX(-30px)';
+            if (isFooterVisible) {
+                // Footer is visible - trigger animation
+                if (!footerSection.classList.contains('visible')) {
+                    // Reset animation elements to starting state
+                    const h2 = footerSection.querySelector('h2');
+                    const p = footerSection.querySelector('p');
+                    
+                    if (h2) {
+                        h2.style.opacity = '0';
+                        h2.style.transform = 'translateX(-30px)';
+                    }
+                    if (p) {
+                        p.style.opacity = '0';
+                        p.style.transform = 'translateX(-30px)';
+                    }
+                    
+                    // Force reflow
+                    footerSection.offsetHeight;
+                    
+                    // Add visible class to trigger animation
+                    setTimeout(() => {
+                        footerSection.classList.add('visible');
+                    }, 50);
                 }
-                if (p) {
-                    p.style.opacity = '0';
-                    p.style.transform = 'translateX(-30px)';
+            } else {
+                // Footer is not visible - reset to invisible state
+                if (footerSection.classList.contains('visible')) {
+                    footerSection.classList.remove('visible');
+                    
+                    // Reset animation elements to starting state
+                    const h2 = footerSection.querySelector('h2');
+                    const p = footerSection.querySelector('p');
+                    
+                    if (h2) {
+                        h2.style.opacity = '0';
+                        h2.style.transform = 'translateX(-30px)';
+                    }
+                    if (p) {
+                        p.style.opacity = '0';
+                        p.style.transform = 'translateX(-30px)';
+                    }
                 }
-                
-                // Remove visible class
-                footerSection.classList.remove('visible');
-                
-                // Force reflow
-                footerSection.offsetHeight;
-                
-                // Add visible class to trigger animation
-                setTimeout(() => {
-                    footerSection.classList.add('visible');
-                }, 50);
-            }
-            
-            // Reset the flag when footer goes out of view (scrolling up)
-            if (!isFooterVisible && currentScrollY < lastScrollY) {
-                footerAnimated = false;
             }
             
             lastScrollY = currentScrollY;
@@ -2929,23 +2904,9 @@
                 });
             }
             
-            // Footer slide-in animation on scroll
-            const footerSection = document.querySelector('.footer-section');
-            if (footerSection) {
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('visible');
-                        } else {
-                            entry.target.classList.remove('visible');
-                        }
-                    });
-                }, {
-                    threshold: 0.3 // Trigger when 30% of footer is visible
-                });
-                
-                observer.observe(footerSection);
-            }
+            // Footer animation is now handled by the checkFooterVisibility function
+            // Initial footer visibility check
+            setTimeout(checkFooterVisibility, 100);
         });
     </script>
 </body>
