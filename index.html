@@ -1411,7 +1411,7 @@
             .docs-nav-item::after {
                 content: '';
                 position: absolute;
-                left: 0px;
+                left: -11px;
                 top: 50%;
                 transform: translateY(-50%);
                 width: 3px;
@@ -2026,17 +2026,21 @@
                     return;
                 }
                 
+                // Set background immediately - don't wait for preload
+                backgroundContainer.style.backgroundImage = `url('${backgroundUrl}')`;
+                
+                // Still preload for optimization, but run callback immediately  
                 const img = new Image();
                 img.onload = () => {
-                    // Image loaded, safe to switch
-                    backgroundContainer.style.backgroundImage = `url('${backgroundUrl}')`;
-                    callback();
+                    // Image fully loaded - no action needed since we already set it
                 };
                 img.onerror = () => {
-                    // Fallback if image fails
-                    callback();
+                    console.warn('Failed to preload background:', backgroundUrl);
                 };
                 img.src = backgroundUrl;
+                
+                // Run callback immediately - don't wait for preload
+                callback();
             }
             
             // Remove all page classes
@@ -2045,7 +2049,7 @@
             if (pageId === 'blog') {
                 showLoadingState();
                 
-                // Preload blog background
+                // Preload blog background (now sets immediately)
                 preloadAndSwitch('dload2.png', () => {
                     mainContent.style.display = 'none';
                     blogPage.style.display = 'block';
@@ -2054,8 +2058,7 @@
                     scrollArrow.classList.remove('visible');
                     scrollArrow.style.display = 'none';
                     
-                    // Set background properties
-                    backgroundContainer.style.background = "";
+                    // Set background properties (removed background = "" line)
                     backgroundContainer.style.backgroundSize = "cover";
                     backgroundContainer.style.backgroundPosition = "center";
                     backgroundContainer.style.backgroundRepeat = "no-repeat";
@@ -2084,7 +2087,7 @@
             } else if (pageId === 'docs') {
                 showLoadingState();
                 
-                // Preload docs background  
+                // Preload docs background (now sets immediately)
                 preloadAndSwitch('bg.png', () => {
                     mainContent.style.display = 'none';
                     blogPage.style.display = 'none';
@@ -2093,8 +2096,7 @@
                     scrollArrow.classList.remove('visible');
                     scrollArrow.style.display = 'none';
                     
-                    // Set background properties
-                    backgroundContainer.style.background = "";
+                    // Set background properties (removed background = "" line)
                     backgroundContainer.style.backgroundSize = "cover";
                     backgroundContainer.style.backgroundPosition = "center";
                     backgroundContainer.style.backgroundRepeat = "no-repeat";
@@ -2114,14 +2116,14 @@
                 // About page
                 const aboutBg = window.innerWidth <= 768 ? 'main-bg-static.png' : '7.gif';
                 
+                // Preload about background (now sets immediately)
                 preloadAndSwitch(aboutBg, () => {
                     mainContent.style.display = 'block';
                     blogPage.style.display = 'none';
                     docsContainer.style.display = 'none';
                     scrollArrow.style.display = 'block';
                     
-                    // Reset background properties
-                    backgroundContainer.style.background = "";
+                    // Reset background properties (removed background = "" line)
                     backgroundContainer.style.backgroundSize = "cover";
                     backgroundContainer.style.backgroundPosition = "center";
                     backgroundContainer.style.backgroundRepeat = "no-repeat";
@@ -2163,6 +2165,7 @@
 
         document.getElementById('aboutLink').addEventListener('click', (e) => {
             e.preventDefault();
+            console.log('About link clicked!');
             updateUrl('about');
             updateMetaTags('about');
             showPage('about');
@@ -2372,12 +2375,19 @@
             const backgroundContainer = document.querySelector('.background-container');
             bottomGradient.style.opacity = 0.6;
             
-            // Preload and show background container to prevent progressive loading
+            // Set initial background immediately and preload for optimization
+            const initialBg = window.innerWidth <= 768 ? 'main-bg-static.png' : '7.gif';
+            
+            // Set background immediately to prevent black flash
+            backgroundContainer.style.backgroundImage = `url('${initialBg}')`;
+            backgroundContainer.classList.add('loaded'); // Mark as loaded immediately
+            
+            // Still preload for optimization
             const preloadImg = new Image();
             preloadImg.onload = () => {
-                backgroundContainer.classList.add('loaded');
+                // Already loaded and set, nothing more needed
             };
-            preloadImg.src = window.innerWidth <= 768 ? 'main-bg-static.png' : '7.gif';
+            preloadImg.src = initialBg;
             
             // Handle initial URL routing
             handleRouting();
@@ -2518,20 +2528,15 @@
                 }
                 
                 currentGifIndex = (currentGifIndex + 1) % gifs.length;
+                const nextGif = gifs[currentGifIndex];
                 
-                // Set the new image on the overlay
-                backgroundOverlay.style.backgroundImage = `url('${gifs[currentGifIndex]}')`;
-                backgroundOverlay.style.filter = backgroundContainer.style.filter; // Match current blur
-                
-                // Fade in the overlay
-                backgroundOverlay.style.opacity = '1';
-                
-                setTimeout(() => {
-                    // After fade is complete, swap the images
-                    backgroundContainer.style.backgroundImage = `url('${gifs[currentGifIndex]}')`;
-                    // Fade out the overlay
-                    backgroundOverlay.style.opacity = '0';
-                }, 800); // Match the transition duration
+                // Preload the next GIF and switch immediately when ready
+                const preloadImg = new Image();
+                preloadImg.onload = () => {
+                    // Image is loaded, switch immediately without overlay
+                    backgroundContainer.style.backgroundImage = `url('${nextGif}')`;
+                };
+                preloadImg.src = nextGif;
             }
             
             // Change background every 5 seconds (5000ms) - only on desktop about page
