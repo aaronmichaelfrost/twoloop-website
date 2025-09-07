@@ -174,47 +174,64 @@ class MarkdownParser {
 
     // Process changelog sections to add tree hierarchy
     processChangelogSections(html) {
-        console.log('Processing changelog, initial HTML:', html.substring(html.indexOf('CHANGELOG'), html.indexOf('CHANGELOG') + 1000));
+        console.log('=== CHANGELOG PROCESSING START ===');
+        console.log('Input HTML length:', html.length);
+        
+        // First, let's see if we can find the changelog section at all
+        const changelogIndex = html.indexOf('<h2>CHANGELOG</h2>');
+        console.log('CHANGELOG header index:', changelogIndex);
+        
+        if (changelogIndex === -1) {
+            console.log('No CHANGELOG header found!');
+            return html;
+        }
         
         // Look for sections that start with ## CHANGELOG or ## Changelog
         const changelogRegex = /(<h2>(?:CHANGELOG|Changelog)<\/h2>)([\s\S]*?)(?=<h[12]|$)/gi;
         
-        return html.replace(changelogRegex, (match, header, content) => {
-            console.log('Found changelog section, content length:', content.length);
-            console.log('Content preview:', content.substring(0, 500));
+        let foundMatch = false;
+        const result = html.replace(changelogRegex, (match, header, content) => {
+            foundMatch = true;
+            console.log('=== FOUND CHANGELOG MATCH ===');
+            console.log('Header:', header);
+            console.log('Content length:', content.length);
+            console.log('Content preview (first 800 chars):', content.substring(0, 800));
             
-            // Wrap the entire changelog section
-            let processedContent = content;
+            // Look for bold dates manually
+            const boldDateRegex = /<p><strong>([^<]+)<\/strong><\/p>/g;
+            let dateMatch;
+            const dates = [];
+            while ((dateMatch = boldDateRegex.exec(content)) !== null) {
+                dates.push(dateMatch[1]);
+            }
+            console.log('Found dates:', dates);
             
-            // Find date headers in bold format (**Date**)
-            const dateMatches = content.match(/<p><strong>([^<]+)<\/strong><\/p>/g);
-            console.log('Date matches found:', dateMatches);
-            
-            processedContent = processedContent.replace(/<p><strong>([^<]+)<\/strong><\/p>/g, (dateMatch, dateText) => {
-                console.log('Processing date:', dateText);
-                return `<div class="changelog-date">${dateText}</div>`;
-            });
-            
-            // Process lists after date headers - wrap them in changelog-items
-            const afterDates = processedContent.match(/(<div class="changelog-date">[^<]+<\/div>)\s*(<ul>[\s\S]*?<\/ul>)/g);
-            console.log('Date+list combinations found:', afterDates);
-            
-            processedContent = processedContent.replace(/(<div class="changelog-date">[^<]+<\/div>)\s*(<ul>[\s\S]*?<\/ul>)/g, (listMatch, dateHeader, listContent) => {
-                console.log('Processing list after date:', listMatch.substring(0, 200));
-                // Modify the list items to remove the default <li> styling
-                const modifiedList = listContent.replace(/<ul>([\s\S]*?)<\/ul>/, (ulMatch, items) => {
-                    return `<div class="changelog-items"><ul>${items}</ul></div>`;
+            // Look for lists manually
+            const listMatches = content.match(/<ul>[\s\S]*?<\/ul>/g);
+            console.log('Found lists:', listMatches ? listMatches.length : 0);
+            if (listMatches) {
+                listMatches.forEach((list, i) => {
+                    console.log(`List ${i + 1}:`, list.substring(0, 200));
                 });
-                return dateHeader + '\n' + modifiedList;
-            });
+            }
             
-            const result = `<div class="changelog-section">
+            // Simple replacement for now - just wrap everything
+            const simpleResult = `<div class="changelog-section">
                 <div class="changelog-header">CHANGELOG</div>
-                ${processedContent}
+                ${content}
             </div>`;
-            console.log('Final result preview:', result.substring(0, 800));
-            return result;
+            
+            console.log('=== CHANGELOG PROCESSING RESULT ===');
+            console.log('Result length:', simpleResult.length);
+            return simpleResult;
         });
+        
+        if (!foundMatch) {
+            console.log('No changelog regex match found!');
+        }
+        
+        console.log('=== CHANGELOG PROCESSING END ===');
+        return result;
     }
 
     // Load and parse all blog posts
