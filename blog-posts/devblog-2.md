@@ -6,143 +6,125 @@ description: Two weeks of polish, stress testing, and major infrastructure impro
 
 # Devblog 2
 
-Two weeks of polish, stress testing, and major infrastructure improvements.
+Got less done than we wanted, but steady progress continues.
 
-### CONSOLE COMMANDS OVERHAUL
+### SUCCESSFUL STRESS TEST
 *by Aaron*
 
-We've completely revamped the console system. App startup args now double as F1 console commands, making server configuration much more flexible. Server owners can now automatically apply console commands on startup.
+We ran a smooth test with **800 items** with rigidbodies, **250 NPCs** (aggroed), and **25 player connections**. Next, with 250 players.
 
-Added a suite of new admin commands including:
-- Island biome forcing
-- Island seed control  
-- Steam auth toggling for stress testing
-- Inventory management (`giveto`, `giveall`, `give`)
-- Player management (`listplayers`, teleportation)
-- Combat utilities (`kit` command for pistol and ammo)
+The goal is to prove systems scale. I wrote a script that runs headless clients in parallel (“Bot Army”), maxing out at 25 connections on my PC. I also connected a low-spec laptop with graphics enabled to check real client perf. Next, we’ll rent machines to aim for 250 players. The server held up great—only slowing past 300 NPCs, which is fine since NPC loops are server-heavy and 300 is worst worst case.
 
-The system now includes autocompletion for dynamic arguments like Steam IDs and item names, plus a `usage` command to explain how to use specific commands.
+It looked suitably chaotic, we'll share some footage soon.
 
-### WORLD GENERATION FIXES
+#### Implemented
+✔️ move, sprint, jump, crouch, shoot, melee  
+✔️ look up/down  
+✔️ reload  
+✔️ receive loot 
+✔️ text chat 
 
-Fixed a critical world generation indeterminism issue. Worlds now generate exclusively on the server/host and are transmitted to clients as byte arrays, ensuring all players see identical terrain.
+#### In progress
+◦ spam transfer loot slots
+◦ voice chat  
+◦ open chests, craft, build  
+◦ rocket building destruction  
+◦ loot spill
+◦ crowded/dispersed groups  
+◦ PvP firing  
+◦ all of above on flatworld & procedural  
 
-This also resolved the annoying bug where players would spawn mid-air with broken maps because the server wasn't properly communicating world type.
+### ROCKS
+*by Rylan*
 
-### STRESS TESTING SUCCESS
+Something cool here with a screenshot?
 
-We've achieved some major milestones:
-- **25 players** running around randomly ✓
-- **250+ NPCs** with 3 real players and 800 inventory items on the ground ✓
+### COMMANDS
+*by Aaron*
+F1 console got a revamp:  
+◦ More autocompletions, more commands (see changelog)
+◦ `usage` command to explain others  
+◦ Startup args also usable as console commands  
+◦ Multi-argument support  
 
-The game maintained massive stability even during destruction scenarios.
+### WORLD GEN FIXES
+Unlike Minecraft/Rust, worlds now generate only on the server/host and sync to clients as byte arrays. This avoids desync issues but removes reliable seed regen (e.g. for machinima replays).
 
 ### ANTI-HACK IMPROVEMENTS
+Updates include:  
+◦ Configurable enforcement (kick/ban)  
+◦ Violation thresholds & decay  
+◦ Discord alerts  
+◦ Pop-up explaining kicks  
 
-Enhanced the anti-hack system with:
-- Configurable enforcement levels (kick/ban)
-- Violation score thresholds
-- Discord alerts for violations
-- Score decay system (default 50 per minute)
-- Better melee line-of-sight verification logging
+We tested kicks ourselves. All good.  
 
-Anti-hack enforcement is automatically disabled when cheats are enabled for development.
+### NEW WEBSITE
+Soon this will host the wiki and server docs. They're placeholder for now.
 
-### VOICE CHAT UPGRADES
+Pages are generated from markdown, and GitHub commits auto-deploy it; very efficient.
 
-Completely overhauled voice chat:
-- Switched from 2D to 3D audio sources
-- Improved volume rolloff
-- Proximity-based networking (only sends voice data to nearby players)
-- Better integration with P2P transport for Unity editor debugging
-
-### UI AND UX POLISH
-
-Multiple quality-of-life improvements:
-- Inventory automatically closes on death
-- Fixed input locking when dying with map open
-- Added resolution selector
-- Popup dialogs explain kick reasons
-- Streamer mode to hide session names
-- Fixed F3 revive utility teleportation bug
-
-### MOVEMENT REFINEMENTS
-
-Smoothed out the jittery first-person ladder climbing experience and restricted horizontal velocity during climbs for more realistic movement.
-
-### COMBAT BALANCE
-
-- Combat logs now only send to involved players for better performance
-- Attacking entities cancels gradual healing buffs, making medkits less overpowered
-- Turned off team chat feature temporarily
-
-### WEBSITE DEVELOPMENT
-
-Made significant progress on the web presence:
-- Created a new landing page
-- Revamped the blog system
-- Added comprehensive documentation pages
+### PROJECT PLANNING
+We’ve found lots of bugs and are talking about a different art style possibly.
 
 ### WHAT'S NEXT
-
-With the core systems stabilized and stress testing successful, we're moving toward more content and polish phases. The foundation is solid for scaling up player counts and adding more gameplay features.
+◦ More stress tests  
+◦ Finish EAC integration  
+◦ Bug fixes  
 
 ## CHANGELOG
 
 **8/24/2025**
-◦ app startup args now double as F1 console commands (this allows server owners and players to automatically apply existing console commands on startup)
-◦ added console command for forcing island biome
-◦ added console command for forcing island seed
-◦ added console command for toggling steam auth. This is useful for stress testing with fake clients.
-◦ fixed bug where you spawn in mid-air and the map doesn't work because the server didn't tell you you were in procedural world and not flat world.
-◦ fixed bug where you have your map open when you die it locks your input when you respawn
-◦ made it so your inventory closes automatically when you die.
-◦ fixed F3 revive dev utility which was teleporting you to the middle of nowhere
-◦ turned off TEAM chat feature, for now
-◦ fixed issue where text chat name color for player was black
+◦ Startup args double as console commands  
+◦ Added `forceislandbiome`, `forceislandseed`, `togglesteamauth`  
+◦ Fixed mid-air spawn bug (procedural vs flatworld)  
+◦ Fixed respawn input lock with map open  
+◦ Inventory now auto-closes on death  
+◦ Fixed `F3 revive` teleport bug  
+◦ Disabled TEAM chat  
+◦ Fixed black name color in chat  
 
 **8/25/2025**
-◦ smoothed out jittery first person ladder climb and restricted horizontal velocity
-◦ make server only send combat logs to involved players
-◦ added "kit" admin command to give pistol and ammo
-◦ fixed voice chat to use 3D audio source instead of 2D
-◦ finalized P2P transport for Unity editor playmode in UNITY_SERVER. This makes it easier to debug 
-◦ Improve player voice chat volume rolloff
-◦ Only network voice chat bytes to players in proximity
+◦ Smoothed ladder climb, limited horizontal velocity  
+◦ Combat logs sent only to involved players  
+◦ Added `kit` admin command (pistol & ammo)  
+◦ Fixed voice chat to use 3D audio  
+◦ Finalized P2P transport for Unity editor playmode (`UNITY_SERVER`)  
+◦ Improved voice volume rolloff & proximity networking  
 
 **8/26/2025**
-◦ fixed world generation indeterminism. worlds now generate on the server/host only and are sent to the clients as a byte[]
+◦ Fixed worldgen indeterminism (server-only, sent as `byte[]`)  
 
 **8/27/2025**
-◦ improve antihack logging on melee LOS verification
-◦ Fixed console spawn menu to use client look direction
-◦ Add server command line args "antihack.enforcementlevel" (kick,ban), and "antihack.maxviolation" (score threshold), and Discord alerts for violations
+◦ Improved anti-hack logging on melee LOS  
+◦ Console spawn menu now uses look direction  
+◦ Added server args: `antihack.enforcementlevel` (kick/ban), `antihack.maxviolation` (threshold), Discord alerts  
 
 **8/28/2025**
-◦ first successful stress test with 25 players running around randomly
+◦ First stress test with 25 players  
 
 **8/29/2025**
-◦ successful stress test with 250+ NPCS, 3 real players, 800 inventory items on the ground, massive stability / destruction
+◦ Stress test: 250+ NPCs, 3 players, 800 items, full stability  
 
 **8/30/2025**
-◦ Add antihack violation score decay using arg "-antihackdecaypermin" (default 50)
-◦ don't enforce server antihack when cheats are enabled
+◦ Added violation score decay (`-antihackdecaypermin`, default 50)  
+◦ Anti-hack bypassed when cheats enabled  
 
 **9/1/2025**
-◦ added console commands to give inventory items: giveto, giveall, give --> using <steamID> and <itemName> and optional <quantity>
-◦ added console command to list players in the session "listplayers"
-◦ added autocompletions for dynamic enumerable command arguments like steamID and item name.
-◦ added console command to teleport to a specific player.
-◦ added 'usage' command to explain how to use a specific console command
-◦ Attacking entities cancels gradual healing buffs so medkits are less OP
-◦ added popup dialog to tell you why you got kicked
+◦ Added `giveto`, `giveall`, `give` (with `<steamID> <itemName> <quantity>`)  
+◦ Added `listplayers`  
+◦ Autocompletions for dynamic args (steamID, itemName)  
+◦ Added `teleport` to player  
+◦ Added `usage` for command help  
+◦ Attacking cancels gradual healing buffs  
+◦ Pop-up shows kick reason  
 ◦ Added streamer mode to hide session name
 
 **9/2/2025**
-◦ added resolution selector
+◦ Added resolution selector in settings
 
 **9/3/2025**
-◦ made a landing page and revamped the old blog
+◦ Made a landing page and revamped the old blog
 
-**9/4/2025**
-◦ added documentation page to new game site
+**9/4/2025-9/7/2025**
+◦ Wrapped up this website
