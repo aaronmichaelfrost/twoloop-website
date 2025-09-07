@@ -1695,6 +1695,46 @@
             margin-bottom: 0.5rem;
             color: white;
             font-weight: bold;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.6) 0%,
+                rgba(255, 255, 255, 0.6) 45%,
+                rgba(255, 255, 255, 1) 50%,
+                rgba(255, 255, 255, 0.6) 55%,
+                rgba(255, 255, 255, 0.6) 100%
+            );
+            background-size: 300% 100%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: docsTextShimmer 8s linear infinite;
+        }
+        
+        @keyframes docsTextShimmer {
+            0% {
+                background-position: 300% 0;
+            }
+            100% {
+                background-position: -300% 0;
+            }
+        }
+        
+        @-webkit-keyframes docsTextShimmer {
+            0% {
+                background-position: 300% 0;
+            }
+            100% {
+                background-position: -300% 0;
+            }
+        }
+        
+        @-moz-keyframes docsTextShimmer {
+            0% {
+                background-position: 300% 0;
+            }
+            100% {
+                background-position: -300% 0;
+            }
         }
 
         .docs-article h2 {
@@ -2373,20 +2413,22 @@
         
         // Footer scroll animation - triggers EVERY time you scroll down to it
         let lastScrollY = 0;
-        let footerAnimationCooldown = false;
+        let footerAnimated = false;
         
         function checkFooterVisibility() {
             const footerSection = document.querySelector('.footer-section');
-            if (!footerSection || footerAnimationCooldown) return;
+            if (!footerSection) return;
             
             const currentScrollY = window.scrollY;
             const rect = footerSection.getBoundingClientRect();
             const windowHeight = window.innerHeight;
             
-            // Only trigger if scrolling DOWN and footer is in viewport
-            if (currentScrollY > lastScrollY && rect.top < windowHeight * 0.8) {
-                // Start cooldown to prevent rapid re-triggering
-                footerAnimationCooldown = true;
+            // Check if footer is visible in viewport
+            const isFooterVisible = rect.top < windowHeight * 0.8;
+            
+            // If scrolling down and footer becomes visible, trigger animation
+            if (currentScrollY > lastScrollY && isFooterVisible && !footerAnimated) {
+                footerAnimated = true;
                 
                 // Reset animation elements
                 const h2 = footerSection.querySelector('h2');
@@ -2411,11 +2453,11 @@
                 setTimeout(() => {
                     footerSection.classList.add('visible');
                 }, 50);
-                
-                // Reset cooldown after animation completes
-                setTimeout(() => {
-                    footerAnimationCooldown = false;
-                }, 1000);
+            }
+            
+            // Reset the flag when footer goes out of view (scrolling up)
+            if (!isFooterVisible && currentScrollY < lastScrollY) {
+                footerAnimated = false;
             }
             
             lastScrollY = currentScrollY;
