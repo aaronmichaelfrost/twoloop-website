@@ -414,6 +414,9 @@ class MarkdownParser {
 const markdownParser = new MarkdownParser();
 // Expose globally for URL routing
 window.markdownParser = markdownParser;
+// Expose blog functions globally
+window.showBlogPost = showBlogPost;
+window.showBlogList = showBlogList;
 
 // Blog functionality
 let currentPage = 'about';
@@ -423,6 +426,16 @@ function showBlogPost(slug) {
     if (!post) {
         console.error('Post not found:', slug);
         return;
+    }
+
+    // Update URL and metadata for the specific blog post
+    if (window.updateUrl) {
+        window.updateUrl('blog', null, slug);
+    }
+    
+    // Update meta tags for social sharing
+    if (window.updateMetaTags) {
+        window.updateMetaTags('blog', null, slug);
     }
 
     // Reset scroll position to top
@@ -483,6 +496,19 @@ function showBlogPost(slug) {
 
 function showBlogList() {
     console.log('showBlogList called, posts count:', markdownParser.posts.length);
+    
+    // Update URL to show blog list (remove post parameter)
+    if (window.updateUrl) {
+        window.updateUrl('blog', null, null);
+    }
+    
+    // Update meta tags for blog list
+    if (window.updateMetaTags) {
+        window.updateMetaTags('blog', null, null);
+    }
+    
+    // Reset scroll position to top
+    window.scrollTo(0, 0);
     
     // Ensure posts are loaded first
     ensureBlogPostsLoaded();

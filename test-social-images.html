@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meta Tag Inspector</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .url-box {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .url-box h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .meta-value {
+            word-break: break-all;
+            color: #666;
+            font-family: monospace;
+            background: #f9f9f9;
+            padding: 3px 6px;
+            border-radius: 3px;
+        }
+        .preview-image {
+            max-width: 300px;
+            max-height: 150px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .test-button {
+            padding: 8px 16px;
+            background: #007cba;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 5px;
+            display: inline-block;
+        }
+        .test-button:hover {
+            background: #005a87;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Social Media Preview Image Test</h1>
+    <p>This page tests that the correct preview images are used for social media sharing:</p>
+    
+    <div class="url-box">
+        <h3>✅ Expected Results</h3>
+        <p><strong>Devblog 1:</strong> Should use <code>blog-posts/devblog1-images/cover.png</code></p>
+        <p><strong>Devblog 2:</strong> Should use <code>blog-posts/devblog2-images/heightmap-2.png</code></p>
+        <p><strong>All other URLs:</strong> Should use <code>playtest.png</code></p>
+    </div>
+    
+    <div class="url-box">
+        <h3>🧪 Test URLs</h3>
+        <a href="/?page=blog&post=devblog-1" class="test-button" target="_blank">Devblog 1</a>
+        <a href="/?page=blog&post=devblog-2" class="test-button" target="_blank">Devblog 2</a>
+        <a href="/?page=blog" class="test-button" target="_blank">Blog List</a>
+        <a href="/?page=about" class="test-button" target="_blank">About</a>
+        <a href="/?page=docs" class="test-button" target="_blank">Docs</a>
+    </div>
+    
+    <div class="url-box">
+        <h3>📋 Manual Testing Instructions</h3>
+        <ol>
+            <li><strong>Discord Test:</strong>
+                <ul>
+                    <li>Copy: <code>http://localhost:8000/?page=blog&post=devblog-1</code></li>
+                    <li>Paste in Discord chat</li>
+                    <li>Should show preview with Devblog 1 cover image</li>
+                </ul>
+            </li>
+            <li><strong>iMessage/SMS Test:</strong>
+                <ul>
+                    <li>Copy: <code>http://localhost:8000/?page=blog&post=devblog-2</code></li>
+                    <li>Paste in iMessage</li>
+                    <li>Should show preview with Devblog 2 cover image</li>
+                </ul>
+            </li>
+            <li><strong>General Test:</strong>
+                <ul>
+                    <li>Copy: <code>http://localhost:8000/?page=blog</code></li>
+                    <li>Paste anywhere (Discord, Slack, etc.)</li>
+                    <li>Should show preview with default playtest.png</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+    
+    <div class="url-box">
+        <h3>🔧 Technical Implementation</h3>
+        <p>The system now works as follows:</p>
+        <ul>
+            <li><strong>Individual blog posts:</strong> Use their <code>cover-image</code> from frontmatter</li>
+            <li><strong>Blog list page:</strong> Uses default <code>playtest.png</code></li>
+            <li><strong>About page:</strong> Uses default <code>playtest.png</code></li>
+            <li><strong>Docs page:</strong> Uses default <code>playtest.png</code></li>
+            <li><strong>All other pages:</strong> Use default <code>playtest.png</code></li>
+        </ul>
+        <p>Meta tags are dynamically updated when navigating between pages.</p>
+    </div>
+    
+    <div class="url-box">
+        <h3>🖼️ Preview Images</h3>
+        <p><strong>Devblog 1 Cover:</strong></p>
+        <img src="blog-posts/devblog1-images/cover.png" alt="Devblog 1 Cover" class="preview-image">
+        
+        <p><strong>Devblog 2 Cover:</strong></p>
+        <img src="blog-posts/devblog2-images/heightmap-2.png" alt="Devblog 2 Cover" class="preview-image">
+        
+        <p><strong>Default (playtest.png):</strong></p>
+        <img src="playtest.png" alt="Default Playtest" class="preview-image">
+    </div>
+    
+    <div class="url-box">
+        <h3>🌐 Production URLs</h3>
+        <p>When deployed to production, these URLs will work:</p>
+        <ul>
+            <li><code>https://twoloop.net/?page=blog&post=devblog-1</code></li>
+            <li><code>https://twoloop.net/?page=blog&post=devblog-2</code></li>
+            <li><code>https://twoloop.net/?page=blog</code></li>
+            <li><code>https://twoloop.net/?page=about</code></li>
+        </ul>
+    </div>
+</body>
+</html>

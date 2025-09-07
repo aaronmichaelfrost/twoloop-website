@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Meta Tags</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .meta-display {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .meta-display h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .meta-row {
+            margin: 5px 0;
+            padding: 5px;
+            background: #f9f9f9;
+            border-radius: 3px;
+        }
+        .meta-label {
+            font-weight: bold;
+            color: #666;
+        }
+        .meta-value {
+            word-break: break-all;
+            color: #333;
+        }
+        iframe {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .test-links {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .test-link {
+            padding: 10px 15px;
+            background: #007cba;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .test-link:hover {
+            background: #005a87;
+        }
+    </style>
+</head>
+<body>
+    <h1>Meta Tag Testing for Blog URLs</h1>
+    
+    <div class="test-links">
+        <a href="javascript:loadPage('/?page=blog&post=devblog-1')" class="test-link">Test Devblog 1</a>
+        <a href="javascript:loadPage('/?page=blog&post=devblog-2')" class="test-link">Test Devblog 2</a>
+        <a href="javascript:loadPage('/?page=blog')" class="test-link">Test Blog List</a>
+        <a href="javascript:loadPage('/?page=about')" class="test-link">Test About</a>
+    </div>
+    
+    <div id="current-url" style="background: #e7f3ff; padding: 10px; border-radius: 5px; margin: 10px 0;">
+        <strong>Current Test URL:</strong> <span id="url-display">None selected</span>
+    </div>
+    
+    <div class="meta-display">
+        <h3>Expected Meta Tags</h3>
+        <div id="meta-info">
+            <p>Click a test link above to see what meta tags should be generated for that URL.</p>
+            <div class="meta-row">
+                <span class="meta-label">og:image for devblog-1:</span> 
+                <span class="meta-value">http://localhost:8000/blog-posts/devblog1-images/cover.png</span>
+            </div>
+            <div class="meta-row">
+                <span class="meta-label">og:image for devblog-2:</span> 
+                <span class="meta-value">http://localhost:8000/blog-posts/devblog2-images/heightmap-2.png</span>
+            </div>
+            <div class="meta-row">
+                <span class="meta-label">og:image for all other pages:</span> 
+                <span class="meta-value">http://localhost:8000/playtest.png</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="meta-display">
+        <h3>Live Page with Meta Tags</h3>
+        <p>This iframe shows the actual page with the updated meta tags:</p>
+        <iframe id="test-frame" src="about:blank"></iframe>
+    </div>
+    
+    <div class="meta-display">
+        <h3>How to Test Social Sharing</h3>
+        <ol>
+            <li><strong>Discord:</strong> Paste the URL in a Discord chat to see the preview</li>
+            <li><strong>Facebook:</strong> Use <a href="https://developers.facebook.com/tools/debug/" target="_blank">Facebook Sharing Debugger</a></li>
+            <li><strong>Twitter:</strong> Use <a href="https://cards-dev.twitter.com/validator" target="_blank">Twitter Card Validator</a></li>
+            <li><strong>LinkedIn:</strong> Use <a href="https://www.linkedin.com/post-inspector/" target="_blank">LinkedIn Post Inspector</a></li>
+        </ol>
+        <p><strong>URLs to test:</strong></p>
+        <ul>
+            <li><code>http://localhost:8000/?page=blog&post=devblog-1</code></li>
+            <li><code>http://localhost:8000/?page=blog&post=devblog-2</code></li>
+            <li><code>http://localhost:8000/?page=blog</code></li>
+            <li><code>http://localhost:8000/?page=about</code></li>
+        </ul>
+    </div>
+
+    <script>
+        function loadPage(url) {
+            document.getElementById('url-display').textContent = url;
+            document.getElementById('test-frame').src = url;
+            
+            // Update expected meta info
+            let expectedImage = 'http://localhost:8000/playtest.png'; // default
+            let expectedTitle = 'twoloop';
+            let expectedDesc = 'twoloop games - Fractium development';
+            
+            if (url.includes('post=devblog-1')) {
+                expectedImage = 'http://localhost:8000/blog-posts/devblog1-images/cover.png';
+                expectedTitle = 'Devblog 1 - twoloop';
+                expectedDesc = 'Covers first two weeks of work on Fractium after a long break.';
+            } else if (url.includes('post=devblog-2')) {
+                expectedImage = 'http://localhost:8000/blog-posts/devblog2-images/heightmap-2.png';
+                expectedTitle = 'Devblog 2 - twoloop';
+                expectedDesc = 'Two weeks of polish, stress testing, and major infrastructure improvements.';
+            } else if (url.includes('page=blog')) {
+                expectedTitle = 'Blog - twoloop';
+                expectedDesc = 'twoloop games development blog';
+            }
+            
+            document.getElementById('meta-info').innerHTML = `
+                <div class="meta-row">
+                    <span class="meta-label">Expected og:title:</span> 
+                    <span class="meta-value">${expectedTitle}</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">Expected og:description:</span> 
+                    <span class="meta-value">${expectedDesc}</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">Expected og:image:</span> 
+                    <span class="meta-value">${expectedImage}</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">Expected og:url:</span> 
+                    <span class="meta-value">http://localhost:8000${url}</span>
+                </div>
+            `;
+        }
+        
+        // Load default page
+        loadPage('/?page=about');
+    </script>
+</body>
+</html>

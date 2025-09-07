@@ -1579,6 +1579,7 @@
                 overflow-x: auto !important;
                 -webkit-overflow-scrolling: touch !important;
                 margin: 1rem -25px !important;
+                padding-top: 10px;
                 padding: 0 25px !important;
             }
             
@@ -2678,7 +2679,7 @@
             const baseUrl = window.location.origin + window.location.pathname;
             let title = SITE_CONFIG.defaultTitle;
             let description = SITE_CONFIG.defaultDescription;
-            let image = SITE_CONFIG.getSocialImageUrl(); // Always use absolute URL for social media
+            let image = SITE_CONFIG.getSocialImageUrl(); // Default to playtest.png
             let url = baseUrl;
             
             if (page === 'blog' && post && window.markdownParser) {
@@ -2687,14 +2688,26 @@
                 if (blogPost) {
                     title = `${blogPost.metadata.title} - ${SITE_CONFIG.siteName}`;
                     description = blogPost.metadata.description || 'twoloop games blog post';
-                    // Always use playtest.png for social media previews
-                    image = SITE_CONFIG.getSocialImageUrl();
+                    
+                    // Use the blog post's cover image for social media preview
+                    if (blogPost.metadata['cover-image']) {
+                        const coverImagePath = blogPost.metadata['cover-image'];
+                        // Convert relative path to absolute URL
+                        if (coverImagePath.startsWith('http') || coverImagePath.startsWith('//')) {
+                            image = coverImagePath;
+                        } else {
+                            image = `${window.location.origin}/blog-posts/${coverImagePath}`;
+                        }
+                    }
+                    // If no cover image, fall back to default playtest.png
+                    
                     url = `${baseUrl}?page=blog&post=${post}`;
                 }
             } else if (page === 'blog') {
                 title = `Blog - ${SITE_CONFIG.siteName}`;
                 description = 'twoloop games development blog';
                 url = `${baseUrl}?page=blog`;
+                // Use default playtest.png for blog list
             } else if (page === 'docs') {
                 title = `Documentation - ${SITE_CONFIG.siteName}`;
                 description = 'twoloop games documentation and guides';
@@ -2702,7 +2715,9 @@
                 if (doc) {
                     url += `&doc=${doc}`;
                 }
+                // Use default playtest.png for docs
             }
+            // All other pages use default playtest.png
             
             // Update meta tags
             document.querySelector('meta[property="og:title"]').setAttribute('content', title);
@@ -2714,6 +2729,21 @@
             document.querySelector('meta[name="twitter:title"]').setAttribute('content', title);
             document.querySelector('meta[name="twitter:description"]').setAttribute('content', description);
             document.querySelector('meta[name="twitter:image"]').setAttribute('content', image);
+            
+            // Update image dimensions for better social media display
+            if (page === 'blog' && post && window.markdownParser) {
+                const blogPost = window.markdownParser.posts.find(p => p.slug === post);
+                if (blogPost && blogPost.metadata['cover-image']) {
+                    // Blog post cover images might have different dimensions
+                    // Set generic dimensions that work well for most platforms
+                    document.querySelector('meta[property="og:image:width"]').setAttribute('content', '1200');
+                    document.querySelector('meta[property="og:image:height"]').setAttribute('content', '630');
+                }
+            } else {
+                // Default playtest.png dimensions
+                document.querySelector('meta[property="og:image:width"]').setAttribute('content', '1200');
+                document.querySelector('meta[property="og:image:height"]').setAttribute('content', '630');
+            }
             
             // Update page title
             document.title = title;
@@ -2733,16 +2763,34 @@
                 if (post && window.markdownParser) {
                     // Wait for blog system to be ready, then load specific post
                     setTimeout(() => {
-                        const blogPosts = document.querySelectorAll('.blog-post');
-                        blogPosts.forEach(postElement => {
-                            const postSlug = postElement.getAttribute('data-slug');
-                            if (postSlug === post) {
-                                postElement.click();
-                            }
-                        });
+                        // Check if the post exists in the loaded posts
+                        const blogPost = window.markdownParser.posts.find(p => p.slug === post);
+                        if (blogPost) {
+                            // Directly call showBlogPost instead of trying to click DOM elements
+                            window.showBlogPost(post);
+                        } else {
+                            // Post not found, wait for posts to load and try again
+                            setTimeout(() => {
+                                const retryPost = window.markdownParser.posts.find(p => p.slug === post);
+                                if (retryPost) {
+                                    window.showBlogPost(post);
+                                } else {
+                                    console.error('Blog post not found:', post);
+                                    // Fallback to blog list
+                                    window.showBlogList();
+                                }
+                            }, 1000);
+                        }
                         // Update meta tags again after post is loaded
                         setTimeout(() => updateMetaTags(page, doc, post), 100);
                     }, 500);
+                } else {
+                    // No specific post requested, show blog list
+                    setTimeout(() => {
+                        if (window.showBlogList) {
+                            window.showBlogList();
+                        }
+                    }, 300);
                 }
             } else if (page === 'docs') {
                 setActiveLink('docsLink');

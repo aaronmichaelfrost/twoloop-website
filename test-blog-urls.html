@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Blog URLs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-link {
+            display: block;
+            padding: 10px;
+            margin: 10px 0;
+            background: white;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+        }
+        .test-link:hover {
+            background: #e9e9e9;
+        }
+        h1 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Blog URL Routing</h1>
+    <p>Click these links to test the individual blog post URLs:</p>
+    
+    <a href="/?page=blog" class="test-link">
+        Blog List Page: /?page=blog
+    </a>
+    
+    <a href="/?page=blog&post=devblog-1" class="test-link">
+        Individual Blog Post 1: /?page=blog&post=devblog-1
+    </a>
+    
+    <a href="/?page=blog&post=devblog-2" class="test-link">
+        Individual Blog Post 2: /?page=blog&post=devblog-2
+    </a>
+    
+    <a href="/?page=about" class="test-link">
+        About Page: /?page=about
+    </a>
+    
+    <a href="/?page=docs" class="test-link">
+        Docs Page: /?page=docs
+    </a>
+    
+    <h2>Direct Link Testing</h2>
+    <p>Each blog post now has its own unique URL that can be shared, bookmarked, and accessed directly:</p>
+    <ul>
+        <li><strong>Blog List:</strong> <code>https://twoloop.net/?page=blog</code></li>
+        <li><strong>Devblog 1:</strong> <code>https://twoloop.net/?page=blog&post=devblog-1</code></li>
+        <li><strong>Devblog 2:</strong> <code>https://twoloop.net/?page=blog&post=devblog-2</code></li>
+    </ul>
+    
+    <h2>Features Implemented</h2>
+    <ul>
+        <li>✅ Individual URLs for each blog post</li>
+        <li>✅ Proper meta tags for social sharing</li>
+        <li>✅ Browser back/forward button support</li>
+        <li>✅ Direct URL access to specific posts</li>
+        <li>✅ URL updates when navigating between posts</li>
+    </ul>
+</body>
+</html>
