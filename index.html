@@ -229,7 +229,7 @@
         }
 
         .logo {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 600;
             color: #ffffff;
             text-decoration: none;
@@ -240,8 +240,8 @@
         }
 
         .logo-icon {
-            width: 24px;
-            height: 24px;
+            width: 30px;
+            height: 30px;
             opacity: 0.9;
         }
 
@@ -1021,12 +1021,12 @@
             }
             
             .logo {
-                font-size: 1.1rem !important;
+                font-size: 1.3rem !important;
             }
             
             .logo-icon {
-                width: 20px !important;
-                height: 20px !important;
+                width: 26px !important;
+                height: 26px !important;
             }
             
             .section {
@@ -1850,6 +1850,11 @@
                     backgroundContainer.style.filter = "";
                     backgroundContainer.style.transform = "";
                     
+                    // Reset GIF cycle to start from the first GIF
+                    if (window.resetGifCycle) {
+                        window.resetGifCycle();
+                    }
+                    
                     // Show arrow after shorter delay if user hasn't scrolled down
                     if (window.arrowCanBeVisible && window.scrollY <= 100) {
                         setTimeout(() => {
@@ -2070,6 +2075,16 @@
             const backgroundOverlay = document.getElementById('backgroundOverlay');
             const gifs = ['7.gif', '2.gif', 'build1.gif', '9.gif'];
             let currentGifIndex = 0;
+            
+            // Expose reset function globally
+            window.resetGifCycle = function() {
+                currentGifIndex = 0;
+                // Make sure the background is set to the first GIF
+                if (window.innerWidth > 768 && !document.body.classList.contains('blog-active') && !document.body.classList.contains('docs-active')) {
+                    backgroundContainer.style.backgroundImage = `url('${gifs[0]}')`;
+                    backgroundOverlay.style.opacity = '0';
+                }
+            };
             
             function cycleBackground() {
                 // Don't cycle if on blog page, docs page, or mobile device

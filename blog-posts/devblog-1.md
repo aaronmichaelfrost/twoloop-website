@@ -66,7 +66,6 @@ I added camera shake and beefier footstep sounds on this enemy.
 - Lots of bugs
 
 ### NEW TREES
-*by Rylan*
 
 Rylan made new trees.
 
