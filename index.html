@@ -14,7 +14,7 @@
     <meta property="og:site_name" content="twoloop">
     <meta property="og:title" content="twoloop">
     <meta property="og:description" content="twoloop games - Fractium development">
-    <meta property="og:image" content="fra.png">
+    <meta property="og:image" content="playtest.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:url" content="">
@@ -23,7 +23,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="twoloop">
     <meta name="twitter:description" content="twoloop games - Fractium development">
-    <meta name="twitter:image" content="fra.png">
+    <meta name="twitter:image" content="playtest.png">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -175,6 +175,13 @@
             transition: all 0.5s ease;
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
+            /* Prevent progressive loading appearance */
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .background-container.loaded {
+            opacity: 1;
         }
 
         .background-container.scrolled {
@@ -247,7 +254,7 @@
         .logo {
             font-size: 16px;
             font-weight: 600;
-            background: linear-gradient(90deg, #e8e8e8 0%, #c0c0c0 50%, #a8a8a8 100%);
+            background: linear-gradient(90deg, #ffffff 0%, #e8e8e8 50%, #c0c0c0 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -524,7 +531,7 @@
 
         /* Blog page background blur */
         body.blog-active .background-container {
-            filter: blur(25px) grayscale(0%) saturate(100%) !important;
+            filter: blur(8px) grayscale(0%) saturate(100%) !important;
             background-image: url('dload2.png') !important;
             background-size: cover !important;
             background-position: center !important;
@@ -550,6 +557,16 @@
         }
 
         /* Docs page overlay for better readability */
+        body.docs-active .background-container {
+            filter: blur(8px) grayscale(0%) saturate(100%) !important;
+            background-image: url('bg.png') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
+            transform: scale(1.1) !important;
+        }
+
         body.docs-active::before {
             content: '';
             position: fixed;
@@ -1002,6 +1019,104 @@
             border-bottom-color: white;
         }
 
+        /* Changelog tree hierarchy styles */
+        .changelog-section {
+            margin: 2rem 0;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .changelog-section::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .changelog-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .changelog-date {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 1rem 0 0.5rem 0;
+            position: relative;
+        }
+
+        .changelog-date::before {
+            content: '';
+            position: absolute;
+            left: -12px;
+            top: 50%;
+            width: 12px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .changelog-date::after {
+            content: '';
+            position: absolute;
+            left: 0px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .changelog-items {
+            margin-left: 20px;
+            position: relative;
+        }
+
+        .changelog-items::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .changelog-items li {
+            position: relative;
+            margin-bottom: 0.3rem;
+            padding-left: 20px;
+        }
+
+        .changelog-items li::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0.6rem;
+            width: 12px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .changelog-items li::after {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0.6rem;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
         /* Loading states */
         .page-loading {
             position: fixed;
@@ -1296,7 +1411,7 @@
             .docs-nav-item::after {
                 content: '';
                 position: absolute;
-                left: -2px;
+                left: 0px;
                 top: 50%;
                 transform: translateY(-50%);
                 width: 3px;
@@ -1323,6 +1438,28 @@
                 white-space: nowrap !important;
                 padding: 0.5rem !important;
                 min-width: 100px !important;
+            }
+
+            /* Mobile changelog tree adjustments */
+            .changelog-section {
+                padding-left: 15px !important;
+            }
+
+            .changelog-items {
+                margin-left: 15px !important;
+            }
+
+            .changelog-items li {
+                padding-left: 15px !important;
+                font-size: 0.85rem !important;
+            }
+
+            .changelog-date {
+                font-size: 1rem !important;
+            }
+
+            .changelog-header {
+                font-size: 1.3rem !important;
             }
         }
 
@@ -1381,6 +1518,19 @@
             list-style: none;
             padding: 0;
             margin: 0;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        /* Vertical line from "Documentation" header */
+        .docs-nav-list::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.3);
         }
 
         .docs-sidebar-header {
@@ -1390,10 +1540,36 @@
             margin-bottom: .5rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            position: relative;
         }
 
         .docs-nav-item {
             margin-bottom: 0.15rem;
+            position: relative;
+        }
+
+        /* Horizontal connector lines (L-shape) for each item - point RIGHT from vertical line to text */
+        .docs-nav-item::before {
+            content: '';
+            position: absolute;
+            left: -12px;  /* Start 12px to the left of the text */
+            top: 50%;
+            width: 12px;  /* Extend RIGHT towards the text */
+            height: 1px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Small circle/dot at the end of each line - at the start of the text */
+        .docs-nav-item::after {
+            content: '';
+            position: absolute;
+            left: 0px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
         }
 
         .docs-nav-link {
@@ -1884,7 +2060,7 @@
                     backgroundContainer.style.backgroundPosition = "center";
                     backgroundContainer.style.backgroundRepeat = "no-repeat";
                     backgroundContainer.style.backgroundAttachment = "fixed";
-                    backgroundContainer.style.filter = "blur(12.5px) grayscale(0%) saturate(100%)";
+                    backgroundContainer.style.filter = "blur(8px) grayscale(0%) saturate(100%)";
                     backgroundContainer.style.transform = "scale(1.1)";
                     backgroundOverlay.style.opacity = '0';
                     
@@ -1923,7 +2099,7 @@
                     backgroundContainer.style.backgroundPosition = "center";
                     backgroundContainer.style.backgroundRepeat = "no-repeat";
                     backgroundContainer.style.backgroundAttachment = "fixed";
-                    backgroundContainer.style.filter = "blur(12.5px) grayscale(0%) saturate(100%)";
+                    backgroundContainer.style.filter = "blur(8px) grayscale(0%) saturate(100%)";
                     backgroundContainer.style.transform = "scale(1.1)";
                     backgroundOverlay.style.opacity = '0';
                     
@@ -1937,7 +2113,6 @@
             } else {
                 // About page
                 const aboutBg = window.innerWidth <= 768 ? 'main-bg-static.png' : '7.gif';
-                showLoadingState();
                 
                 preloadAndSwitch(aboutBg, () => {
                     mainContent.style.display = 'block';
@@ -1972,8 +2147,6 @@
                     if (window.updateSidebarVisibility) {
                         window.updateSidebarVisibility();
                     }
-                    
-                    hideLoadingState();
                 });
             }
         }
@@ -2104,7 +2277,7 @@
             const baseUrl = window.location.origin + window.location.pathname;
             let title = 'twoloop';
             let description = 'twoloop games - Fractium development';
-            let image = 'fra.png';
+            let image = 'playtest.png';
             let url = baseUrl;
             
             if (page === 'blog' && post && window.markdownParser) {
@@ -2113,12 +2286,8 @@
                 if (blogPost) {
                     title = `${blogPost.metadata.title} - twoloop`;
                     description = blogPost.metadata.description || 'twoloop games blog post';
-                    // Handle cover image path
-                    if (blogPost.metadata['cover-image']) {
-                        const coverImg = blogPost.metadata['cover-image'];
-                        image = coverImg.startsWith('http') || coverImg.startsWith('/') ? 
-                               coverImg : `blog-posts/${coverImg}`;
-                    }
+                    // Always use playtest.png for social media previews
+                    image = 'playtest.png';
                     url = `${baseUrl}?page=blog&post=${post}`;
                 }
             } else if (page === 'blog') {
@@ -2154,7 +2323,9 @@
             // Update meta tags for the current page
             updateMetaTags(page, doc, post);
             
+            // Set the active navigation link
             if (page === 'blog') {
+                setActiveLink('blogLink');
                 showPage('blog');
                 // If a specific blog post is requested, load it
                 if (post && window.markdownParser) {
@@ -2172,6 +2343,7 @@
                     }, 500);
                 }
             } else if (page === 'docs') {
+                setActiveLink('docsLink');
                 showPage('docs');
                 // If a specific doc is requested, load it
                 if (doc && window.docsSystem) {
@@ -2180,6 +2352,7 @@
                     }, 100);
                 }
             } else {
+                setActiveLink('aboutLink');
                 showPage('about');
             }
         }
@@ -2196,6 +2369,13 @@
             const bottomGradient = document.querySelector('.gradient-overlay-bottom');
             const backgroundContainer = document.querySelector('.background-container');
             bottomGradient.style.opacity = 0.6;
+            
+            // Preload and show background container to prevent progressive loading
+            const preloadImg = new Image();
+            preloadImg.onload = () => {
+                backgroundContainer.classList.add('loaded');
+            };
+            preloadImg.src = window.innerWidth <= 768 ? 'main-bg-static.png' : '7.gif';
             
             // Handle initial URL routing
             handleRouting();

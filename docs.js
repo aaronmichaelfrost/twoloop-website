@@ -10,8 +10,22 @@ class DocsSystem {
         await this.loadDocsList();
         this.setupEventListeners();
         
-        // Load first doc by default
-        if (this.docs.length > 0) {
+        // Check URL parameters for direct doc access
+        const urlParams = new URLSearchParams(window.location.search);
+        const docParam = urlParams.get('doc');
+        
+        if (docParam && this.docs.find(doc => doc.slug === docParam)) {
+            // Load the requested doc
+            await this.loadDoc(docParam);
+            // Set the requested doc link as active
+            setTimeout(() => {
+                const requestedLink = document.querySelector('.docs-nav-link[data-slug="' + docParam + '"]');
+                if (requestedLink) {
+                    this.setActiveNavItem(requestedLink);
+                }
+            }, 100);
+        } else if (this.docs.length > 0) {
+            // Load first doc by default
             await this.loadDoc(this.docs[0].slug);
             // Set the first doc link as active
             setTimeout(() => {
@@ -106,6 +120,14 @@ class DocsSystem {
             };
 
             this.renderDoc();
+            
+            // Set the active navigation item for this doc
+            setTimeout(() => {
+                const activeLink = document.querySelector('.docs-nav-link[data-slug="' + slug + '"]');
+                if (activeLink) {
+                    this.setActiveNavItem(activeLink);
+                }
+            }, 100);
             
         } catch (error) {
             console.error('Error loading doc:', error);

@@ -135,6 +135,9 @@ class MarkdownParser {
         html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
         html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
 
+        // Process changelog sections with tree hierarchy
+        html = this.processChangelogSections(html);
+
         // Bold and italic
         html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
         html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
@@ -144,6 +147,7 @@ class MarkdownParser {
 
         // Lists
         html = html.replace(/^\* (.+$)/gm, '<li>$1</li>');
+        html = html.replace(/^• (.+$)/gm, '<li>$1</li>'); // Support bullet character
         html = html.replace(/^(\d+)\. (.+$)/gm, '<li>$2</li>');
         
         // Wrap consecutive list items in ul/ol tags
@@ -166,6 +170,51 @@ class MarkdownParser {
 
         console.log('markdownToHtml finished, result length:', html.length);
         return html;
+    }
+
+    // Process changelog sections to add tree hierarchy
+    processChangelogSections(html) {
+        console.log('Processing changelog, initial HTML:', html.substring(html.indexOf('CHANGELOG'), html.indexOf('CHANGELOG') + 1000));
+        
+        // Look for sections that start with ## CHANGELOG or ## Changelog
+        const changelogRegex = /(<h2>(?:CHANGELOG|Changelog)<\/h2>)([\s\S]*?)(?=<h[12]|$)/gi;
+        
+        return html.replace(changelogRegex, (match, header, content) => {
+            console.log('Found changelog section, content length:', content.length);
+            console.log('Content preview:', content.substring(0, 500));
+            
+            // Wrap the entire changelog section
+            let processedContent = content;
+            
+            // Find date headers in bold format (**Date**)
+            const dateMatches = content.match(/<p><strong>([^<]+)<\/strong><\/p>/g);
+            console.log('Date matches found:', dateMatches);
+            
+            processedContent = processedContent.replace(/<p><strong>([^<]+)<\/strong><\/p>/g, (dateMatch, dateText) => {
+                console.log('Processing date:', dateText);
+                return `<div class="changelog-date">${dateText}</div>`;
+            });
+            
+            // Process lists after date headers - wrap them in changelog-items
+            const afterDates = processedContent.match(/(<div class="changelog-date">[^<]+<\/div>)\s*(<ul>[\s\S]*?<\/ul>)/g);
+            console.log('Date+list combinations found:', afterDates);
+            
+            processedContent = processedContent.replace(/(<div class="changelog-date">[^<]+<\/div>)\s*(<ul>[\s\S]*?<\/ul>)/g, (listMatch, dateHeader, listContent) => {
+                console.log('Processing list after date:', listMatch.substring(0, 200));
+                // Modify the list items to remove the default <li> styling
+                const modifiedList = listContent.replace(/<ul>([\s\S]*?)<\/ul>/, (ulMatch, items) => {
+                    return `<div class="changelog-items"><ul>${items}</ul></div>`;
+                });
+                return dateHeader + '\n' + modifiedList;
+            });
+            
+            const result = `<div class="changelog-section">
+                <div class="changelog-header">CHANGELOG</div>
+                ${processedContent}
+            </div>`;
+            console.log('Final result preview:', result.substring(0, 800));
+            return result;
+        });
     }
 
     // Load and parse all blog posts
@@ -233,7 +282,7 @@ class MarkdownParser {
         }
         
         const blogListHtml = this.posts.map(post => `
-            <div class="blog-post" onclick="showBlogPost('${post.slug}')">
+            <div class="blog-post" data-slug="${post.slug}" onclick="showBlogPost('${post.slug}')">
                 <div class="blog-post-meta">${this.formatDate(post.metadata.date)}</div>
                 <div class="blog-png-container">
                     ${post.metadata['cover-image'] ? 
@@ -316,7 +365,7 @@ function showBlogPost(slug) {
         backgroundContainer.style.backgroundPosition = "center";
         backgroundContainer.style.backgroundRepeat = "no-repeat";
         backgroundContainer.style.backgroundAttachment = "fixed";
-        backgroundContainer.style.filter = "blur(25px) grayscale(0%) saturate(100%)";
+        backgroundContainer.style.filter = "blur(8px) grayscale(0%) saturate(100%)";
         backgroundContainer.style.transform = "scale(1.1)";
     } else {
         // Fallback to rload3 if no cover image
@@ -326,7 +375,7 @@ function showBlogPost(slug) {
         backgroundContainer.style.backgroundPosition = "center";
         backgroundContainer.style.backgroundRepeat = "no-repeat";
         backgroundContainer.style.backgroundAttachment = "fixed";
-        backgroundContainer.style.filter = "blur(25px) grayscale(0%) saturate(100%)";
+        backgroundContainer.style.filter = "blur(8px) grayscale(0%) saturate(100%)";
         backgroundContainer.style.transform = "scale(1.1)";
     }
 }
@@ -364,7 +413,7 @@ function showBlogList() {
     backgroundContainer.style.backgroundPosition = "center";
     backgroundContainer.style.backgroundRepeat = "no-repeat";
     backgroundContainer.style.backgroundAttachment = "fixed";
-    backgroundContainer.style.filter = "blur(25px) grayscale(0%) saturate(100%)";
+    backgroundContainer.style.filter = "blur(8px) grayscale(0%) saturate(100%)";
     backgroundContainer.style.transform = "scale(1.1)";
 
     // Animate blog header
