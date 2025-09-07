@@ -14,16 +14,33 @@
     <meta property="og:site_name" content="twoloop">
     <meta property="og:title" content="twoloop">
     <meta property="og:description" content="twoloop games - Fractium development">
-    <meta property="og:image" content="playtest.png">
+    <meta property="og:image" content="https://twoloop.net/playtest.png">
+    <meta property="og:image:secure_url" content="https://twoloop.net/playtest.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:url" content="">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:url" content="https://twoloop.net/">
+    <meta property="og:locale" content="en_US">
     
     <!-- Twitter Card meta tags -->
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@twoloop">
+    <meta name="twitter:creator" content="@twoloop">
     <meta name="twitter:title" content="twoloop">
     <meta name="twitter:description" content="twoloop games - Fractium development">
-    <meta name="twitter:image" content="playtest.png">
+    <meta name="twitter:image" content="https://twoloop.net/playtest.png">
+    <meta name="twitter:image:alt" content="twoloop games preview">
+    
+    <!-- Additional meta tags for better SEO -->
+    <meta name="description" content="twoloop games - Fractium development">
+    <meta name="keywords" content="twoloop, games, Fractium, game development">
+    <meta name="author" content="twoloop">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://twoloop.net/">
+    
+    <!-- Site Configuration -->
+    <script src="site-config.js"></script>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2659,27 +2676,27 @@
         
         function updateMetaTags(page, doc = null, post = null) {
             const baseUrl = window.location.origin + window.location.pathname;
-            let title = 'twoloop';
-            let description = 'twoloop games - Fractium development';
-            let image = 'playtest.png';
+            let title = SITE_CONFIG.defaultTitle;
+            let description = SITE_CONFIG.defaultDescription;
+            let image = SITE_CONFIG.getSocialImageUrl(); // Always use absolute URL for social media
             let url = baseUrl;
             
             if (page === 'blog' && post && window.markdownParser) {
                 // Find the specific blog post
                 const blogPost = window.markdownParser.posts.find(p => p.slug === post);
                 if (blogPost) {
-                    title = `${blogPost.metadata.title} - twoloop`;
+                    title = `${blogPost.metadata.title} - ${SITE_CONFIG.siteName}`;
                     description = blogPost.metadata.description || 'twoloop games blog post';
                     // Always use playtest.png for social media previews
-                    image = 'playtest.png';
+                    image = SITE_CONFIG.getSocialImageUrl();
                     url = `${baseUrl}?page=blog&post=${post}`;
                 }
             } else if (page === 'blog') {
-                title = 'Blog - twoloop';
+                title = `Blog - ${SITE_CONFIG.siteName}`;
                 description = 'twoloop games development blog';
                 url = `${baseUrl}?page=blog`;
             } else if (page === 'docs') {
-                title = 'Documentation - twoloop';
+                title = `Documentation - ${SITE_CONFIG.siteName}`;
                 description = 'twoloop games documentation and guides';
                 url = `${baseUrl}?page=docs`;
                 if (doc) {
@@ -2691,6 +2708,7 @@
             document.querySelector('meta[property="og:title"]').setAttribute('content', title);
             document.querySelector('meta[property="og:description"]').setAttribute('content', description);
             document.querySelector('meta[property="og:image"]').setAttribute('content', image);
+            document.querySelector('meta[property="og:image:secure_url"]').setAttribute('content', image);
             document.querySelector('meta[property="og:url"]').setAttribute('content', url);
             
             document.querySelector('meta[name="twitter:title"]').setAttribute('content', title);

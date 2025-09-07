@@ -132,4 +132,4 @@ Server logs are located in:
 For additional help:
 - Join our [Discord](https://discord.gg/fractium)
 - Visit the [Steam Community](https://steamcommunity.com/app/fractium)
-- Submit tickets at [support@twoloop.games](mailto:support@twoloop.games)
+- Submit tickets at [support@twoloop.net](mailto:support@twoloop.net)

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Sharing Test - twoloop</title>
+    
+    <!-- Open Graph / Social Media meta tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="twoloop">
+    <meta property="og:title" content="twoloop">
+    <meta property="og:description" content="twoloop games - Fractium development">
+    <meta property="og:image" content="https://twoloop.net/playtest.png">
+    <meta property="og:image:secure_url" content="https://twoloop.net/playtest.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:url" content="https://twoloop.net/">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter Card meta tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@twoloop">
+    <meta name="twitter:creator" content="@twoloop">
+    <meta name="twitter:title" content="twoloop">
+    <meta name="twitter:description" content="twoloop games - Fractium development">
+    <meta name="twitter:image" content="https://twoloop.net/playtest.png">
+    <meta name="twitter:image:alt" content="twoloop games preview">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .meta-info {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .meta-tag {
+            margin: 5px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .current-url {
+            background: #333;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .test-links {
+            margin: 20px 0;
+        }
+        .test-links a {
+            color: #4CAF50;
+            text-decoration: none;
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background: #2a2a2a;
+            border-radius: 5px;
+        }
+        .test-links a:hover {
+            background: #3a3a3a;
+        }
+    </style>
+</head>
+<body>
+    <h1>Social Sharing Test</h1>
+    
+    <div class="current-url">
+        <strong>Current URL:</strong> <span id="current-url"></span>
+    </div>
+    
+    <h2>Meta Tags Currently Set:</h2>
+    <div id="meta-tags"></div>
+    
+    <h2>Quick Domain Check:</h2>
+    <div class="test-links">
+        <button onclick="checkCurrentDomain()" style="background: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 10px 0;">
+            🔍 Check if domain matches configuration
+        </button>
+        <div id="domain-check-result"></div>
+    </div>
+    
+    <h2>Test Your Social Sharing:</h2>
+    <div class="test-links">
+        <a href="https://developers.facebook.com/tools/debug/" target="_blank">
+            🔍 Facebook Open Graph Debugger
+        </a>
+        <a href="https://cards-dev.twitter.com/validator" target="_blank">
+            🐦 Twitter Card Validator
+        </a>
+        <a href="https://www.linkedin.com/post-inspector/" target="_blank">
+            💼 LinkedIn Post Inspector
+        </a>
+        <a href="https://discord.com/" target="_blank">
+            💬 Test in Discord (paste URL in a message)
+        </a>
+    </div>
+    
+    <h2>Tips:</h2>
+    <ul>
+        <li>Social media platforms cache previews - it may take time for changes to show up</li>
+        <li>Use the debug tools above to force refresh the cached preview</li>
+        <li>Make sure your domain is accessible to social media crawlers</li>
+        <li>The image should be at least 1200x630 pixels for best results</li>
+    </ul>
+
+    <script>
+        // Display current URL
+        document.getElementById('current-url').textContent = window.location.href;
+        
+        // Check if domain matches configuration
+        function checkCurrentDomain() {
+            const result = document.getElementById('domain-check-result');
+            const currentDomain = window.location.origin;
+            
+            // Load site config if available
+            if (typeof SITE_CONFIG !== 'undefined') {
+                const configDomain = SITE_CONFIG.domain;
+                if (currentDomain === configDomain.replace(/\/$/, '')) {
+                    result.innerHTML = '<div style="background: #e6ffe6; padding: 10px; border-radius: 5px; margin: 10px 0;">✅ Domain matches configuration!</div>';
+                } else {
+                    result.innerHTML = `<div style="background: #ffe6e6; padding: 10px; border-radius: 5px; margin: 10px 0;">⚠️ Domain mismatch!<br>Current: ${currentDomain}<br>Config: ${configDomain}<br><strong>Update site-config.js with your actual domain.</strong></div>`;
+                }
+            } else {
+                result.innerHTML = '<div style="background: #fff3e0; padding: 10px; border-radius: 5px; margin: 10px 0;">⚠️ Site config not loaded. Make sure site-config.js is included.</div>';
+            }
+        }
+        
+        // Display current meta tags
+        const metaTags = document.getElementById('meta-tags');
+        const ogTags = [
+            'og:title',
+            'og:description', 
+            'og:image',
+            'og:image:secure_url',
+            'og:url',
+            'og:type',
+            'og:site_name'
+        ];
+        
+        const twitterTags = [
+            'twitter:card',
+            'twitter:title',
+            'twitter:description',
+            'twitter:image',
+            'twitter:site'
+        ];
+        
+        function displayMetaTags() {
+            let html = '<div class="meta-info"><h3>Open Graph Tags:</h3>';
+            ogTags.forEach(tag => {
+                const element = document.querySelector(`meta[property="${tag}"]`);
+                const content = element ? element.getAttribute('content') : 'Not found';
+                const isImageTag = tag.includes('image');
+                const isAbsoluteUrl = content.startsWith('http');
+                
+                let status = '';
+                if (isImageTag && content !== 'Not found') {
+                    status = isAbsoluteUrl ? ' ✅' : ' ❌ (should be absolute URL)';
+                }
+                
+                html += `<div class="meta-tag"><strong>${tag}:</strong> ${content}${status}</div>`;
+            });
+            html += '</div>';
+            
+            html += '<div class="meta-info"><h3>Twitter Card Tags:</h3>';
+            twitterTags.forEach(tag => {
+                const element = document.querySelector(`meta[name="${tag}"]`);
+                const content = element ? element.getAttribute('content') : 'Not found';
+                const isImageTag = tag.includes('image');
+                const isAbsoluteUrl = content.startsWith('http');
+                
+                let status = '';
+                if (isImageTag && content !== 'Not found') {
+                    status = isAbsoluteUrl ? ' ✅' : ' ❌ (should be absolute URL)';
+                }
+                
+                html += `<div class="meta-tag"><strong>${tag}:</strong> ${content}${status}</div>`;
+            });
+            html += '</div>';
+            
+            // Check if playtest.png is being used
+            const ogImage = document.querySelector('meta[property="og:image"]');
+            const twitterImage = document.querySelector('meta[name="twitter:image"]');
+            
+            html += '<div class="meta-info"><h3>Image Verification:</h3>';
+            if (ogImage && ogImage.getAttribute('content').includes('playtest.png')) {
+                html += '<div class="meta-tag">✅ Using playtest.png for Open Graph</div>';
+            } else {
+                html += '<div class="meta-tag">❌ Not using playtest.png for Open Graph</div>';
+            }
+            
+            if (twitterImage && twitterImage.getAttribute('content').includes('playtest.png')) {
+                html += '<div class="meta-tag">✅ Using playtest.png for Twitter</div>';
+            } else {
+                html += '<div class="meta-tag">❌ Not using playtest.png for Twitter</div>';
+            }
+            html += '</div>';
+            
+            metaTags.innerHTML = html;
+        }
+        
+        displayMetaTags();
+    </script>
+</body>
+</html>

@@ -11,9 +11,9 @@ Got less done than we wanted, but steady progress continues.
 ### SUCCESSFUL STRESS TEST
 *by Aaron*
 
-We ran a smooth test with **800 items** with rigidbodies, **250 NPCs** (aggroed), and **25 player connections**. Next, with 250 players.
+We ran a smooth test with **800 items** (with rigidbodies), **250 NPCs** (aggroed), and **25 player connections**. Next, with 250 players.
 
-The goal is to prove systems scale. I wrote a script that runs headless clients in parallel (“Bot Army”), maxing out at 25 connections on my PC. I also connected a low-spec laptop with graphics enabled to check real client perf. Next, we’ll rent machines to aim for 250 players. The server held up great—only slowing past 300 NPCs, which is fine since NPC loops are server-heavy and 300 is worst worst case.
+The goal is to prove systems scale. I wrote a script that runs headless clients in parallel, which maxed my CPU usage at 25 connections. That's 25 fully generated 700x700 terrains and full player loops running on only one computer. I also connected a low-spec laptop with graphics enabled to check real client perf. Next, we’ll rent machines to aim for 250 players. The server held up great—only slowing past 300 NPCs, which is fine since NPC loops are server-heavy and 300 is worst worst case.
 
 It looked suitably chaotic, we'll share some footage soon.
 
@@ -111,7 +111,7 @@ We’ve found lots of bugs and are talking about a different art style possibly.
 ◦ Anti-hack bypassed when cheats enabled  
 
 **9/1/2025**
-◦ Added `giveto`, `giveall`, `give` (with `<steamID> <itemName> <quantity>`)  
+◦ Added `giveto`, `giveall`, `give` (with `steamID itemName quantity` args)  
 ◦ Added `listplayers`  
 ◦ Autocompletions for dynamic args (steamID, itemName)  
 ◦ Added `teleport` to player  

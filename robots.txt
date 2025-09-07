@@ -1,0 +1,28 @@
+User-agent: *
+Allow: /
+
+# Allow social media crawlers
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+User-agent: SkypeUriPreview
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# Allow Discord and other messaging platforms
+User-agent: Discordbot
+Allow: /
+
+# Sitemap (optional - you can add this later)
+# Sitemap: https://twoloop.net/sitemap.xml
