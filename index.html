@@ -14,7 +14,7 @@
     <meta property="og:site_name" content="twoloop">
     <meta property="og:title" content="twoloop">
     <meta property="og:description" content="twoloop games - Fractium development">
-    <meta property="og:image" content="playtest.png">
+    <meta property="og:image" content="fra.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:url" content="">
@@ -247,7 +247,7 @@
         .logo {
             font-size: 16px;
             font-weight: 600;
-            background: linear-gradient(90deg, #ffffff 0%, #e0e0e0 30%, #c0c0c0 70%, #a0a0a0 100%);
+            background: linear-gradient(90deg, #e8e8e8 0%, #c0c0c0 50%, #a8a8a8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -1267,37 +1267,36 @@
             /* Mobile hierarchy tree lines */
             .docs-nav-list {
                 position: relative;
-                padding-right: 20px !important;
                 padding-left: 0 !important;
             }
             
-            /* Vertical line from parent - ends at last item */
+            /* Vertical line from parent */
             .docs-nav-list::before {
                 content: '';
                 position: absolute;
-                right: 8px;
+                left: 8px;
                 top: 0;
-                height: calc(100% - 20px);
+                bottom: 0;
                 width: 1px;
                 background: rgba(255, 255, 255, 0.3);
             }
             
-            /* Horizontal connector lines (L-shape) pointing RIGHT to each item */
+            /* Horizontal connector lines (L-shape) for each item */
             .docs-nav-item::before {
                 content: '';
                 position: absolute;
-                right: -12px;
+                left: -12px;
                 top: 50%;
                 width: 12px;
                 height: 1px;
                 background: rgba(255, 255, 255, 0.3);
             }
             
-            /* Small circle/dot at the connection point */
+            /* Small circle/dot at the end of each line */
             .docs-nav-item::after {
                 content: '';
                 position: absolute;
-                right: 0px;
+                left: -2px;
                 top: 50%;
                 transform: translateY(-50%);
                 width: 3px;
@@ -1439,28 +1438,28 @@
 
         .docs-article h1 {
             font-size: 2.5rem;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.5rem;
             color: white;
             font-weight: bold;
         }
 
         .docs-article h2 {
             font-size: 2rem;
-            margin: 2rem 0 0.3rem 0;
+            margin: 2rem 0 0.5rem 0;
             color: white;
             font-weight: bold;
         }
 
         .docs-article h3 {
             font-size: 1.5rem;
-            margin: 1.5rem 0 0.15rem 0;
+            margin: 1.5rem 0 0.25rem 0;
             color: white;
             font-weight: bold;
         }
 
         .docs-article h4 {
             font-size: 1.2rem;
-            margin: 1.2rem 0 0.1rem 0;
+            margin: 1.2rem 0 0.2rem 0;
             color: white;
             font-weight: 600;
         }
@@ -1556,7 +1555,7 @@
         .docs-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 0.5rem 0;
+            margin: 1rem 0;
             background: rgba(0, 0, 0, 0.3);
             border-radius: 8px;
             overflow: hidden;
@@ -1885,7 +1884,7 @@
                     backgroundContainer.style.backgroundPosition = "center";
                     backgroundContainer.style.backgroundRepeat = "no-repeat";
                     backgroundContainer.style.backgroundAttachment = "fixed";
-                    backgroundContainer.style.filter = "blur(6px) grayscale(0%) saturate(100%)";
+                    backgroundContainer.style.filter = "blur(12.5px) grayscale(0%) saturate(100%)";
                     backgroundContainer.style.transform = "scale(1.1)";
                     backgroundOverlay.style.opacity = '0';
                     
@@ -1919,13 +1918,12 @@
                     scrollArrow.style.display = 'none';
                     
                     // Set background properties
-                    backgroundContainer.style.backgroundImage = "url('bg.png')";
                     backgroundContainer.style.background = "";
                     backgroundContainer.style.backgroundSize = "cover";
                     backgroundContainer.style.backgroundPosition = "center";
                     backgroundContainer.style.backgroundRepeat = "no-repeat";
                     backgroundContainer.style.backgroundAttachment = "fixed";
-                    backgroundContainer.style.filter = "blur(6px) grayscale(0%) saturate(100%)";
+                    backgroundContainer.style.filter = "blur(12.5px) grayscale(0%) saturate(100%)";
                     backgroundContainer.style.transform = "scale(1.1)";
                     backgroundOverlay.style.opacity = '0';
                     
@@ -1937,39 +1935,50 @@
                     hideLoadingState();
                 });
             } else {
-                // About page - use static background, no loading spinner
-                mainContent.style.display = 'block';
-                blogPage.style.display = 'none';
-                docsContainer.style.display = 'none';
-                scrollArrow.style.display = 'block';
+                // About page
+                const aboutBg = window.innerWidth <= 768 ? 'main-bg-static.png' : '7.gif';
+                showLoadingState();
                 
-                // Reset background properties - use static image
-                backgroundContainer.style.backgroundImage = "url('main-bg-static.png')";
-                backgroundContainer.style.background = "";
-                backgroundContainer.style.backgroundSize = "cover";
-                backgroundContainer.style.backgroundPosition = "center";
-                backgroundContainer.style.backgroundRepeat = "no-repeat";
-                backgroundContainer.style.backgroundAttachment = "fixed";
-                backgroundContainer.style.filter = "";
-                backgroundContainer.style.transform = "";
-                
-                // Don't reset GIF cycle since we're not using gifs
-                
-                // Show arrow after shorter delay if user hasn't scrolled down
-                if (window.arrowCanBeVisible && window.scrollY <= 100) {
-                    setTimeout(() => {
-                        if (window.scrollY <= 100 && !body.classList.contains('blog-active') && !body.classList.contains('docs-active')) {
-                            scrollArrow.classList.add('visible');
-                        }
-                    }, 100);
-                }
-                
-                // Hide the fixed sidebar
-                if (window.updateSidebarVisibility) {
-                    window.updateSidebarVisibility();
-                }
+                preloadAndSwitch(aboutBg, () => {
+                    mainContent.style.display = 'block';
+                    blogPage.style.display = 'none';
+                    docsContainer.style.display = 'none';
+                    scrollArrow.style.display = 'block';
+                    
+                    // Reset background properties
+                    backgroundContainer.style.background = "";
+                    backgroundContainer.style.backgroundSize = "cover";
+                    backgroundContainer.style.backgroundPosition = "center";
+                    backgroundContainer.style.backgroundRepeat = "no-repeat";
+                    backgroundContainer.style.backgroundAttachment = "fixed";
+                    backgroundContainer.style.filter = "";
+                    backgroundContainer.style.transform = "";
+                    
+                    // Reset GIF cycle to start from the first GIF
+                    if (window.resetGifCycle) {
+                        window.resetGifCycle();
+                    }
+                    
+                    // Show arrow after shorter delay if user hasn't scrolled down
+                    if (window.arrowCanBeVisible && window.scrollY <= 100) {
+                        setTimeout(() => {
+                            if (window.scrollY <= 100 && !body.classList.contains('blog-active') && !body.classList.contains('docs-active')) {
+                                scrollArrow.classList.add('visible');
+                            }
+                        }, 100);
+                    }
+                    
+                    // Hide the fixed sidebar
+                    if (window.updateSidebarVisibility) {
+                        window.updateSidebarVisibility();
+                    }
+                    
+                    hideLoadingState();
+                });
             }
-        }        function setActiveLink(linkId) {
+        }
+
+        function setActiveLink(linkId) {
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
             });
@@ -2056,58 +2065,33 @@
         
         // URL Routing system
         function parseUrl() {
-            const path = window.location.pathname;
             const hash = window.location.hash.slice(1); // Remove the #
             const params = new URLSearchParams(window.location.search);
             
-            console.log('parseUrl: path =', path, 'hash =', hash, 'search =', window.location.search);
-            
-            // Check for blog post URLs like /blog/post-slug
-            const blogMatch = path.match(/\/blog\/([^\/]+)$/);
-            if (blogMatch) {
-                console.log('parseUrl: detected blog post:', blogMatch[1]);
-                return { page: 'blog', doc: null, post: blogMatch[1] };
-            }
-            
-            // Check for docs URLs like /docs/doc-name
-            const docsMatch = path.match(/\/docs\/([^\/]+)$/);
-            if (docsMatch) {
-                console.log('parseUrl: detected docs page:', docsMatch[1]);
-                return { page: 'docs', doc: docsMatch[1], post: null };
-            }
-            
-            // Check for simple page URLs like /blog, /docs
-            if (path === '/blog') {
-                console.log('parseUrl: detected blog main page');
-                return { page: 'blog', doc: null, post: null };
-            }
-            if (path === '/docs') {
-                console.log('parseUrl: detected docs main page');
-                return { page: 'docs', doc: null, post: null };
-            }
-            
-            // Support both hash-based and query parameter routing (fallback)
+            // Support both hash-based and query parameter routing
             const page = hash || params.get('page') || 'about';
-            console.log('parseUrl: fallback to page:', page);
+            const doc = params.get('doc') || null;
+            const post = params.get('post') || null;
             
-            return { page, doc: params.get('doc') || null, post: params.get('post') || null };
+            return { page, doc, post };
         }
         
         function updateUrl(page, doc = null, post = null) {
-            let newUrl = window.location.origin;
+            let url = window.location.pathname;
+            const params = new URLSearchParams();
             
-            if (page === 'blog' && post) {
-                newUrl += `/blog/${post}`;
-            } else if (page === 'docs' && doc) {
-                newUrl += `/docs/${doc}`;
-            } else if (page === 'blog') {
-                newUrl += '/blog';
-            } else if (page === 'docs') {
-                newUrl += '/docs';
-            } else {
-                // Default to root for 'about' page
-                newUrl += '/';
+            if (page !== 'about') {
+                params.set('page', page);
             }
+            if (doc) {
+                params.set('doc', doc);
+            }
+            if (post) {
+                params.set('post', post);
+            }
+            
+            const queryString = params.toString();
+            const newUrl = queryString ? `${url}?${queryString}` : url;
             
             // Update URL without reloading the page
             window.history.pushState({ page, doc, post }, '', newUrl);
@@ -2117,11 +2101,11 @@
         window.updateUrl = updateUrl;
         
         function updateMetaTags(page, doc = null, post = null) {
-            const baseUrl = window.location.origin;
+            const baseUrl = window.location.origin + window.location.pathname;
             let title = 'twoloop';
             let description = 'twoloop games - Fractium development';
-            let image = 'playtest.png';
-            let url = baseUrl + '/';
+            let image = 'fra.png';
+            let url = baseUrl;
             
             if (page === 'blog' && post && window.markdownParser) {
                 // Find the specific blog post
@@ -2135,18 +2119,18 @@
                         image = coverImg.startsWith('http') || coverImg.startsWith('/') ? 
                                coverImg : `blog-posts/${coverImg}`;
                     }
-                    url = `${baseUrl}/blog/${post}`;
+                    url = `${baseUrl}?page=blog&post=${post}`;
                 }
             } else if (page === 'blog') {
                 title = 'Blog - twoloop';
                 description = 'twoloop games development blog';
-                url = `${baseUrl}/blog`;
+                url = `${baseUrl}?page=blog`;
             } else if (page === 'docs') {
                 title = 'Documentation - twoloop';
                 description = 'twoloop games documentation and guides';
-                url = `${baseUrl}/docs`;
+                url = `${baseUrl}?page=docs`;
                 if (doc) {
-                    url = `${baseUrl}/docs/${doc}`;
+                    url += `&doc=${doc}`;
                 }
             }
             
@@ -2167,50 +2151,36 @@
         function handleRouting() {
             const { page, doc, post } = parseUrl();
             
-            console.log('handleRouting called with:', { page, doc, post });
-            console.log('Current path:', window.location.pathname);
-            
             // Update meta tags for the current page
             updateMetaTags(page, doc, post);
             
             if (page === 'blog') {
-                console.log('Routing to blog page');
                 showPage('blog');
-                setActiveLink('blogLink');
-                
                 // If a specific blog post is requested, load it
                 if (post && window.markdownParser) {
                     // Wait for blog system to be ready, then load specific post
                     setTimeout(() => {
-                        showBlogPost(post);
+                        const blogPosts = document.querySelectorAll('.blog-post');
+                        blogPosts.forEach(postElement => {
+                            const postSlug = postElement.getAttribute('data-slug');
+                            if (postSlug === post) {
+                                postElement.click();
+                            }
+                        });
+                        // Update meta tags again after post is loaded
+                        setTimeout(() => updateMetaTags(page, doc, post), 100);
                     }, 500);
-                } else {
-                    // Show blog list
-                    setTimeout(() => {
-                        showBlogList();
-                    }, 100);
                 }
             } else if (page === 'docs') {
-                console.log('Routing to docs page');
                 showPage('docs');
-                setActiveLink('docsLink');
-                
                 // If a specific doc is requested, load it
-                if (doc) {
-                    // Wait for docs system to be ready
-                    const loadDocWhenReady = () => {
-                        if (window.docsSystem) {
-                            window.docsSystem.loadDoc(doc);
-                        } else {
-                            setTimeout(loadDocWhenReady, 100);
-                        }
-                    };
-                    setTimeout(loadDocWhenReady, 100);
+                if (doc && window.docsSystem) {
+                    setTimeout(() => {
+                        window.docsSystem.loadDoc(doc);
+                    }, 100);
                 }
             } else {
-                console.log('Routing to about page, page detected as:', page);
                 showPage('about');
-                setActiveLink('aboutLink');
             }
         }
         
