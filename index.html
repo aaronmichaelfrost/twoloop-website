@@ -1255,11 +1255,54 @@
             /* Mobile docs navigation spacing */
             .docs-nav-item {
                 margin-bottom: 0.1rem !important;
+                position: relative;
             }
             
             .docs-nav-link {
                 padding: 0.3rem 0 !important;
                 font-size: 0.9rem !important;
+                margin-left: 20px !important;
+            }
+            
+            /* Mobile hierarchy tree lines */
+            .docs-nav-list {
+                position: relative;
+                padding-left: 0 !important;
+            }
+            
+            /* Vertical line from parent */
+            .docs-nav-list::before {
+                content: '';
+                position: absolute;
+                left: 8px;
+                top: 0;
+                bottom: 0;
+                width: 1px;
+                background: rgba(255, 255, 255, 0.3);
+            }
+            
+            /* Horizontal connector lines (L-shape) for each item */
+            .docs-nav-item::before {
+                content: '';
+                position: absolute;
+                left: -12px;
+                top: 50%;
+                width: 12px;
+                height: 1px;
+                background: rgba(255, 255, 255, 0.3);
+            }
+            
+            /* Small circle/dot at the end of each line */
+            .docs-nav-item::after {
+                content: '';
+                position: absolute;
+                left: -2px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 3px;
+                height: 3px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.5);
             }
             
             /* Mobile table horizontal scroll */
