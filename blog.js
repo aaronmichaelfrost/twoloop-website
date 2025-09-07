@@ -39,6 +39,21 @@ function handleContentImageError(img) {
 class MarkdownParser {
     constructor() {
         this.posts = [];
+        this.authorLinks = {};
+        this.loadAuthorLinks();
+    }
+
+    // Load author links mapping
+    async loadAuthorLinks() {
+        try {
+            const response = await fetch('author-links.json');
+            if (response.ok) {
+                this.authorLinks = await response.json();
+                console.log('Author links loaded:', this.authorLinks);
+            }
+        } catch (error) {
+            console.error('Failed to load author links:', error);
+        }
     }
 
     // Parse frontmatter (YAML-like metadata at the top of markdown files)
@@ -100,7 +115,19 @@ class MarkdownParser {
         });
 
         // Author attribution inline with headers (e.g., ## Title *by Author*)
-        html = html.replace(/^(#{1,4})\s+(.+?)\s+\*by ([^*]+)\*$/gm, '$1 $2<span class="author-attribution">by $3</span>');
+        html = html.replace(/^(#{1,4})\s+(.+?)\s+\*by ([^*]+)\*$/gm, (match, hashes, title, author) => {
+            const authorName = author.trim();
+            const authorUrl = this.authorLinks[authorName];
+            
+            let authorHtml;
+            if (authorUrl) {
+                authorHtml = `<a href="${authorUrl}" class="author-link" target="_blank" rel="noopener">${authorName}</a>`;
+            } else {
+                authorHtml = authorName;
+            }
+            
+            return `${hashes} ${title}<span class="author-attribution">by ${authorHtml}</span>`;
+        });
 
         // Headers
         html = html.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
@@ -144,6 +171,12 @@ class MarkdownParser {
     // Load and parse all blog posts
     async loadBlogPosts() {
         console.log('Loading blog posts...');
+        
+        // Ensure author links are loaded first
+        if (Object.keys(this.authorLinks).length === 0) {
+            await this.loadAuthorLinks();
+        }
+        
         const blogPosts = [
             'devblog-1.md'
         ];

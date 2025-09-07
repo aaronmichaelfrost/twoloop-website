@@ -53,7 +53,6 @@ Now, when players send feedback or their game crashes, it surfaces in our Discor
 <div class="discord-images-row">
 ![Exception reporting](devblog1-images/webhook1.png)
 ![Anticheat alerts](devblog1-images/webhook2.png)
-![Server logs](devblog1-images/webhook3.png)
 ![Player feedback](devblog1-images/webhook4.png)
 </div>
 
@@ -138,7 +137,3 @@ More random clips coming soon!
 
 **8/21/2025 – 8/22/2025**
 • progress on streamlining dedicated server development setup including CI/CD and automated setup scripts
-
----
-
-*Development Update - Twoloop Games*
