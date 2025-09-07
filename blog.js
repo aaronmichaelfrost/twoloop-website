@@ -262,6 +262,8 @@ class MarkdownParser {
 
 // Initialize the markdown parser
 const markdownParser = new MarkdownParser();
+// Expose globally for URL routing
+window.markdownParser = markdownParser;
 
 // Blog functionality
 let currentPage = 'about';

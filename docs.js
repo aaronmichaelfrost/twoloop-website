@@ -13,6 +13,13 @@ class DocsSystem {
         // Load first doc by default
         if (this.docs.length > 0) {
             await this.loadDoc(this.docs[0].slug);
+            // Set the first doc link as active
+            setTimeout(() => {
+                const firstLink = document.querySelector('.docs-nav-link[data-slug="' + this.docs[0].slug + '"]');
+                if (firstLink) {
+                    this.setActiveNavItem(firstLink);
+                }
+            }, 100);
         }
     }
 
@@ -56,6 +63,16 @@ class DocsSystem {
                 const slug = e.target.dataset.slug;
                 this.loadDoc(slug);
                 this.setActiveNavItem(e.target);
+                
+                // Update URL to include the doc parameter
+                if (window.updateUrl) {
+                    window.updateUrl('docs', slug);
+                }
+                
+                // Update meta tags for the specific doc
+                if (window.updateMetaTags) {
+                    setTimeout(() => window.updateMetaTags('docs', slug), 100);
+                }
             }
         });
     }

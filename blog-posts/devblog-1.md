@@ -9,7 +9,6 @@ description: Covers first two weeks of work on Fractium after a long break.
 
 Covers first two weeks of work on Fractium after a long break.
 
-Fractium, once known as The Last Path, is our first person survival game that aims to create breathtaking and original social experiences. Fractium is unreleased and currently under development by twoloop games, under Aaron Frost and Rylan Krebbs.
 
 ### BACK ON TRACK
 *by Aaron*

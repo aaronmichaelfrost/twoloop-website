@@ -9,6 +9,22 @@
     <link rel="icon" type="image/png" href="twoloop_pattern.png">
     <link rel="shortcut icon" type="image/png" href="twoloop_pattern.png">
     
+    <!-- Open Graph / Social Media meta tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="twoloop">
+    <meta property="og:title" content="twoloop">
+    <meta property="og:description" content="twoloop games - Fractium development">
+    <meta property="og:image" content="fra.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="">
+    
+    <!-- Twitter Card meta tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="twoloop">
+    <meta name="twitter:description" content="twoloop games - Fractium development">
+    <meta name="twitter:image" content="fra.png">
+    
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -813,7 +829,7 @@
 
         /* Inline images within blog content */
         .blog-content-image {
-            margin: 2rem 0;
+            margin: 0.5rem 0;
             text-align: center;
         }
 
@@ -892,6 +908,27 @@
             font-weight: 600;
             display: flex;
             align-items: baseline;
+        }
+
+        /* Reduce spacing for headers immediately followed by tables */
+        .blog-post-content h1 + .table-container,
+        .blog-post-content h1 + .docs-table {
+            margin-top: -1rem;
+        }
+
+        .blog-post-content h2 + .table-container,
+        .blog-post-content h2 + .docs-table {
+            margin-top: -0.3rem;
+        }
+
+        .blog-post-content h3 + .table-container,
+        .blog-post-content h3 + .docs-table {
+            margin-top: -0.2rem;
+        }
+
+        .blog-post-content h4 + .table-container,
+        .blog-post-content h4 + .docs-table {
+            margin-top: -0.1rem;
         }
 
         .blog-post-content p {
@@ -1017,7 +1054,7 @@
             }
             
             .nav-links a {
-                font-size: 0.95rem !important;
+                font-size: 0.8rem !important;
             }
             
             .logo {
@@ -1379,6 +1416,27 @@
             margin: 1.2rem 0 0.2rem 0;
             color: white;
             font-weight: 600;
+        }
+
+        /* Reduce spacing for docs headers immediately followed by tables */
+        .docs-article h1 + .table-container,
+        .docs-article h1 + .docs-table {
+            margin-top: -0.3rem;
+        }
+
+        .docs-article h2 + .table-container,
+        .docs-article h2 + .docs-table {
+            margin-top: -0.3rem;
+        }
+
+        .docs-article h3 + .table-container,
+        .docs-article h3 + .docs-table {
+            margin-top: -0.1rem;
+        }
+
+        .docs-article h4 + .table-container,
+        .docs-article h4 + .docs-table {
+            margin-top: -0.1rem;
         }
 
         .docs-article p {
@@ -1780,7 +1838,7 @@
                     backgroundContainer.style.backgroundPosition = "center";
                     backgroundContainer.style.backgroundRepeat = "no-repeat";
                     backgroundContainer.style.backgroundAttachment = "fixed";
-                    backgroundContainer.style.filter = "blur(25px) grayscale(0%) saturate(100%)";
+                    backgroundContainer.style.filter = "blur(12.5px) grayscale(0%) saturate(100%)";
                     backgroundContainer.style.transform = "scale(1.1)";
                     backgroundOverlay.style.opacity = '0';
                     
@@ -1819,7 +1877,7 @@
                     backgroundContainer.style.backgroundPosition = "center";
                     backgroundContainer.style.backgroundRepeat = "no-repeat";
                     backgroundContainer.style.backgroundAttachment = "fixed";
-                    backgroundContainer.style.filter = "blur(25px) grayscale(0%) saturate(100%)";
+                    backgroundContainer.style.filter = "blur(12.5px) grayscale(0%) saturate(100%)";
                     backgroundContainer.style.transform = "scale(1.1)";
                     backgroundOverlay.style.opacity = '0';
                     
@@ -1892,6 +1950,8 @@
 
         document.getElementById('blogLink').addEventListener('click', (e) => {
             e.preventDefault();
+            updateUrl('blog');
+            updateMetaTags('blog');
             showPage('blog');
             setActiveLink('blogLink');
             showBlogList(); // Load the blog list
@@ -1899,6 +1959,8 @@
 
         document.getElementById('docsLink').addEventListener('click', (e) => {
             e.preventDefault();
+            updateUrl('docs');
+            updateMetaTags('docs');
             showPage('docs');
             setActiveLink('docsLink');
         });
@@ -1906,6 +1968,8 @@
         // Logo click handler - go to about page
         document.querySelector('.logo').addEventListener('click', (e) => {
             e.preventDefault();
+            updateUrl('about');
+            updateMetaTags('about');
             showPage('about');
             setActiveLink('aboutLink');
         });
@@ -1953,11 +2017,142 @@
             bottomGradient.style.opacity = gradientOpacity;
         });
         
+        // URL Routing system
+        function parseUrl() {
+            const hash = window.location.hash.slice(1); // Remove the #
+            const params = new URLSearchParams(window.location.search);
+            
+            // Support both hash-based and query parameter routing
+            const page = hash || params.get('page') || 'about';
+            const doc = params.get('doc') || null;
+            const post = params.get('post') || null;
+            
+            return { page, doc, post };
+        }
+        
+        function updateUrl(page, doc = null, post = null) {
+            let url = window.location.pathname;
+            const params = new URLSearchParams();
+            
+            if (page !== 'about') {
+                params.set('page', page);
+            }
+            if (doc) {
+                params.set('doc', doc);
+            }
+            if (post) {
+                params.set('post', post);
+            }
+            
+            const queryString = params.toString();
+            const newUrl = queryString ? `${url}?${queryString}` : url;
+            
+            // Update URL without reloading the page
+            window.history.pushState({ page, doc, post }, '', newUrl);
+        }
+        
+        // Expose updateUrl globally for use by docs.js and blog.js
+        window.updateUrl = updateUrl;
+        
+        function updateMetaTags(page, doc = null, post = null) {
+            const baseUrl = window.location.origin + window.location.pathname;
+            let title = 'twoloop';
+            let description = 'twoloop games - Fractium development';
+            let image = 'fra.png';
+            let url = baseUrl;
+            
+            if (page === 'blog' && post && window.markdownParser) {
+                // Find the specific blog post
+                const blogPost = window.markdownParser.posts.find(p => p.slug === post);
+                if (blogPost) {
+                    title = `${blogPost.metadata.title} - twoloop`;
+                    description = blogPost.metadata.description || 'twoloop games blog post';
+                    // Handle cover image path
+                    if (blogPost.metadata['cover-image']) {
+                        const coverImg = blogPost.metadata['cover-image'];
+                        image = coverImg.startsWith('http') || coverImg.startsWith('/') ? 
+                               coverImg : `blog-posts/${coverImg}`;
+                    }
+                    url = `${baseUrl}?page=blog&post=${post}`;
+                }
+            } else if (page === 'blog') {
+                title = 'Blog - twoloop';
+                description = 'twoloop games development blog';
+                url = `${baseUrl}?page=blog`;
+            } else if (page === 'docs') {
+                title = 'Documentation - twoloop';
+                description = 'twoloop games documentation and guides';
+                url = `${baseUrl}?page=docs`;
+                if (doc) {
+                    url += `&doc=${doc}`;
+                }
+            }
+            
+            // Update meta tags
+            document.querySelector('meta[property="og:title"]').setAttribute('content', title);
+            document.querySelector('meta[property="og:description"]').setAttribute('content', description);
+            document.querySelector('meta[property="og:image"]').setAttribute('content', image);
+            document.querySelector('meta[property="og:url"]').setAttribute('content', url);
+            
+            document.querySelector('meta[name="twitter:title"]').setAttribute('content', title);
+            document.querySelector('meta[name="twitter:description"]').setAttribute('content', description);
+            document.querySelector('meta[name="twitter:image"]').setAttribute('content', image);
+            
+            // Update page title
+            document.title = title;
+        }
+        
+        function handleRouting() {
+            const { page, doc, post } = parseUrl();
+            
+            // Update meta tags for the current page
+            updateMetaTags(page, doc, post);
+            
+            if (page === 'blog') {
+                showPage('blog');
+                // If a specific blog post is requested, load it
+                if (post && window.markdownParser) {
+                    // Wait for blog system to be ready, then load specific post
+                    setTimeout(() => {
+                        const blogPosts = document.querySelectorAll('.blog-post');
+                        blogPosts.forEach(postElement => {
+                            const postSlug = postElement.getAttribute('data-slug');
+                            if (postSlug === post) {
+                                postElement.click();
+                            }
+                        });
+                        // Update meta tags again after post is loaded
+                        setTimeout(() => updateMetaTags(page, doc, post), 100);
+                    }, 500);
+                }
+            } else if (page === 'docs') {
+                showPage('docs');
+                // If a specific doc is requested, load it
+                if (doc && window.docsSystem) {
+                    setTimeout(() => {
+                        window.docsSystem.loadDoc(doc);
+                    }, 100);
+                }
+            } else {
+                showPage('about');
+            }
+        }
+        
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', function(event) {
+            if (event.state) {
+                handleRouting();
+            }
+        });
+
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             const bottomGradient = document.querySelector('.gradient-overlay-bottom');
             const backgroundContainer = document.querySelector('.background-container');
             bottomGradient.style.opacity = 0.6;
+            
+            // Handle initial URL routing
+            handleRouting();
             
             // COMPLETELY RECREATE the sidebar outside all containers
             const originalSidebar = document.getElementById('docsSidebar');
