@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Blog Loading</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        pre {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .log {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 3px solid #4CAF50;
+            background: #1f2f1f;
+        }
+        .error {
+            border-left-color: #f44336;
+            background: #2f1f1f;
+        }
+    </style>
+</head>
+<body>
+    <h1>Blog Loading Debug</h1>
+    <div id="debug-output"></div>
+    
+    <h2>Posts Array Contents:</h2>
+    <pre id="posts-content"></pre>
+    
+    <h2>Generated HTML:</h2>
+    <div id="generated-html"></div>
+
+    <script src="blog.js"></script>
+    <script>
+        const debugOutput = document.getElementById('debug-output');
+        const postsContent = document.getElementById('posts-content');
+        const generatedHtml = document.getElementById('generated-html');
+        
+        // Override console.log to capture debug output
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const logDiv = document.createElement('div');
+            logDiv.className = 'log';
+            logDiv.textContent = args.join(' ');
+            debugOutput.appendChild(logDiv);
+        };
+        
+        const originalError = console.error;
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'log error';
+            errorDiv.textContent = 'ERROR: ' + args.join(' ');
+            debugOutput.appendChild(errorDiv);
+        };
+        
+        // Monitor the posts array
+        async function checkBlogPosts() {
+            console.log('=== CHECKING BLOG POSTS ===');
+            console.log('Current posts count:', markdownParser.posts.length);
+            
+            // Show current posts
+            postsContent.textContent = JSON.stringify(markdownParser.posts.map(p => ({
+                slug: p.slug,
+                title: p.metadata.title,
+                filename: p.filename
+            })), null, 2);
+            
+            // Generate blog list and show it
+            const blogListHtml = markdownParser.generateBlogList();
+            generatedHtml.innerHTML = blogListHtml;
+            
+            console.log('Generated HTML length:', blogListHtml.length);
+            console.log('Number of blog-post divs:', (blogListHtml.match(/class="blog-post"/g) || []).length);
+        }
+        
+        // Wait for initial load, then check
+        setTimeout(async () => {
+            await checkBlogPosts();
+            
+            // Check again after a short delay
+            setTimeout(checkBlogPosts, 2000);
+        }, 1000);
+    </script>
+</body>
+</html>
