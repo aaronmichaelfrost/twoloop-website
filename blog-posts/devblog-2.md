@@ -12,6 +12,7 @@ Got less done than we wanted, but steady progress continues.
 ### SUCCESSFUL STRESS TEST
 *by Aaron*
 
+
 We ran a smooth test with **800 items** (with rigidbodies), **250 NPCs** (aggro'd), and **25 player connections**. Next, with 250 players. 
 
 The goal is to prove systems scale, and so far, everything has worked flawlessly. Feels good to verify years of work and optimizations. 
@@ -35,7 +36,6 @@ It looked suitably chaotic, we'll share some footage soon.
 
 
 ### F1 CONSOLE
-*by Aaron*
 
 F1 console got a revamp:  
 ◦ Startup args now double as console commands  
