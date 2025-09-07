@@ -422,13 +422,13 @@
         /* Slow zoom animation for background */
         @keyframes slowZoom {
             0% {
-                transform: scale(1);
-            }
-            50% {
                 transform: scale(1.1);
             }
+            50% {
+                transform: scale(1.15);
+            }
             100% {
-                transform: scale(1);
+                transform: scale(1.1);
             }
         }
 
@@ -538,6 +538,7 @@
             background-repeat: no-repeat !important;
             background-attachment: fixed !important;
             transform: scale(1.1) !important;
+            animation: slowZoom 20s ease-in-out infinite;
         }
 
         /* Blog page overlay for better readability */
@@ -565,6 +566,7 @@
             background-repeat: no-repeat !important;
             background-attachment: fixed !important;
             transform: scale(1.1) !important;
+            animation: slowZoom 20s ease-in-out infinite;
         }
 
         body.docs-active::before {
@@ -1882,6 +1884,11 @@
             .docs-table td {
                 padding: 0.4rem;
             }
+
+            /* Mobile background zoom animation for about page */
+            body:not(.blog-active):not(.docs-active) .background-container {
+                animation: slowZoom 20s ease-in-out infinite;
+            }
         }
     </style>
 </head>
@@ -2192,6 +2199,14 @@
                     </div>
                 </section>
             `;
+            
+            // Add visible class to trigger animation after a brief delay
+            setTimeout(() => {
+                const footerSection = document.querySelector('.footer-section');
+                if (footerSection) {
+                    footerSection.classList.add('visible');
+                }
+            }, 100);
         }
 
         function setActiveLink(linkId) {
