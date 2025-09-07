@@ -135,9 +135,6 @@ class MarkdownParser {
         html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
         html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
 
-        // Process changelog sections with tree hierarchy
-        html = this.processChangelogSections(html);
-
         // Bold and italic
         html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
         html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
@@ -159,6 +156,9 @@ class MarkdownParser {
 
         // Clean up empty paragraphs
         html = html.replace(/<p>\s*<\/p>/g, '');
+
+        // Process changelog sections with tree hierarchy (after all other processing)
+        html = this.processChangelogSections(html);
 
         // Links
         html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
@@ -184,27 +184,67 @@ class MarkdownParser {
             console.log('=== FOUND CHANGELOG MATCH ===');
             console.log('Content preview:', content.substring(0, 500));
             
-            // For debugging, let's manually create some test structure
-            const testStructure = `
-                <div class="changelog-date">8/9/2025</div>
-                <div class="changelog-items">
-                    <ul>
-                        <li>got rid of second directional light that was left enabled by accident</li>
-                        <li>get rid of tile generation (we're not using it, yet)</li>
-                    </ul>
-                </div>
-                <div class="changelog-date">8/11/2025</div>
-                <div class="changelog-items">
-                    <ul>
-                        <li>made fog color a function of time</li>
-                        <li>got rid of scoreboard indicator in map UI</li>
-                    </ul>
-                </div>
-            `;
+            // Parse the actual changelog structure
+            let processedContent = content;
+            
+            // First, convert bold dates to date headers
+            // Match patterns like **8/9/2025** or **8/11/2025**
+            processedContent = processedContent.replace(/<p><strong>([^<]+)<\/strong><\/p>/g, '<div class="changelog-date">$1</div>');
+            
+            // Group consecutive list items under each date
+            const lines = processedContent.split('\n');
+            const groupedLines = [];
+            let currentDateItems = [];
+            let inItemsGroup = false;
+            
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+                
+                if (trimmedLine.includes('class="changelog-date"')) {
+                    // If we have accumulated items, wrap them in changelog-items div
+                    if (currentDateItems.length > 0) {
+                        groupedLines.push('<div class="changelog-items">');
+                        groupedLines.push('<ul>');
+                        groupedLines.push(...currentDateItems);
+                        groupedLines.push('</ul>');
+                        groupedLines.push('</div>');
+                        currentDateItems = [];
+                    }
+                    groupedLines.push(trimmedLine);
+                    inItemsGroup = true;
+                } else if (trimmedLine.startsWith('<li>') && inItemsGroup) {
+                    currentDateItems.push(trimmedLine);
+                } else if (trimmedLine && !trimmedLine.startsWith('<li>')) {
+                    // End of items group
+                    if (currentDateItems.length > 0) {
+                        groupedLines.push('<div class="changelog-items">');
+                        groupedLines.push('<ul>');
+                        groupedLines.push(...currentDateItems);
+                        groupedLines.push('</ul>');
+                        groupedLines.push('</div>');
+                        currentDateItems = [];
+                    }
+                    groupedLines.push(trimmedLine);
+                    inItemsGroup = false;
+                } else if (trimmedLine) {
+                    groupedLines.push(trimmedLine);
+                }
+            }
+            
+            // Handle any remaining items at the end
+            if (currentDateItems.length > 0) {
+                groupedLines.push('<div class="changelog-items">');
+                groupedLines.push('<ul>');
+                groupedLines.push(...currentDateItems);
+                groupedLines.push('</ul>');
+                groupedLines.push('</div>');
+            }
+            
+            const structuredContent = groupedLines.join('\n');
             
             return `<div class="changelog-section">
                 <div class="changelog-header">CHANGELOG</div>
-                ${testStructure}
+                ${structuredContent}
             </div>`;
         });
         

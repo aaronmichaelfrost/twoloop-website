@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Corrected Pipeline Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .changelog-section {
+            border: 1px solid #333;
+            margin: 20px 0;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 8px;
+        }
+        .changelog-header {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+        .changelog-date {
+            font-weight: bold;
+            color: #FFA500;
+            margin: 15px 0 10px 0;
+            font-size: 1.1em;
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+        }
+        .changelog-items {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+        .changelog-items ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+        .changelog-items li {
+            margin: 5px 0;
+            color: #ddd;
+            line-height: 1.4;
+        }
+        h2 {
+            color: #4CAF50;
+        }
+        pre {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-size: 12px;
+            border: 1px solid #444;
+        }
+        .step {
+            margin: 20px 0;
+            border: 1px solid #555;
+            padding: 15px;
+            border-radius: 5px;
+            background: #1f1f1f;
+        }
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .expected, .actual {
+            border: 1px solid #555;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .expected {
+            background: #1f2f1f;
+        }
+        .actual {
+            background: #2f1f1f;
+        }
+        .match {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .mismatch {
+            color: #f44336;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Corrected Markdown Pipeline Test</h1>
+    
+    <div class="step">
+        <h2>Original Markdown</h2>
+        <pre id="original"></pre>
+    </div>
+    
+    <div class="step">
+        <h2>Processed HTML (with corrected order)</h2>
+        <pre id="processed"></pre>
+    </div>
+    
+    <div class="step">
+        <h2>Final Result (Rendered)</h2>
+        <div id="final-result"></div>
+    </div>
+
+    <div class="comparison">
+        <div class="expected">
+            <h3>Expected Structure</h3>
+            <div class="changelog-section">
+                <div class="changelog-header">CHANGELOG</div>
+                <div class="changelog-date">8/9/2025</div>
+                <div class="changelog-items">
+                    <ul>
+                        <li>got rid of second directional light that was left enabled by accident</li>
+                        <li>get rid of tile generation (we're not using it, yet)</li>
+                    </ul>
+                </div>
+                <div class="changelog-date">8/11/2025</div>
+                <div class="changelog-items">
+                    <ul>
+                        <li>made fog color a function of time</li>
+                        <li>got rid of scoreboard indicator in map UI</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="actual">
+            <h3>Actual Result</h3>
+            <div id="actual-result"></div>
+        </div>
+    </div>
+
+    <div id="validation-result"></div>
+
+    <script>
+        // Original markdown excerpt
+        const originalMarkdown = `## CHANGELOG
+
+**8/9/2025**
+• got rid of second directional light that was left enabled by accident
+• get rid of tile generation (we're not using it, yet)
+
+**8/11/2025**
+• made fog color a function of time
+• got rid of scoreboard indicator in map UI`;
+
+        document.getElementById('original').textContent = originalMarkdown;
+
+        function processWithCorrectOrder(markdown) {
+            let html = markdown;
+
+            // Headers
+            html = html.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
+            html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+            html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+            html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+
+            // Bold and italic
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+            // Lists
+            html = html.replace(/^\* (.+$)/gm, '<li>$1</li>');
+            html = html.replace(/^• (.+$)/gm, '<li>$1</li>'); // Support bullet character
+            html = html.replace(/^(\d+)\. (.+$)/gm, '<li>$2</li>');
+            
+            // Wrap consecutive list items in ul/ol tags
+            html = html.replace(/(<li>.*<\/li>)\s*(<li>.*<\/li>)/g, '$1\n$2');
+            html = html.replace(/(<li>.*?<\/li>(?:\s*<li>.*?<\/li>)*)/gs, '<ul>$1</ul>');
+
+            // Paragraphs
+            html = html.replace(/^(?!<[hup]|<li|<\/[uo]|<pre|<code|<div class="blog-content-image"|<div class="author-attribution"|<div class="discord-images-row"|__CODE_BLOCK_)(.+$)/gm, '<p>$1</p>');
+
+            // Clean up empty paragraphs
+            html = html.replace(/<p>\s*<\/p>/g, '');
+
+            // Process changelog sections with tree hierarchy (after all other processing)
+            html = processChangelogSections(html);
+
+            return html;
+        }
+
+        function processChangelogSections(html) {
+            const changelogRegex = /(<h2>(?:CHANGELOG|Changelog)<\/h2>)([\s\S]*?)(?=<h[12]|$)/gi;
+            
+            return html.replace(changelogRegex, (match, header, content) => {
+                console.log('Processing changelog content:', content);
+                
+                let processedContent = content;
+                
+                // Convert bold dates to date headers
+                processedContent = processedContent.replace(/<p><strong>([^<]+)<\/strong><\/p>/g, '<div class="changelog-date">$1</div>');
+                
+                // Group consecutive list items under each date
+                const lines = processedContent.split('\n');
+                const groupedLines = [];
+                let currentDateItems = [];
+                let inItemsGroup = false;
+                
+                for (const line of lines) {
+                    const trimmedLine = line.trim();
+                    
+                    if (trimmedLine.includes('class="changelog-date"')) {
+                        // If we have accumulated items, wrap them in changelog-items div
+                        if (currentDateItems.length > 0) {
+                            groupedLines.push('<div class="changelog-items">');
+                            groupedLines.push('<ul>');
+                            groupedLines.push(...currentDateItems);
+                            groupedLines.push('</ul>');
+                            groupedLines.push('</div>');
+                            currentDateItems = [];
+                        }
+                        groupedLines.push(trimmedLine);
+                        inItemsGroup = true;
+                    } else if (trimmedLine.startsWith('<li>') && inItemsGroup) {
+                        currentDateItems.push(trimmedLine);
+                    } else if (trimmedLine && !trimmedLine.startsWith('<li>')) {
+                        // End of items group
+                        if (currentDateItems.length > 0) {
+                            groupedLines.push('<div class="changelog-items">');
+                            groupedLines.push('<ul>');
+                            groupedLines.push(...currentDateItems);
+                            groupedLines.push('</ul>');
+                            groupedLines.push('</div>');
+                            currentDateItems = [];
+                        }
+                        groupedLines.push(trimmedLine);
+                        inItemsGroup = false;
+                    } else if (trimmedLine) {
+                        groupedLines.push(trimmedLine);
+                    }
+                }
+                
+                // Handle any remaining items at the end
+                if (currentDateItems.length > 0) {
+                    groupedLines.push('<div class="changelog-items">');
+                    groupedLines.push('<ul>');
+                    groupedLines.push(...currentDateItems);
+                    groupedLines.push('</ul>');
+                    groupedLines.push('</div>');
+                }
+                
+                const structuredContent = groupedLines.join('\n');
+                
+                return `<div class="changelog-section">
+                    <div class="changelog-header">CHANGELOG</div>
+                    ${structuredContent}
+                </div>`;
+            });
+        }
+
+        // Process the markdown
+        const processedHtml = processWithCorrectOrder(originalMarkdown);
+        document.getElementById('processed').textContent = processedHtml;
+        document.getElementById('final-result').innerHTML = processedHtml;
+        document.getElementById('actual-result').innerHTML = processedHtml;
+
+        // Validation
+        const hasCorrectStructure = processedHtml.includes('class="changelog-section"') &&
+                                   processedHtml.includes('class="changelog-date"') &&
+                                   processedHtml.includes('class="changelog-items"');
+
+        const validationEl = document.getElementById('validation-result');
+        if (hasCorrectStructure) {
+            validationEl.innerHTML = '<div class="match">✓ Structure validation PASSED - All expected CSS classes found</div>';
+        } else {
+            validationEl.innerHTML = '<div class="mismatch">✗ Structure validation FAILED - Missing expected CSS classes</div>';
+        }
+
+        console.log('Corrected pipeline test completed');
+        console.log('Structure validation:', hasCorrectStructure);
+    </script>
+</body>
+</html>

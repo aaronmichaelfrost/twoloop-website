@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Changelog Parser</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .changelog-section {
+            border: 1px solid #333;
+            margin: 20px 0;
+            padding: 20px;
+        }
+        .changelog-header {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+        .changelog-date {
+            font-weight: bold;
+            color: #FFA500;
+            margin: 15px 0 10px 0;
+            font-size: 1.1em;
+        }
+        .changelog-items {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+        .changelog-items ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+        .changelog-items li {
+            margin: 5px 0;
+            color: #ddd;
+        }
+        h2 {
+            color: #4CAF50;
+        }
+        pre {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Changelog Parser Test</h1>
+    
+    <h2>Input Markdown (simulated after initial processing):</h2>
+    <pre id="input"></pre>
+    
+    <h2>Output HTML:</h2>
+    <div id="output"></div>
+    
+    <h2>Raw HTML (for debugging):</h2>
+    <pre id="raw-output"></pre>
+
+    <script>
+        // Copy the exact processChangelogSections function from blog.js
+        function processChangelogSections(html) {
+            console.log('=== CHANGELOG PROCESSING START ===');
+            console.log('Input HTML length:', html.length);
+            
+            // Look for sections that start with ## CHANGELOG or ## Changelog
+            const changelogRegex = /(<h2>(?:CHANGELOG|Changelog)<\/h2>)([\s\S]*?)(?=<h[12]|$)/gi;
+            
+            const result = html.replace(changelogRegex, (match, header, content) => {
+                console.log('=== FOUND CHANGELOG MATCH ===');
+                console.log('Content preview:', content.substring(0, 500));
+                
+                // Parse the actual changelog structure
+                let processedContent = content;
+                
+                // First, convert bold dates to date headers
+                // Match patterns like **8/9/2025** or **8/11/2025**
+                processedContent = processedContent.replace(/<p><strong>([^<]+)<\/strong><\/p>/g, '<div class="changelog-date">$1</div>');
+                
+                // Group consecutive list items under each date
+                const lines = processedContent.split('\n');
+                const groupedLines = [];
+                let currentDateItems = [];
+                let inItemsGroup = false;
+                
+                for (const line of lines) {
+                    const trimmedLine = line.trim();
+                    
+                    if (trimmedLine.includes('class="changelog-date"')) {
+                        // If we have accumulated items, wrap them in changelog-items div
+                        if (currentDateItems.length > 0) {
+                            groupedLines.push('<div class="changelog-items">');
+                            groupedLines.push('<ul>');
+                            groupedLines.push(...currentDateItems);
+                            groupedLines.push('</ul>');
+                            groupedLines.push('</div>');
+                            currentDateItems = [];
+                        }
+                        groupedLines.push(trimmedLine);
+                        inItemsGroup = true;
+                    } else if (trimmedLine.startsWith('<li>') && inItemsGroup) {
+                        currentDateItems.push(trimmedLine);
+                    } else if (trimmedLine && !trimmedLine.startsWith('<li>')) {
+                        // End of items group
+                        if (currentDateItems.length > 0) {
+                            groupedLines.push('<div class="changelog-items">');
+                            groupedLines.push('<ul>');
+                            groupedLines.push(...currentDateItems);
+                            groupedLines.push('</ul>');
+                            groupedLines.push('</div>');
+                            currentDateItems = [];
+                        }
+                        groupedLines.push(trimmedLine);
+                        inItemsGroup = false;
+                    } else if (trimmedLine) {
+                        groupedLines.push(trimmedLine);
+                    }
+                }
+                
+                // Handle any remaining items at the end
+                if (currentDateItems.length > 0) {
+                    groupedLines.push('<div class="changelog-items">');
+                    groupedLines.push('<ul>');
+                    groupedLines.push(...currentDateItems);
+                    groupedLines.push('</ul>');
+                    groupedLines.push('</div>');
+                }
+                
+                const structuredContent = groupedLines.join('\n');
+                
+                return `<div class="changelog-section">
+                    <div class="changelog-header">CHANGELOG</div>
+                    ${structuredContent}
+                </div>`;
+            });
+            
+            console.log('=== CHANGELOG PROCESSING END ===');
+            return result;
+        }
+
+        // Test data - simulate what the markdown would look like after basic HTML conversion
+        const testInput = `<h2>CHANGELOG</h2>
+
+<p><strong>8/9/2025</strong></p>
+<ul>
+<li>got rid of second directional light that was left enabled by accident</li>
+<li>get rid of tile generation (we're not using it, yet)</li>
+</ul>
+
+<p><strong>8/11/2025</strong></p>
+<ul>
+<li>made fog color a function of time</li>
+<li>got rid of scoreboard indicator in map UI</li>
+<li>got rid of game timer and UI in map UI</li>
+<li>fixed unclickable spawn point UI</li>
+</ul>
+
+<p><strong>8/12/2025</strong></p>
+<ul>
+<li>added server side validation on remote inventory access</li>
+<li>bug fix – you cannot consume med-kits if they are not in your inventory</li>
+</ul>`;
+
+        // Show the input
+        document.getElementById('input').textContent = testInput;
+
+        // Process and show the output
+        const result = processChangelogSections(testInput);
+        document.getElementById('output').innerHTML = result;
+        document.getElementById('raw-output').textContent = result;
+
+        console.log('Test completed. Check the output above.');
+    </script>
+</body>
+</html>

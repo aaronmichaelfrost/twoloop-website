@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Full Pipeline Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .changelog-section {
+            border: 1px solid #333;
+            margin: 20px 0;
+            padding: 20px;
+        }
+        .changelog-header {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+        .changelog-date {
+            font-weight: bold;
+            color: #FFA500;
+            margin: 15px 0 10px 0;
+            font-size: 1.1em;
+        }
+        .changelog-items {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+        .changelog-items ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+        .changelog-items li {
+            margin: 5px 0;
+            color: #ddd;
+        }
+        h2 {
+            color: #4CAF50;
+        }
+        pre {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-size: 12px;
+        }
+        .step {
+            margin: 20px 0;
+            border: 1px solid #555;
+            padding: 15px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Full Markdown Pipeline Test</h1>
+    
+    <div class="step">
+        <h2>Step 1: Original Markdown</h2>
+        <pre id="original"></pre>
+    </div>
+    
+    <div class="step">
+        <h2>Step 2: After Headers Processing</h2>
+        <pre id="after-headers"></pre>
+    </div>
+    
+    <div class="step">
+        <h2>Step 3: After Bold Processing</h2>
+        <pre id="after-bold"></pre>
+    </div>
+    
+    <div class="step">
+        <h2>Step 4: After List Processing</h2>
+        <pre id="after-lists"></pre>
+    </div>
+    
+    <div class="step">
+        <h2>Step 5: After Changelog Processing</h2>
+        <pre id="after-changelog"></pre>
+    </div>
+    
+    <div class="step">
+        <h2>Final Result (Rendered):</h2>
+        <div id="final-result"></div>
+    </div>
+
+    <script>
+        // Original markdown excerpt
+        const originalMarkdown = `## CHANGELOG
+
+**8/9/2025**
+• got rid of second directional light that was left enabled by accident
+• get rid of tile generation (we're not using it, yet)
+
+**8/11/2025**
+• made fog color a function of time
+• got rid of scoreboard indicator in map UI
+• got rid of game timer and UI in map UI`;
+
+        document.getElementById('original').textContent = originalMarkdown;
+
+        // Step 1: Headers
+        let html = originalMarkdown;
+        html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+        document.getElementById('after-headers').textContent = html;
+
+        // Step 2: Bold
+        html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        document.getElementById('after-bold').textContent = html;
+
+        // Step 3: Lists
+        html = html.replace(/^• (.+$)/gm, '<li>$1</li>');
+        html = html.replace(/(<li>.*<\/li>)\s*(<li>.*<\/li>)/g, '$1\n$2');
+        html = html.replace(/(<li>.*?<\/li>(?:\s*<li>.*?<\/li>)*)/gs, '<ul>$1</ul>');
+        document.getElementById('after-lists').textContent = html;
+
+        // Step 4: Paragraphs (simplified)
+        html = html.replace(/^(?!<[hup]|<li|<\/[uo])(.+$)/gm, '<p>$1</p>');
+        html = html.replace(/<p>\s*<\/p>/g, '');
+
+        // Copy the processChangelogSections function
+        function processChangelogSections(html) {
+            const changelogRegex = /(<h2>(?:CHANGELOG|Changelog)<\/h2>)([\s\S]*?)(?=<h[12]|$)/gi;
+            
+            return html.replace(changelogRegex, (match, header, content) => {
+                let processedContent = content;
+                
+                // Convert bold dates to date headers
+                processedContent = processedContent.replace(/<p><strong>([^<]+)<\/strong><\/p>/g, '<div class="changelog-date">$1</div>');
+                
+                // Group consecutive list items under each date
+                const lines = processedContent.split('\n');
+                const groupedLines = [];
+                let currentDateItems = [];
+                let inItemsGroup = false;
+                
+                for (const line of lines) {
+                    const trimmedLine = line.trim();
+                    
+                    if (trimmedLine.includes('class="changelog-date"')) {
+                        // If we have accumulated items, wrap them in changelog-items div
+                        if (currentDateItems.length > 0) {
+                            groupedLines.push('<div class="changelog-items">');
+                            groupedLines.push('<ul>');
+                            groupedLines.push(...currentDateItems);
+                            groupedLines.push('</ul>');
+                            groupedLines.push('</div>');
+                            currentDateItems = [];
+                        }
+                        groupedLines.push(trimmedLine);
+                        inItemsGroup = true;
+                    } else if (trimmedLine.startsWith('<li>') && inItemsGroup) {
+                        currentDateItems.push(trimmedLine);
+                    } else if (trimmedLine && !trimmedLine.startsWith('<li>')) {
+                        // End of items group
+                        if (currentDateItems.length > 0) {
+                            groupedLines.push('<div class="changelog-items">');
+                            groupedLines.push('<ul>');
+                            groupedLines.push(...currentDateItems);
+                            groupedLines.push('</ul>');
+                            groupedLines.push('</div>');
+                            currentDateItems = [];
+                        }
+                        groupedLines.push(trimmedLine);
+                        inItemsGroup = false;
+                    } else if (trimmedLine) {
+                        groupedLines.push(trimmedLine);
+                    }
+                }
+                
+                // Handle any remaining items at the end
+                if (currentDateItems.length > 0) {
+                    groupedLines.push('<div class="changelog-items">');
+                    groupedLines.push('<ul>');
+                    groupedLines.push(...currentDateItems);
+                    groupedLines.push('</ul>');
+                    groupedLines.push('</div>');
+                }
+                
+                const structuredContent = groupedLines.join('\n');
+                
+                return `<div class="changelog-section">
+                    <div class="changelog-header">CHANGELOG</div>
+                    ${structuredContent}
+                </div>`;
+            });
+        }
+
+        // Step 5: Changelog processing
+        html = processChangelogSections(html);
+        document.getElementById('after-changelog').textContent = html;
+        document.getElementById('final-result').innerHTML = html;
+
+        console.log('Pipeline test completed');
+    </script>
+</body>
+</html>
