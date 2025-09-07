@@ -1058,21 +1058,23 @@
             position: absolute;
             left: -13px;
             top: 50%;
-            width: 20px;
+            width: 12px;
             height: 1px;
             background: rgba(255, 255, 255, 0.3);
+            z-index: 1; /* Ensure visibility */
         }
 
         .changelog-date::after {
             content: '';
             position: absolute;
-            left: -15px;
+            left: -3px;
             top: 50%;
             transform: translateY(-50%);
             width: 3px;
             height: 3px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.5);
+            z-index: 2; /* Ensure visibility */
         }
 
         .changelog-items {
@@ -1104,18 +1106,20 @@
             width: 15px;
             height: 1px;
             background: rgba(255, 255, 255, 0.3);
+            z-index: 1; /* Ensure visibility */
         }
 
         .changelog-items li::after {
             content: '';
             position: absolute;
-            left: -12px;
+            left: 3px;
             top: 0.6rem;
             transform: translateY(-50%);
             width: 3px;
             height: 3px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.5);
+            z-index: 2; /* Ensure visibility */
         }
 
         /* Loading states */
@@ -1523,15 +1527,15 @@
             padding-left: 20px;
         }
 
-        /* Vertical line from "Documentation" header */
+        /* Vertical line from "Documentation" header - use JavaScript to set precise height */
         .docs-nav-list::before {
             content: '';
             position: absolute;
             left: 8px;
             top: 0;
-            bottom: 0;
             width: 1px;
             background: rgba(255, 255, 255, 0.3);
+            /* Height will be set by JavaScript to end at last item */
         }
 
         .docs-sidebar-header {
@@ -2113,51 +2117,6 @@
                     
                     hideLoadingState();
                 });
-            } else if (pageId === 'changelog') {
-                showLoadingState();
-                
-                // Use the same background as about page
-                const changelogBg = window.innerWidth <= 768 ? 'main-bg-static.png' : '7.gif';
-                
-                // Preload changelog background (now sets immediately)
-                preloadAndSwitch(changelogBg, () => {
-                    mainContent.style.display = 'block';
-                    blogPage.style.display = 'none';
-                    docsContainer.style.display = 'none';
-                    scrollArrow.style.display = 'block';
-                    
-                    // Generate changelog content
-                    generateChangelogContent();
-                    
-                    // Reset background properties (removed background = "" line)
-                    backgroundContainer.style.backgroundSize = "cover";
-                    backgroundContainer.style.backgroundPosition = "center";
-                    backgroundContainer.style.backgroundRepeat = "no-repeat";
-                    backgroundContainer.style.backgroundAttachment = "fixed";
-                    backgroundContainer.style.filter = "";
-                    backgroundContainer.style.transform = "";
-                    
-                    // Reset GIF cycle to start from the first GIF
-                    if (window.resetGifCycle) {
-                        window.resetGifCycle();
-                    }
-                    
-                    // Show arrow after shorter delay if user hasn't scrolled down
-                    if (window.arrowCanBeVisible && window.scrollY <= 100) {
-                        setTimeout(() => {
-                            if (window.scrollY <= 100 && !body.classList.contains('blog-active') && !body.classList.contains('docs-active')) {
-                                scrollArrow.classList.add('visible');
-                            }
-                        }, 100);
-                    }
-                    
-                    // Hide the fixed sidebar
-                    if (window.updateSidebarVisibility) {
-                        window.updateSidebarVisibility();
-                    }
-                    
-                    hideLoadingState();
-                });
             } else {
                 // About page
                 const aboutBg = window.innerWidth <= 768 ? 'main-bg-static.png' : '7.gif';
@@ -2224,73 +2183,42 @@
             `;
         }
 
-        function generateChangelogContent() {
-            const mainContent = document.getElementById('mainContent');
-            mainContent.innerHTML = `
-                <!-- Changelog section -->
-                <section class="section">
-                    <div class="section-content">
-                        <h1>Changelog</h1>
-                        
-                        <div class="changelog-section">
-                            <div class="changelog-header">Version 0.3.0</div>
-                            
-                            <div class="changelog-date">December 2024</div>
-                            <ul class="changelog-items">
-                                <li>Added new weapon balancing system</li>
-                                <li>Improved network synchronization</li>
-                                <li>Fixed critical memory leak in rendering</li>
-                                <li>Enhanced particle effects</li>
-                            </ul>
-                            
-                            <div class="changelog-date">November 2024</div>
-                            <ul class="changelog-items">
-                                <li>New map: Crystal Caverns</li>
-                                <li>Updated UI design</li>
-                                <li>Performance optimizations</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="changelog-section">
-                            <div class="changelog-header">Version 0.2.0</div>
-                            
-                            <div class="changelog-date">October 2024</div>
-                            <ul class="changelog-items">
-                                <li>Multiplayer lobby system</li>
-                                <li>Voice chat integration</li>
-                                <li>Anti-cheat improvements</li>
-                            </ul>
-                            
-                            <div class="changelog-date">September 2024</div>
-                            <ul class="changelog-items">
-                                <li>Beta release preparation</li>
-                                <li>Bug fixes and stability</li>
-                                <li>Documentation updates</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="changelog-section">
-                            <div class="changelog-header">Version 0.1.0</div>
-                            
-                            <div class="changelog-date">August 2024</div>
-                            <ul class="changelog-items">
-                                <li>Initial alpha release</li>
-                                <li>Core gameplay mechanics</li>
-                                <li>Basic multiplayer support</li>
-                                <li>Fundamental weapon systems</li>
-                            </ul>
-                        </div>
-                    </div>
-                </section>
-            `;
-        }
-
         function setActiveLink(linkId) {
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
             });
             document.getElementById(linkId).classList.add('active');
         }
+
+        function fixDocsNavigationLineHeight() {
+            // Fix the docs navigation vertical line to end at the last navigation item
+            const docsList = document.querySelector('.docs-nav-list');
+            if (docsList) {
+                const listBefore = window.getComputedStyle(docsList, '::before');
+                const navItems = docsList.querySelectorAll('.docs-nav-item');
+                if (navItems.length > 0) {
+                    const lastItem = navItems[navItems.length - 1];
+                    const listRect = docsList.getBoundingClientRect();
+                    const lastItemRect = lastItem.getBoundingClientRect();
+                    const height = lastItemRect.bottom - listRect.top;
+                    
+                    // Set a CSS custom property that we can use
+                    docsList.style.setProperty('--nav-line-height', `${height}px`);
+                    
+                    // Update the CSS rule dynamically
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        .docs-nav-list::before {
+                            height: var(--nav-line-height, auto) !important;
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }
+        }
+
+        // Expose the function globally so docs.js can call it
+        window.fixDocsNavigationLineHeight = fixDocsNavigationLineHeight;
 
         // Event listeners
         window.addEventListener('scroll', updateGradients);
@@ -2438,10 +2366,6 @@
                 if (doc) {
                     url += `&doc=${doc}`;
                 }
-            } else if (page === 'changelog') {
-                title = 'Changelog - twoloop';
-                description = 'twoloop games development changelog and updates';
-                url = `${baseUrl}?page=changelog`;
             }
             
             // Update meta tags
@@ -2490,11 +2414,13 @@
                 if (doc && window.docsSystem) {
                     setTimeout(() => {
                         window.docsSystem.loadDoc(doc);
+                        // Fix navigation line height after docs load
+                        setTimeout(fixDocsNavigationLineHeight, 200);
                     }, 100);
+                } else {
+                    // Fix navigation line height after docs load
+                    setTimeout(fixDocsNavigationLineHeight, 300);
                 }
-            } else if (page === 'changelog') {
-                setActiveLink('aboutLink'); // Use about link for now since there's no dedicated changelog nav
-                showPage('changelog');
             } else {
                 setActiveLink('aboutLink');
                 showPage('about');

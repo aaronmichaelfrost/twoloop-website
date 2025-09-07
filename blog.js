@@ -177,15 +177,6 @@ class MarkdownParser {
         console.log('=== CHANGELOG PROCESSING START ===');
         console.log('Input HTML length:', html.length);
         
-        // First, let's see if we can find the changelog section at all
-        const changelogIndex = html.indexOf('<h2>CHANGELOG</h2>');
-        console.log('CHANGELOG header index:', changelogIndex);
-        
-        if (changelogIndex === -1) {
-            console.log('No CHANGELOG header found!');
-            return html;
-        }
-        
         // Look for sections that start with ## CHANGELOG or ## Changelog
         const changelogRegex = /(<h2>(?:CHANGELOG|Changelog)<\/h2>)([\s\S]*?)(?=<h[12]|$)/gi;
         
@@ -195,35 +186,27 @@ class MarkdownParser {
             console.log('=== FOUND CHANGELOG MATCH ===');
             console.log('Header:', header);
             console.log('Content length:', content.length);
-            console.log('Content preview (first 800 chars):', content.substring(0, 800));
             
-            // Look for bold dates manually
-            const boldDateRegex = /<p><strong>([^<]+)<\/strong><\/p>/g;
-            let dateMatch;
-            const dates = [];
-            while ((dateMatch = boldDateRegex.exec(content)) !== null) {
-                dates.push(dateMatch[1]);
-            }
-            console.log('Found dates:', dates);
+            // Process the changelog content to add proper tree hierarchy
+            let processedContent = content;
             
-            // Look for lists manually
-            const listMatches = content.match(/<ul>[\s\S]*?<\/ul>/g);
-            console.log('Found lists:', listMatches ? listMatches.length : 0);
-            if (listMatches) {
-                listMatches.forEach((list, i) => {
-                    console.log(`List ${i + 1}:`, list.substring(0, 200));
-                });
-            }
+            // Replace bold dates with changelog-date structure
+            processedContent = processedContent.replace(/<p><strong>([^<]+)<\/strong><\/p>/g, 
+                '<div class="changelog-date">$1</div>');
             
-            // Simple replacement for now - just wrap everything
-            const simpleResult = `<div class="changelog-section">
+            // Replace lists that follow dates with changelog-items structure
+            processedContent = processedContent.replace(/<ul>([\s\S]*?)<\/ul>/g, 
+                '<ul class="changelog-items">$1</ul>');
+            
+            // Wrap everything in a changelog-section
+            const wrappedResult = `<div class="changelog-section">
                 <div class="changelog-header">CHANGELOG</div>
-                ${content}
+                ${processedContent}
             </div>`;
             
             console.log('=== CHANGELOG PROCESSING RESULT ===');
-            console.log('Result length:', simpleResult.length);
-            return simpleResult;
+            console.log('Result length:', wrappedResult.length);
+            return wrappedResult;
         });
         
         if (!foundMatch) {
