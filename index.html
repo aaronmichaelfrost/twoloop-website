@@ -419,19 +419,6 @@
             }
         }
 
-        /* Slow zoom animation for background */
-        @keyframes slowZoom {
-            0% {
-                transform: scale(1.1);
-            }
-            50% {
-                transform: scale(1.15);
-            }
-            100% {
-                transform: scale(1.1);
-            }
-        }
-
         /* Fade in animation for back button */
         @keyframes fadeInDelay {
             0% {
@@ -665,6 +652,27 @@
             opacity: 1;
             transform: translateY(30px);
             transition: opacity 0.6s ease, transform 0.6s ease;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.3) 0%,
+                rgba(255, 255, 255, 1) 30%,
+                rgba(255, 255, 255, 1) 70%,
+                rgba(255, 255, 255, 0.3) 100%
+            );
+            background-size: 300% 100%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes textShimmer {
+            0% {
+                background-position: -300% 0;
+            }
+            100% {
+                background-position: 300% 0;
+            }
         }
 
         .blog-content h1.animate-in {
@@ -1886,9 +1894,22 @@
 
         /* Background zoom animation for all pages that need it */
         .background-container.mobile-zoom {
-            animation: slowZoom 20s ease-in-out infinite !important;
+            animation: slowZoom 10s ease-in-out infinite !important;
+        }
+        
+        @keyframes slowZoom {
+            0% {
+                transform: scale(1.05);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1.05);
+            }
         }
     </style>
+</head>
 </head>
 <body>
     <!-- Background layers -->
@@ -2295,6 +2316,59 @@
 
         // Initialize
         updateGradients();
+        
+        // Footer scroll animation - triggers EVERY time you scroll down to it
+        let lastScrollY = 0;
+        let footerAnimationCooldown = false;
+        
+        function checkFooterVisibility() {
+            const footerSection = document.querySelector('.footer-section');
+            if (!footerSection || footerAnimationCooldown) return;
+            
+            const currentScrollY = window.scrollY;
+            const rect = footerSection.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            
+            // Only trigger if scrolling DOWN and footer is in viewport
+            if (currentScrollY > lastScrollY && rect.top < windowHeight * 0.8) {
+                // Start cooldown to prevent rapid re-triggering
+                footerAnimationCooldown = true;
+                
+                // Reset animation elements
+                const h2 = footerSection.querySelector('h2');
+                const p = footerSection.querySelector('p');
+                
+                if (h2) {
+                    h2.style.opacity = '0';
+                    h2.style.transform = 'translateX(-30px)';
+                }
+                if (p) {
+                    p.style.opacity = '0';
+                    p.style.transform = 'translateX(-30px)';
+                }
+                
+                // Remove visible class
+                footerSection.classList.remove('visible');
+                
+                // Force reflow
+                footerSection.offsetHeight;
+                
+                // Add visible class to trigger animation
+                setTimeout(() => {
+                    footerSection.classList.add('visible');
+                }, 50);
+                
+                // Reset cooldown after animation completes
+                setTimeout(() => {
+                    footerAnimationCooldown = false;
+                }, 1000);
+            }
+            
+            lastScrollY = currentScrollY;
+        }
+        
+        // Add scroll listener for footer animation
+        window.addEventListener('scroll', checkFooterVisibility);
     </script>
     <script>
         // Blur effect on scroll
