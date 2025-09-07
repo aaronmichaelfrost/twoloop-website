@@ -68,7 +68,7 @@ We tested the server-side validation ourselves and can see it working, kicking p
 ### NEW WEBSITE
 Before, I was using a Wordpress template. Now, we're using something arguably worse: raw HTML, CSS, and Javascript.
 
-Soon, this will host a wiki and convienant documentation for server owners. All pages on this website are generated from markdown and GitHub pushes auto-deploy are reflected automatically; it's pretty efficient.
+Soon, this will host a wiki and convienant documentation for server owners. All pages on this website are generated from markdown and GitHub source pushes are reflected automatically; it's pretty efficient.
 
 ### OTHER WORK
 We’ve found lots of bugs (**at least 41** total so far) and are talking about a different art style possibly.
