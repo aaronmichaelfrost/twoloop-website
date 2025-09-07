@@ -10,12 +10,95 @@ import os
 import sys
 import json
 import glob
+import re
+from urllib.parse import urlparse, parse_qs
 
 # Set the port
-PORT = 8000
+PORT = 8001
 
 # Change to the directory containing this script
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+def parse_blog_post_metadata(filepath):
+    """Parse frontmatter metadata from a markdown file."""
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Extract frontmatter
+        frontmatter_match = re.match(r'^---\s*\n(.*?)\n---\s*\n', content, re.DOTALL)
+        if not frontmatter_match:
+            return {}
+        
+        frontmatter = frontmatter_match.group(1)
+        metadata = {}
+        
+        for line in frontmatter.split('\n'):
+            if ':' in line:
+                key, value = line.split(':', 1)
+                metadata[key.strip()] = value.strip()
+        
+        return metadata
+    except Exception as e:
+        print(f"Error parsing {filepath}: {e}")
+        return {}
+
+def inject_meta_tags(html_content, page, post_slug=None):
+    """Inject appropriate meta tags into HTML content."""
+    base_url = "http://localhost:8001"  # In production, this would be https://twoloop.net
+    
+    # Default values
+    title = "twoloop"
+    description = "twoloop games - Fractium development"
+    image = f"{base_url}/playtest.png"
+    url = base_url
+    
+    if page == 'blog' and post_slug:
+        # Try to load blog post metadata
+        blog_post_path = f"blog-posts/{post_slug}.md"
+        if os.path.exists(blog_post_path):
+            metadata = parse_blog_post_metadata(blog_post_path)
+            
+            if metadata:
+                title = f"{metadata.get('title', post_slug)} - twoloop"
+                description = metadata.get('description', 'twoloop games blog post')
+                
+                # Use cover image if available
+                cover_image = metadata.get('cover-image', '')
+                if cover_image:
+                    if not (cover_image.startswith('http') or cover_image.startswith('//')):
+                        image = f"{base_url}/blog-posts/{cover_image}"
+                    else:
+                        image = cover_image
+                
+                url = f"{base_url}/?page=blog&post={post_slug}"
+    elif page == 'blog':
+        title = "Blog - twoloop"
+        description = "twoloop games development blog"
+        url = f"{base_url}/?page=blog"
+    elif page == 'docs':
+        title = "Documentation - twoloop"
+        description = "twoloop games documentation and guides"
+        url = f"{base_url}/?page=docs"
+    
+    # Replace meta tags
+    replacements = {
+        r'<meta property="og:title" content="[^"]*">': f'<meta property="og:title" content="{title}">',
+        r'<meta property="og:description" content="[^"]*">': f'<meta property="og:description" content="{description}">',
+        r'<meta property="og:image" content="[^"]*">': f'<meta property="og:image" content="{image}">',
+        r'<meta property="og:image:secure_url" content="[^"]*">': f'<meta property="og:image:secure_url" content="{image}">',
+        r'<meta property="og:url" content="[^"]*">': f'<meta property="og:url" content="{url}">',
+        r'<meta name="twitter:title" content="[^"]*">': f'<meta name="twitter:title" content="{title}">',
+        r'<meta name="twitter:description" content="[^"]*">': f'<meta name="twitter:description" content="{description}">',
+        r'<meta name="twitter:image" content="[^"]*">': f'<meta name="twitter:image" content="{image}">',
+        r'<meta name="description" content="[^"]*">': f'<meta name="description" content="{description}">',
+        r'<title>[^<]*</title>': f'<title>{title}</title>'
+    }
+    
+    for pattern, replacement in replacements.items():
+        html_content = re.sub(pattern, replacement, html_content)
+    
+    return html_content
 
 class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
@@ -42,6 +125,34 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             
             self.wfile.write(json.dumps(blog_posts).encode())
             return
+        
+        # Handle index.html requests with meta tag injection
+        if self.path == '/' or self.path.startswith('/?'):
+            # Parse query parameters
+            parsed_url = urlparse(self.path)
+            query_params = parse_qs(parsed_url.query)
+            
+            page = query_params.get('page', ['about'])[0]
+            post_slug = query_params.get('post', [None])[0]
+            
+            # Read the original index.html
+            try:
+                with open('index.html', 'r', encoding='utf-8') as f:
+                    html_content = f.read()
+                
+                # Inject appropriate meta tags
+                html_content = inject_meta_tags(html_content, page, post_slug)
+                
+                # Send response
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(html_content.encode('utf-8'))
+                return
+                
+            except Exception as e:
+                print(f"Error serving index.html: {e}")
+                # Fall back to default behavior
         
         # Default behavior for all other requests
         super().do_GET()

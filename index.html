@@ -2699,7 +2699,6 @@
                             image = `${window.location.origin}/blog-posts/${coverImagePath}`;
                         }
                     }
-                    // If no cover image, fall back to default playtest.png
                     
                     url = `${baseUrl}?page=blog&post=${post}`;
                 }
@@ -2749,11 +2748,30 @@
             document.title = title;
         }
         
+        // Function to wait for blog posts to be loaded before updating meta tags
+        function waitForBlogPostsAndUpdateMeta(page, doc, post, maxRetries = 10) {
+            if (page !== 'blog' || !post) {
+                // Not a blog post, update immediately
+                updateMetaTags(page, doc, post);
+                return;
+            }
+            
+            if (window.areBlogPostsLoaded && window.areBlogPostsLoaded()) {
+                // Posts are loaded, update meta tags
+                updateMetaTags(page, doc, post);
+            } else if (maxRetries > 0) {
+                // Posts not loaded yet, wait and retry
+                setTimeout(() => {
+                    waitForBlogPostsAndUpdateMeta(page, doc, post, maxRetries - 1);
+                }, 500);
+            } else {
+                // Use default meta tags
+                updateMetaTags('blog', null, null);
+            }
+        }
+        
         function handleRouting() {
             const { page, doc, post } = parseUrl();
-            
-            // Update meta tags for the current page
-            updateMetaTags(page, doc, post);
             
             // Set the active navigation link
             if (page === 'blog') {
@@ -2781,9 +2799,10 @@
                                 }
                             }, 1000);
                         }
-                        // Update meta tags again after post is loaded
-                        setTimeout(() => updateMetaTags(page, doc, post), 100);
                     }, 500);
+                    
+                    // Wait for blog posts to load, then update meta tags
+                    waitForBlogPostsAndUpdateMeta(page, doc, post);
                 } else {
                     // No specific post requested, show blog list
                     setTimeout(() => {
@@ -2791,6 +2810,8 @@
                             window.showBlogList();
                         }
                     }, 300);
+                    // Update meta tags for blog list
+                    updateMetaTags('blog', null, null);
                 }
             } else if (page === 'docs') {
                 setActiveLink('docsLink');
@@ -2801,9 +2822,13 @@
                         window.docsSystem.loadDoc(doc);
                     }, 100);
                 }
+                // Update meta tags for docs
+                updateMetaTags(page, doc, null);
             } else {
                 setActiveLink('aboutLink');
                 showPage('about');
+                // Update meta tags for about page
+                updateMetaTags('about', null, null);
             }
         }
         

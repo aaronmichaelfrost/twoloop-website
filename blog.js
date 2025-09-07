@@ -418,6 +418,11 @@ window.markdownParser = markdownParser;
 window.showBlogPost = showBlogPost;
 window.showBlogList = showBlogList;
 
+// Function to check if blog posts are loaded
+window.areBlogPostsLoaded = function() {
+    return markdownParser.posts && markdownParser.posts.length > 0;
+};
+
 // Blog functionality
 let currentPage = 'about';
 
@@ -433,10 +438,12 @@ function showBlogPost(slug) {
         window.updateUrl('blog', null, slug);
     }
     
-    // Update meta tags for social sharing
-    if (window.updateMetaTags) {
-        window.updateMetaTags('blog', null, slug);
-    }
+    // Update meta tags for social sharing - with delay to ensure DOM is ready
+    setTimeout(() => {
+        if (window.updateMetaTags) {
+            window.updateMetaTags('blog', null, slug);
+        }
+    }, 200);
 
     // Reset scroll position to top
     window.scrollTo(0, 0);

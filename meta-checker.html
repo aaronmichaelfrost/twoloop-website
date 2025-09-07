@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meta Tag Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .meta-check {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .meta-check h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .meta-value {
+            word-break: break-all;
+            color: #666;
+            font-family: monospace;
+            background: #f9f9f9;
+            padding: 5px;
+            border-radius: 3px;
+            margin: 5px 0;
+        }
+        .test-urls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .test-url {
+            padding: 8px 16px;
+            background: #007cba;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .test-url:hover {
+            background: #005a87;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Meta Tag Verification</h1>
+    <p>This page shows the current meta tags. Use this to verify that the server-side meta tag injection is working.</p>
+    
+    <div class="test-urls">
+        <a href="http://localhost:8001/?page=blog&post=devblog-1" class="test-url" target="_blank">Devblog 1</a>
+        <a href="http://localhost:8001/?page=blog&post=devblog-2" class="test-url" target="_blank">Devblog 2</a>
+        <a href="http://localhost:8001/?page=blog" class="test-url" target="_blank">Blog List</a>
+        <a href="http://localhost:8001/?page=about" class="test-url" target="_blank">About</a>
+    </div>
+    
+    <div class="meta-check">
+        <h3>Current Page Meta Tags</h3>
+        <div id="meta-display">Loading...</div>
+    </div>
+    
+    <div class="meta-check">
+        <h3>✅ Expected Results</h3>
+        <ul>
+            <li><strong>Devblog 1:</strong> Title should be "Devblog 1 - twoloop", image should be cover.png</li>
+            <li><strong>Devblog 2:</strong> Title should be "Devblog 2 - twoloop", image should be heightmap-2.png</li>
+            <li><strong>Blog List:</strong> Title should be "Blog - twoloop", image should be playtest.png</li>
+            <li><strong>About:</strong> Title should be "twoloop", image should be playtest.png</li>
+        </ul>
+    </div>
+    
+    <div class="meta-check">
+        <h3>🧪 Testing Instructions</h3>
+        <ol>
+            <li><strong>View Source:</strong> Right-click and "View Page Source" to see the actual HTML meta tags</li>
+            <li><strong>Discord Test:</strong> Copy URL and paste in Discord to see preview</li>
+            <li><strong>Social Media Debuggers:</strong>
+                <ul>
+                    <li><a href="https://developers.facebook.com/tools/debug/" target="_blank">Facebook Debugger</a></li>
+                    <li><a href="https://cards-dev.twitter.com/validator" target="_blank">Twitter Card Validator</a></li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+    
+    <script>
+        function displayMetaTags() {
+            const metaTags = [
+                'og:title',
+                'og:description', 
+                'og:image',
+                'og:url',
+                'twitter:title',
+                'twitter:description',
+                'twitter:image'
+            ];
+            
+            let html = '';
+            
+            metaTags.forEach(tag => {
+                const element = document.querySelector(`meta[property="${tag}"], meta[name="${tag}"]`);
+                const value = element ? element.getAttribute('content') : 'Not found';
+                html += `<div><strong>${tag}:</strong><div class="meta-value">${value}</div></div>`;
+            });
+            
+            // Also show page title
+            html += `<div><strong>Page Title:</strong><div class="meta-value">${document.title}</div></div>`;
+            
+            document.getElementById('meta-display').innerHTML = html;
+        }
+        
+        // Display meta tags when page loads
+        window.addEventListener('load', displayMetaTags);
+    </script>
+</body>
+</html>
