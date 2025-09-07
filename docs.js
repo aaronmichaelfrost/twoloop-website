@@ -207,23 +207,32 @@ class DocsSystem {
         // Simple markdown parser - enhanced version of blog parser
         let html = markdown;
 
-        // Store code blocks temporarily to protect them
+        // Store code blocks temporarily to protect them from all processing
         const codeBlocks = [];
-        html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+        html = html.replace(/```(\w+)?\s*\n([\s\S]*?)\n```/g, (match, lang, code) => {
             const language = lang || '';
             const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
-            codeBlocks.push(`<div class="code-block"><pre><code class="language-${language}">${this.escapeHtml(code.trim())}</code></pre></div>`);
+            codeBlocks.push(`<div class="code-block"><pre><code class="language-${language}">${this.escapeHtml(code)}</code></pre></div>`);
             return placeholder;
         });
 
         // Tables
         html = this.parseMarkdownTables(html);
 
-        // Headers
-        html = html.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
-        html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
-        html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
-        html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+        // Lists (process before headers to avoid header/list conflicts)
+        html = html.replace(/^\- (.+)$/gm, '<li>$1</li>');
+        html = html.replace(/^• (.+)$/gm, '<li>$1</li>'); // Support filled bullet character
+        html = html.replace(/^◦ (.+)$/gm, '<li>$1</li>'); // Support hollow bullet character
+        html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+        
+        // Group consecutive list items into ul/ol tags
+        html = this.groupListItems(html);
+
+        // Headers - trim leading whitespace (process after lists)
+        html = html.replace(/^\s*#### (.*$)/gm, '<h4>$1</h4>');
+        html = html.replace(/^\s*### (.*$)/gm, '<h3>$1</h3>');
+        html = html.replace(/^\s*## (.*$)/gm, '<h2>$1</h2>');
+        html = html.replace(/^\s*# (.*$)/gm, '<h1>$1</h1>');
 
         // Inline code
         html = html.replace(/`([^`\n]+)`/g, '<code>$1</code>');
@@ -234,13 +243,6 @@ class DocsSystem {
 
         // Links
         html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-
-        // Lists
-        html = html.replace(/^\- (.+)$/gm, '<li>$1</li>');
-        html = html.replace(/^• (.+)$/gm, '<li>$1</li>'); // Support filled bullet character
-        html = html.replace(/^◦ (.+)$/gm, '<li>$1</li>'); // Support hollow bullet character
-        html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-        html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
 
         // Paragraphs
         html = html.split('\n\n').map(paragraph => {
@@ -266,6 +268,49 @@ class DocsSystem {
         });
 
         return html;
+    }
+
+    groupListItems(html) {
+        const lines = html.split('\n');
+        const result = [];
+        let inList = false;
+        let listItems = [];
+        
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            
+            if (line.startsWith('<li>') && line.endsWith('</li>')) {
+                // This is a list item
+                if (!inList) {
+                    inList = true;
+                    listItems = [];
+                }
+                listItems.push(line);
+            } else {
+                // This is not a list item
+                if (inList) {
+                    // Close the current list
+                    result.push('<ul>');
+                    result.push(...listItems);
+                    result.push('</ul>');
+                    listItems = [];
+                    inList = false;
+                }
+                // Only add non-empty lines
+                if (line || lines[i] !== '') {
+                    result.push(lines[i]);
+                }
+            }
+        }
+        
+        // Handle case where file ends with a list
+        if (inList && listItems.length > 0) {
+            result.push('<ul>');
+            result.push(...listItems);
+            result.push('</ul>');
+        }
+        
+        return result.join('\n');
     }
 
     // Mark the first paragraph that comes immediately after a title header as pre-header text

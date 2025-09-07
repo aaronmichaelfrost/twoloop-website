@@ -793,7 +793,7 @@
         }
 
         /* Mobile back button styling */
-        @media (max-width: 768px) {
+        @media (max-width: 1800px) {
             .back-to-blog {
                 top: 100px !important;
                 left: 50% !important;
@@ -892,8 +892,8 @@
         /* Style paragraphs that come after title headers but before other content */
         .blog-post-content .pre-header-text,
         .docs-article .pre-header-text {
-            font-size: 0.75rem !important;
-            color: rgba(255,255,255,0.5) !important;
+            font-size: 0.7rem !important;
+            color: rgba(255,255,255,0.45) !important;
             font-weight: 300 !important;
             opacity: 0.8 !important;
             margin-top: -0.5rem !important;
@@ -937,7 +937,7 @@
         }
 
         /* Mobile responsive for discord images */
-        @media (max-width: 768px) {
+        @media (max-width: 1800px) {
             .discord-images-row {
                 flex-direction: column;
                 gap: 15px;
@@ -1007,16 +1007,16 @@
 
         .blog-post-content p {
             margin-bottom: 0.6rem;
-            color: rgba(255,255,255,0.7);
+            color: rgba(255,255,255,0.65);
             font-weight: 300;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .blog-post-content ul, .blog-post-content ol {
             margin: 0.5rem 0 0.5rem 2rem;
-            color: rgba(255,255,255,0.7);
+            color: rgba(255,255,255,0.65);
             font-weight: 300;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .blog-post-content li {
@@ -1024,6 +1024,8 @@
             padding-bottom: 0.3rem;
             font-weight: 300;
             position: relative;
+            color: rgba(255,255,255,0.65);
+            font-size: 0.9rem;
         }
 
         .blog-post-content li::marker {
@@ -1256,7 +1258,7 @@
         }
 
         /* Responsive design */
-        @media (max-width: 768px) {
+        @media (max-width: 1800px) {
             .header {
                 padding: 10px 20px;
             }
@@ -1382,14 +1384,15 @@
             }
             
             .blog-post-content p {
-                font-size: 0.9rem !important;
+                font-size: 0.85rem !important;
                 line-height: 1.5 !important;
             }
             
             .blog-post-content li {
-                font-size: 0.9rem !important;
+                font-size: 0.85rem !important;
                 padding-bottom: 0.3rem !important;
                 position: relative !important;
+                color: rgba(255,255,255,0.65) !important;
             }
 
             .blog-post-content li::marker {
@@ -1431,8 +1434,8 @@
             
             /* Mobile-specific blog and docs text styling */
             .blog-post-content p {
-                font-size: 0.85rem !important;
-                color: rgba(255,255,255,0.7) !important;
+                font-size: 0.8rem !important;
+                color: rgba(255,255,255,0.65) !important;
                 line-height: 1.4 !important;
             }
 
@@ -1463,9 +1466,9 @@
             }
             
             .blog-post-content li {
-                font-size: 0.85rem !important;
+                font-size: 0.8rem !important;
                 padding-bottom: 0.3rem !important;
-                color: rgba(255,255,255,0.7) !important;
+                color: rgba(255,255,255,0.65) !important;
                 position: relative !important;
             }
 
@@ -1475,8 +1478,8 @@
             }
             
             .docs-article p {
-                font-size: 0.85rem !important;
-                color: rgba(255,255,255,0.7) !important;
+                font-size: 0.8rem !important;
+                color: rgba(255,255,255,0.65) !important;
             }
             
             .docs-article h1 {
@@ -1497,8 +1500,8 @@
             }
             
             .docs-article li {
-                font-size: 0.85rem !important;
-                color: rgba(255,255,255,0.7) !important;
+                font-size: 0.8rem !important;
+                color: rgba(255,255,255,0.65) !important;
             }
             
             /* Mobile docs navigation spacing */
@@ -1781,10 +1784,10 @@
         }
 
         .docs-article {
-            color: rgba(255,255,255,0.8);
+            color: rgba(255,255,255,0.7);
             line-height: 1.4;
             font-weight: 300;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             user-select: text;
             -webkit-user-select: text;
             -moz-user-select: text;
@@ -1883,22 +1886,22 @@
 
         .docs-article p {
             margin-bottom: 0.6rem;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255,255,255,0.7);
             font-weight: 300;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .docs-article ul, .docs-article ol {
             margin-bottom: 1rem;
             padding-left: 2rem;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255,255,255,0.7);
             font-weight: 300;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .docs-article li {
             margin-bottom: 0.2rem;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255,255,255,0.7);
             font-weight: 300;
         }
 
@@ -2017,7 +2020,7 @@
             100% { transform: rotate(360deg); }
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1800px) {
             .docs-layout {
                 flex-direction: column;
                 padding-top: 60px;
@@ -2067,11 +2070,13 @@
             }
 
             .docs-article p {
-                font-size: 0.9rem;
+                font-size: 0.8rem;
+                color: rgba(255,255,255,0.65);
             }
 
             .docs-article li {
-                font-size: 0.9rem;
+                font-size: 0.8rem;
+                color: rgba(255,255,255,0.65);
             }
 
             .docs-nav-link {
@@ -2360,7 +2365,7 @@
                 });
             } else {
                 // About page
-                const aboutBg = window.innerWidth <= 768 ? 'main-bg-static.png' : '7.gif';
+                const aboutBg = window.innerWidth <= 1800 ? 'main-bg-static.png' : '7.gif';
                 
                 // Preload about background (now sets immediately)
                 preloadAndSwitch(aboutBg, () => {
@@ -2381,7 +2386,7 @@
                     backgroundContainer.style.transform = "";
                     
                     // Add zoom animation for static backgrounds (non-GIF) on all devices
-                    const aboutBg = window.innerWidth <= 768 ? 'main-bg-static.png' : '7.gif';
+                    const aboutBg = window.innerWidth <= 1800 ? 'main-bg-static.png' : '7.gif';
                     if (aboutBg.includes('.png') || aboutBg.includes('.jpg') || aboutBg.includes('.jpeg')) {
                         // Static image - add zoom animation
                         backgroundContainer.classList.add('mobile-zoom');
@@ -2750,7 +2755,7 @@
             bottomGradient.style.opacity = 0.6;
             
             // Set initial background immediately and preload for optimization
-            const initialBg = window.innerWidth <= 768 ? 'main-bg-static.png' : '7.gif';
+            const initialBg = window.innerWidth <= 1800 ? 'main-bg-static.png' : '7.gif';
             
             // Set background immediately to prevent black flash
             backgroundContainer.style.backgroundImage = `url('${initialBg}')`;
@@ -2816,7 +2821,7 @@
                 
                 // Function to show/hide sidebar based on page
                 window.updateSidebarVisibility = function() {
-                    const isMobile = window.innerWidth <= 768;
+                    const isMobile = window.innerWidth <= 1800;
                     console.log('Updating sidebar visibility, mobile:', isMobile, 'docs-active:', document.body.classList.contains('docs-active'));
                     
                     if (document.body.classList.contains('docs-active')) {
@@ -2861,7 +2866,7 @@
             }
             
             // Set initial background based on screen size
-            if (window.innerWidth <= 768) {
+            if (window.innerWidth <= 1800) {
                 backgroundContainer.style.backgroundImage = "url('main-bg-static.png')";
             } else {
                 backgroundContainer.style.backgroundImage = "url('7.gif')";
@@ -2887,7 +2892,7 @@
             window.resetGifCycle = function() {
                 currentGifIndex = 0;
                 // Make sure the background is set to the first GIF
-                if (window.innerWidth > 768 && !document.body.classList.contains('blog-active') && !document.body.classList.contains('docs-active')) {
+                if (window.innerWidth > 1800 && !document.body.classList.contains('blog-active') && !document.body.classList.contains('docs-active')) {
                     backgroundContainer.style.backgroundImage = `url('${gifs[0]}')`;
                     backgroundOverlay.style.opacity = '0';
                 }
@@ -2897,7 +2902,7 @@
                 // Don't cycle if on blog page, docs page, or mobile device
                 if (document.body.classList.contains('blog-active') || 
                     document.body.classList.contains('docs-active') ||
-                    window.innerWidth <= 768) {
+                    window.innerWidth <= 1800) {
                     return;
                 }
                 
@@ -2922,7 +2927,7 @@
                     !document.body.classList.contains('docs-active')) {
                     // On about page, switch background based on screen size
                     const backgroundContainer = document.querySelector('.background-container');
-                    if (window.innerWidth <= 768) {
+                    if (window.innerWidth <= 1800) {
                         backgroundContainer.style.backgroundImage = "url('main-bg-static.png')";
                     } else {
                         backgroundContainer.style.backgroundImage = `url('${gifs[currentGifIndex]}')`;
