@@ -15,12 +15,12 @@ Got less done than we wanted, but steady progress continues.
 
 We ran a smooth test with **800 items** (with rigidbodies), **250 NPCs** (aggro'd), and **25 player connections**. Next, with 250 players. 
 
-The goal is to prove systems scale, and so far, everything has worked flawlessly. Feels good to verify years of work and optimizations. 
+The goal is to prove systems scale, and so far, everything has worked flawlessly. The server held up great—only slowing past 300 NPCs, which is fine since NPC loops are server-heavy and 300 is worst worst case. Feels good to verify years of work and optimizations. 
 
 #### How the test works:
 I wrote a script that runs headless clients in parallel, which maxed my CPU usage at 25 connections. That's 25 700x700m terrains and player loops running on a single computer. I also joined on my laptop with graphics enabled to check worst case player perf. Frame rates did drop with over a few hundred enemies on screen, but that won't be happening realistically. 
 
-Next, we’ll rent machines to aim for 250 players. The server held up great—only slowing past 300 NPCs, which is fine since NPC loops are server-heavy and 300 is worst worst case.
+Next, we’ll rent machines to aim for 250 players. 
 
 It looked suitably chaotic, we'll share some footage soon.
 
@@ -35,7 +35,7 @@ It looked suitably chaotic, we'll share some footage soon.
 ◦ all of above on flatworld & procedural  
 
 
-### F1 CONSOLE
+### F1 Console
 
 F1 console got a revamp:  
 ◦ Startup args now double as console commands  
