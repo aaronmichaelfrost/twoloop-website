@@ -275,10 +275,6 @@ function showBlogPost(slug) {
         return;
     }
 
-    // Update URL and meta tags
-    updateUrl('blog', null, slug);
-    updateMetaTags('blog', null, slug);
-
     // Reset scroll position to top
     window.scrollTo(0, 0);
 
@@ -337,10 +333,6 @@ function showBlogPost(slug) {
 
 function showBlogList() {
     console.log('showBlogList called, posts count:', markdownParser.posts.length);
-    
-    // Update URL and meta tags
-    updateUrl('blog');
-    updateMetaTags('blog');
     
     // Ensure posts are loaded first
     ensureBlogPostsLoaded();
