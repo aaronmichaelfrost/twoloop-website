@@ -30,7 +30,8 @@ It looked suitably chaotic, we'll share some footage soon.
 
 
 #### In progress
-spam transfer loot slots  ◦ voice chat   ◦ open chests, craft, build  ◦ rocket building destruction  ◦ loot spill  ◦ crowded/dispersed groups  ◦ PvP  ◦ all of above on flatworld & procedural  
+◦ spam transfer loot slots, voice chat, opening chests, craft, building, rocket building destruction, loot spill, crowded/dispersed groups, PvP  
+◦ all of above on flatworld & procedural  
 
 
 ### F1 CONSOLE
