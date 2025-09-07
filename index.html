@@ -1065,12 +1065,25 @@
         .changelog-date::before {
             content: '';
             position: absolute;
-            left: -6px;
+            left: -13px;
             top: 50%;
             width: 12px;
             height: 1px;
             background: rgba(255, 255, 255, 0.3);
             z-index: 1; /* Ensure visibility */
+        }
+
+        .changelog-date::after {
+            content: '';
+            position: absolute;
+            left: -3px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 2; /* Ensure visibility */
         }
 
         .changelog-items {
@@ -1489,12 +1502,25 @@
             .changelog-date::before {
                 content: '' !important;
                 position: absolute !important;
-                left: -6px !important;
+                left: -13px !important;
                 top: 50% !important;
                 width: 12px !important;
                 height: 1px !important;
                 background: rgba(255, 255, 255, 0.3) !important;
                 z-index: 1 !important;
+            }
+
+            .changelog-date::after {
+                content: '' !important;
+                position: absolute !important;
+                left: -3px !important;
+                top: 50% !important;
+                transform: translateY(-50%) !important;
+                width: 6px !important;
+                height: 6px !important;
+                border-radius: 50% !important;
+                background: rgba(255, 255, 255, 0.8) !important;
+                z-index: 2 !important;
             }
 
             .changelog-items li::before {
