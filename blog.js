@@ -144,7 +144,8 @@ class MarkdownParser {
 
         // Lists
         html = html.replace(/^\* (.+$)/gm, '<li>$1</li>');
-        html = html.replace(/^• (.+$)/gm, '<li>$1</li>'); // Support bullet character
+        html = html.replace(/^• (.+$)/gm, '<li>$1</li>'); // Support filled bullet character
+        html = html.replace(/^◦ (.+$)/gm, '<li>$1</li>'); // Support hollow bullet character
         html = html.replace(/^(\d+)\. (.+$)/gm, '<li>$2</li>');
         
         // Wrap consecutive list items in ul/ol tags

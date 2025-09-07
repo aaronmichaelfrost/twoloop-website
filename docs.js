@@ -237,6 +237,8 @@ class DocsSystem {
 
         // Lists
         html = html.replace(/^\- (.+)$/gm, '<li>$1</li>');
+        html = html.replace(/^• (.+)$/gm, '<li>$1</li>'); // Support filled bullet character
+        html = html.replace(/^◦ (.+)$/gm, '<li>$1</li>'); // Support hollow bullet character
         html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
         html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
 

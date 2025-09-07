@@ -660,19 +660,19 @@
                 rgba(255, 255, 255, 0.6) 55%,
                 rgba(255, 255, 255, 0.6) 100%
             );
-            background-size: 300% 100%;
+            background-size: 150% 100%;
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: textShimmer 5s linear infinite;
+            animation: textShimmer 2s linear infinite;
         }
         
         @keyframes textShimmer {
             0% {
-                background-position: 300% 0;
+                background-position: 150% 0;
             }
             100% {
-                background-position: -300% 0;
+                background-position: -150% 0;
             }
         }
 
@@ -1124,10 +1124,12 @@
             left: 3px;
             top: 0.6rem;
             transform: translateY(-50%);
-            width: 4px;
-            height: 4px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            background: transparent;
+            box-sizing: border-box;
             z-index: 2; /* Ensure visibility */
         }
 
@@ -1543,7 +1545,8 @@
                 width: 4px !important;
                 height: 4px !important;
                 border-radius: 50% !important;
-                background: rgba(255, 255, 255, 0.6) !important;
+                border: 1px solid rgba(255, 255, 255, 0.6) !important;
+                background: transparent !important;
                 z-index: 2 !important;
             }
 
@@ -1703,19 +1706,19 @@
                 rgba(255, 255, 255, 0.6) 55%,
                 rgba(255, 255, 255, 0.6) 100%
             );
-            background-size: 300% 100%;
+            background-size: 150% 100%;
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: docsTextShimmer 8s linear infinite;
+            animation: docsTextShimmer 4s linear infinite;
         }
         
         @keyframes docsTextShimmer {
             0% {
-                background-position: 300% 0;
+                background-position: 150% 0;
             }
             100% {
-                background-position: -300% 0;
+                background-position: -150% 0;
             }
         }
         
