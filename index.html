@@ -976,7 +976,20 @@
 
         .blog-post-content li {
             margin-bottom: 0.2rem;
+            padding-bottom: 0.3rem;
             font-weight: 300;
+            position: relative;
+        }
+
+        .blog-post-content li:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -0.1rem;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 0.6rem;
+            background: rgba(255, 255, 255, 0.3);
         }
 
         .blog-post-content li::marker {
@@ -1044,7 +1057,7 @@
             content: '';
             position: absolute;
             left: 8px;
-            top: 2rem;  /* Start below the header */
+            top: 2.7rem;  /* Start below the header */
             bottom: 0;
             width: 1px;
             background: rgba(255, 255, 255, 0.3);
@@ -1056,6 +1069,7 @@
             color: #ffffff;
             margin-bottom: 1rem;
             position: relative;
+            left: -21px;
         }
 
         .changelog-date {
@@ -1110,8 +1124,20 @@
             position: relative;
             margin-bottom: 0.3rem;
             padding-left: 15px;
+            padding-bottom: 0.3rem;
             list-style: none;
             display: list-item;
+        }
+
+        .changelog-items li:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -0.1rem;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 0.6rem;
+            background: rgba(255, 255, 255, 0.3);
         }
 
         .changelog-items li::before {
@@ -1328,6 +1354,19 @@
             
             .blog-post-content li {
                 font-size: 0.9rem !important;
+                padding-bottom: 0.3rem !important;
+                position: relative !important;
+            }
+
+            .blog-post-content li:not(:last-child)::after {
+                content: '' !important;
+                position: absolute !important;
+                left: 50% !important;
+                bottom: -0.1rem !important;
+                transform: translateX(-50%) !important;
+                width: 1px !important;
+                height: 0.6rem !important;
+                background: rgba(255, 255, 255, 0.3) !important;
             }
 
             .blog-post-content li::marker {
@@ -1392,7 +1431,20 @@
             
             .blog-post-content li {
                 font-size: 0.85rem !important;
+                padding-bottom: 0.3rem !important;
                 color: rgba(255,255,255,0.7) !important;
+                position: relative !important;
+            }
+
+            .blog-post-content li:not(:last-child)::after {
+                content: '' !important;
+                position: absolute !important;
+                left: 50% !important;
+                bottom: -0.1rem !important;
+                transform: translateX(-50%) !important;
+                width: 1px !important;
+                height: 0.6rem !important;
+                background: rgba(255, 255, 255, 0.3) !important;
             }
 
             .blog-post-content li::marker {
@@ -1511,9 +1563,22 @@
 
             .changelog-items li {
                 padding-left: 15px !important;
+                padding-bottom: 0.3rem !important;
                 font-size: 0.85rem !important;
                 list-style: disc !important;
                 display: list-item !important;
+                position: relative !important;
+            }
+
+            .changelog-items li:not(:last-child)::after {
+                content: '' !important;
+                position: absolute !important;
+                left: 50% !important;
+                bottom: -0.1rem !important;
+                transform: translateX(-50%) !important;
+                width: 1px !important;
+                height: 0.6rem !important;
+                background: rgba(255, 255, 255, 0.3) !important;
             }
 
             .changelog-items li::marker {
@@ -1563,6 +1628,7 @@
 
             .changelog-header {
                 font-size: 1.3rem !important;
+                left: -16px;
             }
         }
 
