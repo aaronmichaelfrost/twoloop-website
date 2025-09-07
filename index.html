@@ -1030,7 +1030,7 @@
             content: '';
             position: absolute;
             left: 8px;
-            top: 3rem;  /* Start below the header instead of at top */
+            top: 2rem;  /* Start below the header */
             bottom: 0;
             width: 1px;
             background: rgba(255, 255, 255, 0.3);
@@ -1050,14 +1050,15 @@
             color: rgba(255, 255, 255, 0.9);
             margin: 1rem 0 0.5rem 0;
             position: relative;
+            padding-left: 15px;
         }
 
         .changelog-date::before {
             content: '';
             position: absolute;
-            left: -12px;
+            left: -13px;
             top: 50%;
-            width: 12px;
+            width: 20px;
             height: 1px;
             background: rgba(255, 255, 255, 0.3);
         }
@@ -1065,7 +1066,7 @@
         .changelog-date::after {
             content: '';
             position: absolute;
-            left: 0px;
+            left: -15px;
             top: 50%;
             transform: translateY(-50%);
             width: 3px;
@@ -1075,14 +1076,14 @@
         }
 
         .changelog-items {
-            margin-left: 20px;
+            margin-left: 15px;
             position: relative;
         }
 
         .changelog-items::before {
             content: '';
             position: absolute;
-            left: 8px;
+            left: 5px;
             top: 0;
             bottom: 0;
             width: 1px;
@@ -1092,15 +1093,15 @@
         .changelog-items li {
             position: relative;
             margin-bottom: 0.3rem;
-            padding-left: 20px;
+            padding-left: 15px;
         }
 
         .changelog-items li::before {
             content: '';
             position: absolute;
-            left: 8px;
+            left: -10px;
             top: 0.6rem;
-            width: 12px;
+            width: 15px;
             height: 1px;
             background: rgba(255, 255, 255, 0.3);
         }
@@ -1108,7 +1109,7 @@
         .changelog-items li::after {
             content: '';
             position: absolute;
-            left: 20px;
+            left: -12px;
             top: 0.6rem;
             transform: translateY(-50%);
             width: 3px;
@@ -1400,7 +1401,7 @@
             .docs-nav-item::before {
                 content: '';
                 position: absolute;
-                left: 0px;   /* Changed to 0px as requested */
+                left: 0px !important;   /* Changed to 0px with !important */
                 top: 50%;
                 width: 22px; /* Extend right to reach text (30px - 8px = 22px) */
                 height: 1px;
@@ -1411,7 +1412,7 @@
             .docs-nav-item::after {
                 content: '';
                 position: absolute;
-                left: -1px;  /* Changed to -1px as requested */
+                left: -1px !important;  /* Changed to -1px with !important */
                 top: 50%;
                 transform: translateY(-50%);
                 width: 3px;
@@ -2112,6 +2113,51 @@
                     
                     hideLoadingState();
                 });
+            } else if (pageId === 'changelog') {
+                showLoadingState();
+                
+                // Use the same background as about page
+                const changelogBg = window.innerWidth <= 768 ? 'main-bg-static.png' : '7.gif';
+                
+                // Preload changelog background (now sets immediately)
+                preloadAndSwitch(changelogBg, () => {
+                    mainContent.style.display = 'block';
+                    blogPage.style.display = 'none';
+                    docsContainer.style.display = 'none';
+                    scrollArrow.style.display = 'block';
+                    
+                    // Generate changelog content
+                    generateChangelogContent();
+                    
+                    // Reset background properties (removed background = "" line)
+                    backgroundContainer.style.backgroundSize = "cover";
+                    backgroundContainer.style.backgroundPosition = "center";
+                    backgroundContainer.style.backgroundRepeat = "no-repeat";
+                    backgroundContainer.style.backgroundAttachment = "fixed";
+                    backgroundContainer.style.filter = "";
+                    backgroundContainer.style.transform = "";
+                    
+                    // Reset GIF cycle to start from the first GIF
+                    if (window.resetGifCycle) {
+                        window.resetGifCycle();
+                    }
+                    
+                    // Show arrow after shorter delay if user hasn't scrolled down
+                    if (window.arrowCanBeVisible && window.scrollY <= 100) {
+                        setTimeout(() => {
+                            if (window.scrollY <= 100 && !body.classList.contains('blog-active') && !body.classList.contains('docs-active')) {
+                                scrollArrow.classList.add('visible');
+                            }
+                        }, 100);
+                    }
+                    
+                    // Hide the fixed sidebar
+                    if (window.updateSidebarVisibility) {
+                        window.updateSidebarVisibility();
+                    }
+                    
+                    hideLoadingState();
+                });
             } else {
                 // About page
                 const aboutBg = window.innerWidth <= 768 ? 'main-bg-static.png' : '7.gif';
@@ -2122,6 +2168,9 @@
                     blogPage.style.display = 'none';
                     docsContainer.style.display = 'none';
                     scrollArrow.style.display = 'block';
+                    
+                    // Generate about content
+                    generateAboutContent();
                     
                     // Reset background properties (removed background = "" line)
                     backgroundContainer.style.backgroundSize = "cover";
@@ -2151,6 +2200,89 @@
                     }
                 });
             }
+        }
+
+        function generateAboutContent() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <!-- Hero section -->
+                <section class="section">
+                    <div class="section-content">
+                        <img src="fra.png" alt="Fractium" class="game-icon">
+                        <p>Fractium is a hardcore multiplayer game that aims to create breathtakingly original multiplayer experiences.</p>
+                        <a href="https://store.steampowered.com/app/1551700/Fractium/#game_area_purchase" class="wishlist-button">add to wishlist</a>
+                    </div>
+                </section>
+
+                <!-- Footer section -->
+                <section class="section footer-section">
+                    <div class="section-content">
+                        <h2>twoloop games</h2>
+                        <p>we're an independent, self-published small game studio formed in 2020, led with years of professional AAA experience. twoloop is PC-first and prioritizes a high level of polish and replayability.</p>
+                    </div>
+                </section>
+            `;
+        }
+
+        function generateChangelogContent() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <!-- Changelog section -->
+                <section class="section">
+                    <div class="section-content">
+                        <h1>Changelog</h1>
+                        
+                        <div class="changelog-section">
+                            <div class="changelog-header">Version 0.3.0</div>
+                            
+                            <div class="changelog-date">December 2024</div>
+                            <ul class="changelog-items">
+                                <li>Added new weapon balancing system</li>
+                                <li>Improved network synchronization</li>
+                                <li>Fixed critical memory leak in rendering</li>
+                                <li>Enhanced particle effects</li>
+                            </ul>
+                            
+                            <div class="changelog-date">November 2024</div>
+                            <ul class="changelog-items">
+                                <li>New map: Crystal Caverns</li>
+                                <li>Updated UI design</li>
+                                <li>Performance optimizations</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="changelog-section">
+                            <div class="changelog-header">Version 0.2.0</div>
+                            
+                            <div class="changelog-date">October 2024</div>
+                            <ul class="changelog-items">
+                                <li>Multiplayer lobby system</li>
+                                <li>Voice chat integration</li>
+                                <li>Anti-cheat improvements</li>
+                            </ul>
+                            
+                            <div class="changelog-date">September 2024</div>
+                            <ul class="changelog-items">
+                                <li>Beta release preparation</li>
+                                <li>Bug fixes and stability</li>
+                                <li>Documentation updates</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="changelog-section">
+                            <div class="changelog-header">Version 0.1.0</div>
+                            
+                            <div class="changelog-date">August 2024</div>
+                            <ul class="changelog-items">
+                                <li>Initial alpha release</li>
+                                <li>Core gameplay mechanics</li>
+                                <li>Basic multiplayer support</li>
+                                <li>Fundamental weapon systems</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            `;
         }
 
         function setActiveLink(linkId) {
@@ -2306,6 +2438,10 @@
                 if (doc) {
                     url += `&doc=${doc}`;
                 }
+            } else if (page === 'changelog') {
+                title = 'Changelog - twoloop';
+                description = 'twoloop games development changelog and updates';
+                url = `${baseUrl}?page=changelog`;
             }
             
             // Update meta tags
@@ -2356,6 +2492,9 @@
                         window.docsSystem.loadDoc(doc);
                     }, 100);
                 }
+            } else if (page === 'changelog') {
+                setActiveLink('aboutLink'); // Use about link for now since there's no dedicated changelog nav
+                showPage('changelog');
             } else {
                 setActiveLink('aboutLink');
                 showPage('about');
