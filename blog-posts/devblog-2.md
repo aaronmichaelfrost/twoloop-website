@@ -13,24 +13,20 @@ Got less done than we wanted, but steady progress continues.
 *by Aaron*
 
 
-We ran a smooth test with **800 items** (with rigidbodies), **250 NPCs** (aggro'd), and **25 player connections**. Next, with 250 players. 
+We ran a smooth test with **800 items** (with rigidbodies), **250 NPCs** (aggro'd), and **25 player connections**. Next, with 250 players. It looks suitably chaotic, we'll share some footage soon.
 
 The goal is to prove systems scale, and so far, everything has worked flawlessly. The server held up great—only slowing past 300 NPCs, which is fine since NPC loops are server-heavy and 300 is worst worst case. Feels good to verify years of work and optimizations. 
 
 #### How the test works:
-I wrote a script that runs headless clients in parallel, which maxed my CPU usage at 25 connections. That's 25 700x700m terrains and player loops running on a single computer. I also joined on my laptop with graphics enabled to check worst case player perf. Frame rates did drop with over a few hundred enemies on screen, but that won't be happening realistically. 
+I wrote a script that runs headless clients in parallel, which maxed my CPU usage at 25 connections. That's 25 700x700m terrains and player loops running on a single computer. I also joined on my laptop with graphics enabled to check worst case player perf. Frame rates did drop with over a few hundred enemies on screen, but that won't be happening realistically. Next, we’ll rent machines to aim for 250 players. 
 
-Next, we’ll rent machines to aim for 250 players. 
-
-It looked suitably chaotic, we'll share some footage soon.
-
-#### Implemented
+#### IMPLEMENTED
 ✔️ move, sprint, jump, crouch, shoot, melee, reload 
 ✔️ receive loot   
 ✔️ text chat 
 
 
-#### In progress
+#### IN PROGRESS
 ◦ spam transfer loot slots, voice chat, opening chests, craft, building, rocket building destruction, loot spill, crowded/dispersed groups, PvP  
 ◦ all of above on flatworld & procedural  
 
