@@ -184,26 +184,27 @@ class MarkdownParser {
             console.log('=== FOUND CHANGELOG MATCH ===');
             console.log('Content preview:', content.substring(0, 500));
             
-            // Transform the content to create proper hierarchy
-            let transformedContent = content;
-            
-            // Replace date paragraphs with changelog-date divs
-            transformedContent = transformedContent.replace(
-                /<p><strong>([^<]+)<\/strong><\/p>/g,
-                '<div class="changelog-date">$1</div>'
-            );
-            
-            // Replace ul elements with changelog-items wrapped versions
-            transformedContent = transformedContent.replace(
-                /<ul>([\s\S]*?)<\/ul>/g,
-                '<div class="changelog-items"><ul>$1</ul></div>'
-            );
-            
-            console.log('Transformed content preview:', transformedContent.substring(0, 500));
+            // For debugging, let's manually create some test structure
+            const testStructure = `
+                <div class="changelog-date">8/9/2025</div>
+                <div class="changelog-items">
+                    <ul>
+                        <li>got rid of second directional light that was left enabled by accident</li>
+                        <li>get rid of tile generation (we're not using it, yet)</li>
+                    </ul>
+                </div>
+                <div class="changelog-date">8/11/2025</div>
+                <div class="changelog-items">
+                    <ul>
+                        <li>made fog color a function of time</li>
+                        <li>got rid of scoreboard indicator in map UI</li>
+                    </ul>
+                </div>
+            `;
             
             return `<div class="changelog-section">
                 <div class="changelog-header">CHANGELOG</div>
-                ${transformedContent}
+                ${testStructure}
             </div>`;
         });
         
