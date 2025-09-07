@@ -458,6 +458,14 @@
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
+        /* FORCE FOOTER SUBTEXT TRANSPARENCY - OVERRIDE EVERYTHING */
+        .section.footer-section p#about-subtext,
+        .footer-section .section-content p#about-subtext,
+        section.footer-section div.section-content p#about-subtext {
+            color: rgba(255,255,255,0.6) !important;
+            opacity: 1 !important;
+        }
+
         /* Footer section */
 
             #about-subtext {
