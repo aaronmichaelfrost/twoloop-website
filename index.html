@@ -857,6 +857,18 @@
             text-overflow: ellipsis;
         }
 
+        /* Style paragraphs that come after title headers but before other content */
+        .blog-post-content .pre-header-text,
+        .docs-article .pre-header-text {
+            font-size: 0.75rem !important;
+            color: rgba(255,255,255,0.5) !important;
+            font-weight: 300 !important;
+            opacity: 0.8 !important;
+            margin-top: -0.5rem !important;
+            margin-bottom: 0.8rem !important;
+            line-height: 1.5 !important;
+        }
+
         /* Inline images within blog content */
         .blog-content-image {
             margin: 0.5rem 0;
@@ -1050,7 +1062,7 @@
             top: 2.7rem;  /* Start below the header */
             bottom: 0;
             width: 1px;
-            background: rgba(255, 255, 255, 0.3);
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.3) 80%, transparent 100%);
         }
 
         .changelog-header {
@@ -1390,6 +1402,16 @@
                 font-size: 0.85rem !important;
                 color: rgba(255,255,255,0.7) !important;
                 line-height: 1.4 !important;
+            }
+
+            /* Style paragraphs that come after title headers but before other content - mobile */
+            .blog-post-content .pre-header-text,
+            .docs-article .pre-header-text {
+                font-size: 0.7rem !important;
+                color: rgba(255,255,255,0.45) !important;
+                opacity: 0.8 !important;
+                margin-top: -0.3rem !important;
+                margin-bottom: 0.6rem !important;
             }
             
             .blog-post-content h1 {

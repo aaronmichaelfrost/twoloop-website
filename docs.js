@@ -257,12 +257,60 @@ class DocsSystem {
             return paragraph;
         }).join('\n\n');
 
+        // Post-process to identify paragraphs that precede headers and mark them
+        html = this.markPreHeaderText(html);
+
         // Restore code blocks
         codeBlocks.forEach((block, index) => {
             html = html.replace(`__CODE_BLOCK_${index}__`, block);
         });
 
         return html;
+    }
+
+    // Mark the first paragraph that comes immediately after a title header as pre-header text
+    markPreHeaderText(html) {
+        // Split into lines for processing
+        const lines = html.split('\n');
+        const result = [];
+        let lastWasH1 = false;
+        let hasSeenContentAfterH1 = false;
+        
+        for (let i = 0; i < lines.length; i++) {
+            const currentLine = lines[i].trim();
+            
+            // Reset flags when we see an H1
+            if (currentLine.match(/^<h1/)) {
+                lastWasH1 = true;
+                hasSeenContentAfterH1 = false;
+                result.push(lines[i]);
+            }
+            // Check if current line is a paragraph
+            else if (currentLine.startsWith('<p>')) {
+                // Only apply styling if this is the first paragraph after an H1 and we haven't seen other content
+                if (lastWasH1 && !hasSeenContentAfterH1) {
+                    const modifiedLine = currentLine.replace('<p>', '<p class="pre-header-text">');
+                    result.push(modifiedLine);
+                    hasSeenContentAfterH1 = true; // Mark that we've seen content after H1
+                } else {
+                    result.push(lines[i]);
+                }
+            }
+            // Any other content (headers, lists, images, etc.) resets our tracking
+            else if (currentLine && !currentLine.match(/^<h1/)) {
+                if (currentLine.match(/^<h[2-4]/)) {
+                    lastWasH1 = false; // We've moved past the H1 section
+                }
+                hasSeenContentAfterH1 = true;
+                result.push(lines[i]);
+            }
+            // Empty lines don't affect our tracking
+            else {
+                result.push(lines[i]);
+            }
+        }
+        
+        return result.join('\n');
     }
 
     parseMarkdownTables(html) {
