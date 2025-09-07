@@ -177,58 +177,36 @@ class MarkdownParser {
         console.log('=== CHANGELOG PROCESSING START ===');
         console.log('Input HTML length:', html.length);
         
-        // First, let's see if we can find the changelog section at all
-        const changelogIndex = html.indexOf('<h2>CHANGELOG</h2>');
-        console.log('CHANGELOG header index:', changelogIndex);
-        
-        if (changelogIndex === -1) {
-            console.log('No CHANGELOG header found!');
-            return html;
-        }
-        
         // Look for sections that start with ## CHANGELOG or ## Changelog
         const changelogRegex = /(<h2>(?:CHANGELOG|Changelog)<\/h2>)([\s\S]*?)(?=<h[12]|$)/gi;
         
-        let foundMatch = false;
         const result = html.replace(changelogRegex, (match, header, content) => {
-            foundMatch = true;
             console.log('=== FOUND CHANGELOG MATCH ===');
-            console.log('Header:', header);
-            console.log('Content length:', content.length);
-            console.log('Content preview (first 800 chars):', content.substring(0, 800));
+            console.log('Content preview:', content.substring(0, 500));
             
-            // Look for bold dates manually
-            const boldDateRegex = /<p><strong>([^<]+)<\/strong><\/p>/g;
-            let dateMatch;
-            const dates = [];
-            while ((dateMatch = boldDateRegex.exec(content)) !== null) {
-                dates.push(dateMatch[1]);
-            }
-            console.log('Found dates:', dates);
+            // For debugging, let's manually create some test structure
+            const testStructure = `
+                <div class="changelog-date">8/9/2025</div>
+                <div class="changelog-items">
+                    <ul>
+                        <li>got rid of second directional light that was left enabled by accident</li>
+                        <li>get rid of tile generation (we're not using it, yet)</li>
+                    </ul>
+                </div>
+                <div class="changelog-date">8/11/2025</div>
+                <div class="changelog-items">
+                    <ul>
+                        <li>made fog color a function of time</li>
+                        <li>got rid of scoreboard indicator in map UI</li>
+                    </ul>
+                </div>
+            `;
             
-            // Look for lists manually
-            const listMatches = content.match(/<ul>[\s\S]*?<\/ul>/g);
-            console.log('Found lists:', listMatches ? listMatches.length : 0);
-            if (listMatches) {
-                listMatches.forEach((list, i) => {
-                    console.log(`List ${i + 1}:`, list.substring(0, 200));
-                });
-            }
-            
-            // Simple replacement for now - just wrap everything
-            const simpleResult = `<div class="changelog-section">
+            return `<div class="changelog-section">
                 <div class="changelog-header">CHANGELOG</div>
-                ${content}
+                ${testStructure}
             </div>`;
-            
-            console.log('=== CHANGELOG PROCESSING RESULT ===');
-            console.log('Result length:', simpleResult.length);
-            return simpleResult;
         });
-        
-        if (!foundMatch) {
-            console.log('No changelog regex match found!');
-        }
         
         console.log('=== CHANGELOG PROCESSING END ===');
         return result;
