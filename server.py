@@ -45,15 +45,7 @@ def parse_blog_post_metadata(filepath):
 
 def inject_meta_tags(html_content, page, post_slug=None):
     """Inject appropriate meta tags into HTML content."""
-    # Detect if we're running locally or in production
-    import socket
-    hostname = socket.gethostname()
-    is_local = hostname.lower() in ['localhost', '127.0.0.1'] or 'local' in hostname.lower()
-    
-    if is_local or PORT == 8001:
-        base_url = f"http://localhost:{PORT}"
-    else:
-        base_url = "https://twoloop.net"
+    base_url = "http://localhost:8001"  # In production, this would be https://twoloop.net
     
     # Default values
     title = "twoloop"
