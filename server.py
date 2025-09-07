@@ -8,6 +8,8 @@ import http.server
 import socketserver
 import os
 import sys
+import json
+import glob
 
 # Set the port
 PORT = 8000
@@ -22,6 +24,27 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         super().end_headers()
+
+    def do_GET(self):
+        # Handle API endpoint for listing blog posts
+        if self.path == '/api/blog-posts':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            
+            # Get all .md files from blog-posts directory
+            blog_posts = []
+            blog_posts_dir = 'blog-posts'
+            if os.path.exists(blog_posts_dir):
+                md_files = glob.glob(os.path.join(blog_posts_dir, '*.md'))
+                blog_posts = [os.path.basename(f) for f in md_files]
+                blog_posts.sort()  # Sort alphabetically for consistent ordering
+            
+            self.wfile.write(json.dumps(blog_posts).encode())
+            return
+        
+        # Default behavior for all other requests
+        super().do_GET()
 
     def guess_type(self, path):
         # Ensure .md files are served with correct content type

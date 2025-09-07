@@ -310,9 +310,26 @@ class MarkdownParser {
             await this.loadAuthorLinks();
         }
         
-        const blogPosts = [
-            'devblog-1.md'
-        ];
+        // Fetch the list of blog posts from the server
+        let blogPosts = [];
+        try {
+            console.log('Fetching blog post list from /api/blog-posts...');
+            const response = await fetch('/api/blog-posts');
+            if (response.ok) {
+                blogPosts = await response.json();
+                console.log('Blog post files found:', blogPosts);
+            } else {
+                console.error('Failed to fetch blog post list:', response.status, response.statusText);
+                // Fallback to hardcoded list if API fails
+                blogPosts = ['devblog-1.md', 'devblog-2.md'];
+                console.log('Using fallback blog post list:', blogPosts);
+            }
+        } catch (error) {
+            console.error('Error fetching blog post list:', error);
+            // Fallback to hardcoded list if API fails
+            blogPosts = ['devblog-1.md', 'devblog-2.md'];
+            console.log('Using fallback blog post list:', blogPosts);
+        }
 
         this.posts = [];
 
