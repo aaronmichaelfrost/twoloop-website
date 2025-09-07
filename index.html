@@ -2085,7 +2085,8 @@
                     backgroundContainer.style.backgroundRepeat = "no-repeat";
                     backgroundContainer.style.backgroundAttachment = "fixed";
                     backgroundContainer.style.filter = "blur(8px) grayscale(0%) saturate(100%)";
-                    backgroundContainer.style.transform = "scale(1.1)";
+                    // Remove static transform to allow zoom animation
+                    backgroundContainer.style.transform = "";
                     backgroundOverlay.style.opacity = '0';
                     
                     // Add background zoom animation for blog page
@@ -2126,7 +2127,8 @@
                     backgroundContainer.style.backgroundRepeat = "no-repeat";
                     backgroundContainer.style.backgroundAttachment = "fixed";
                     backgroundContainer.style.filter = "blur(8px) grayscale(0%) saturate(100%)";
-                    backgroundContainer.style.transform = "scale(1.1)";
+                    // Remove static transform to allow zoom animation  
+                    backgroundContainer.style.transform = "";
                     backgroundOverlay.style.opacity = '0';
                     
                     // Add background zoom animation for docs page
@@ -2161,10 +2163,13 @@
                     backgroundContainer.style.filter = "";
                     backgroundContainer.style.transform = "";
                     
-                    // Add mobile zoom animation class if on mobile
-                    if (window.innerWidth <= 768) {
+                    // Add zoom animation for static backgrounds (non-GIF) on all devices
+                    const aboutBg = window.innerWidth <= 768 ? 'main-bg-static.png' : '7.gif';
+                    if (aboutBg.includes('.png') || aboutBg.includes('.jpg') || aboutBg.includes('.jpeg')) {
+                        // Static image - add zoom animation
                         backgroundContainer.classList.add('mobile-zoom');
                     } else {
+                        // GIF - no zoom animation needed
                         backgroundContainer.classList.remove('mobile-zoom');
                     }
                     
