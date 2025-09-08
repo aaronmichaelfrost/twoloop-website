@@ -2122,6 +2122,41 @@
             }
         }
 
+        /* Fix for blinking text selection rectangle */
+        *::selection {
+            background: rgba(255, 255, 255, 0.2);
+            color: inherit;
+        }
+        
+        *::-moz-selection {
+            background: rgba(255, 255, 255, 0.2);
+            color: inherit;
+        }
+        
+        /* Prevent text cursor blinking on non-editable elements */
+        * {
+            caret-color: transparent;
+        }
+        
+        /* Only show text cursor on actual text content areas */
+        .blog-post-content, 
+        .docs-article,
+        pre code {
+            caret-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Disable outline on focus for all elements */
+        *:focus {
+            outline: none !important;
+        }
+        
+        /* Remove any blinking or animation from text selection */
+        *:focus, 
+        *:active {
+            animation: none !important;
+            transition: none !important;
+        }
+
         /* Background zoom animation for all pages that need it */
         .background-container.mobile-zoom {
             animation: slowZoom 10s ease-in-out infinite !important;
