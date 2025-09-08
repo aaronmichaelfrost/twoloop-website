@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Loading Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #000;
+            color: #fff;
+        }
+        .test-area {
+            border: 1px solid #333;
+            padding: 20px;
+            margin: 10px 0;
+        }
+        .blog-content {
+            border: 1px solid #666;
+            padding: 15px;
+            margin: 10px 0;
+            min-height: 100px;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            background: #333;
+            color: #fff;
+            border: 1px solid #666;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #555;
+        }
+        .log {
+            background: #111;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #333;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Blog Loading Test</h1>
+    
+    <div class="test-area">
+        <h2>Test Controls</h2>
+        <button onclick="testRapidClicks()">Test Rapid Blog List Clicks</button>
+        <button onclick="testSlowLoading()">Simulate Slow Loading</button>
+        <button onclick="showBlogState()">Show Blog State</button>
+        <button onclick="clearLog()">Clear Log</button>
+        <button onclick="resetBlog()">Reset Blog State</button>
+    </div>
+    
+    <div class="test-area">
+        <h2>Blog Content Area</h2>
+        <div class="blog-content" id="blogContent">
+            <!-- Blog content will be loaded here -->
+        </div>
+    </div>
+    
+    <div class="test-area">
+        <h2>Debug Log</h2>
+        <div class="log" id="debugLog"></div>
+    </div>
+
+    <script src="blog.js"></script>
+    <script>
+        // Override console.log to capture debug output
+        const originalLog = console.log;
+        const originalError = console.error;
+        
+        function addToLog(message, type = 'log') {
+            const logDiv = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.color = type === 'error' ? '#ff6666' : '#cccccc';
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logDiv.appendChild(logEntry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToLog(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToLog(args.join(' '), 'error');
+        };
+        
+        // Test functions
+        function testRapidClicks() {
+            addToLog('=== STARTING RAPID CLICKS TEST ===', 'log');
+            
+            // Simulate multiple rapid calls to showBlogList
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    addToLog(`Rapid click ${i + 1}`, 'log');
+                    if (window.showBlogList) {
+                        window.showBlogList();
+                    }
+                }, i * 100); // 100ms intervals
+            }
+        }
+        
+        function testSlowLoading() {
+            addToLog('=== STARTING SLOW LOADING TEST ===', 'log');
+            
+            // Reset blog state first
+            resetBlog();
+            
+            // Override the fetch function temporarily to simulate slow loading
+            const originalFetch = window.fetch;
+            window.fetch = function(...args) {
+                addToLog(`Fetch called for: ${args[0]}`, 'log');
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        addToLog(`Fetch completing for: ${args[0]}`, 'log');
+                        resolve(originalFetch.apply(this, args));
+                    }, 2000); // 2 second delay
+                });
+            };
+            
+            // Try to load blog list
+            if (window.showBlogList) {
+                window.showBlogList();
+            }
+            
+            // Restore original fetch after 10 seconds
+            setTimeout(() => {
+                window.fetch = originalFetch;
+                addToLog('Fetch restored to normal', 'log');
+            }, 10000);
+        }
+        
+        function clearLog() {
+            document.getElementById('debugLog').innerHTML = '';
+        }
+        
+        function resetBlog() {
+            addToLog('=== RESETTING BLOG STATE ===', 'log');
+            
+            // Reset the markdown parser state
+            if (window.markdownParser) {
+                window.markdownParser.posts = [];
+            }
+            
+            // Reset loading states using the global function
+            if (window.resetBlogStates) {
+                window.resetBlogStates();
+            }
+            
+            // Clear blog content
+            document.getElementById('blogContent').innerHTML = '<p>Blog content cleared - ready for testing</p>';
+            
+            addToLog('Blog state reset complete', 'log');
+        }
+        
+        function showBlogState() {
+            if (window.getBlogLoadingState) {
+                const state = window.getBlogLoadingState();
+                addToLog(`Blog State - Loading: ${state.isLoadingBlogPosts}, Rendering: ${state.isRenderingBlogList}, Posts: ${state.postsCount}`, 'log');
+            }
+        }
+        
+        // Override showBlogList to capture calls and show content in our test area
+        if (window.showBlogList) {
+            const originalShowBlogList = window.showBlogList;
+            window.showBlogList = function() {
+                addToLog('showBlogList() called', 'log');
+                
+                // Call original function
+                originalShowBlogList.apply(this, arguments);
+                
+                // Copy content to our test area
+                const originalBlogContent = document.querySelector('.blog-content');
+                const testBlogContent = document.getElementById('blogContent');
+                
+                if (originalBlogContent && testBlogContent) {
+                    testBlogContent.innerHTML = originalBlogContent.innerHTML;
+                }
+            };
+        }
+        
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', function() {
+            addToLog('Test page loaded', 'log');
+            addToLog('Blog system initialized', 'log');
+            
+            // Show initial blog state
+            setTimeout(() => {
+                if (window.markdownParser) {
+                    addToLog(`Initial posts count: ${window.markdownParser.posts.length}`, 'log');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

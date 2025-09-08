@@ -305,6 +305,14 @@ class MarkdownParser {
     async loadBlogPosts() {
         console.log('Loading blog posts...');
         
+        // Prevent concurrent loading attempts
+        if (isLoadingBlogPosts) {
+            console.log('Blog posts already loading, skipping...');
+            return this.posts;
+        }
+        
+        isLoadingBlogPosts = true;
+        
         // Ensure author links are loaded first
         if (Object.keys(this.authorLinks).length === 0) {
             await this.loadAuthorLinks();
@@ -362,6 +370,10 @@ class MarkdownParser {
 
         // Sort posts by date (newest first)
         this.posts.sort((a, b) => new Date(b.metadata.date) - new Date(a.metadata.date));
+        
+        // Mark loading as complete
+        isLoadingBlogPosts = false;
+        
         return this.posts;
     }
 
@@ -425,6 +437,22 @@ window.areBlogPostsLoaded = function() {
 
 // Blog functionality
 let currentPage = 'about';
+let isLoadingBlogPosts = false; // Add loading state tracking
+let isRenderingBlogList = false; // Add rendering state tracking
+
+// Expose loading state functions globally for debugging
+window.getBlogLoadingState = function() {
+    return {
+        isLoadingBlogPosts,
+        isRenderingBlogList,
+        postsCount: markdownParser.posts.length
+    };
+};
+
+window.resetBlogStates = function() {
+    isLoadingBlogPosts = false;
+    isRenderingBlogList = false;
+};
 
 function showBlogPost(slug) {
     const post = markdownParser.getPost(slug);
@@ -504,6 +532,14 @@ function showBlogPost(slug) {
 function showBlogList() {
     console.log('showBlogList called, posts count:', markdownParser.posts.length);
     
+    // Prevent concurrent rendering
+    if (isRenderingBlogList) {
+        console.log('Already rendering blog list, skipping...');
+        return;
+    }
+    
+    isRenderingBlogList = true;
+    
     // Update URL to show blog list (remove post parameter)
     if (window.updateUrl) {
         window.updateUrl('blog', null, null);
@@ -517,10 +553,37 @@ function showBlogList() {
     // Reset scroll position to top
     window.scrollTo(0, 0);
     
-    // Ensure posts are loaded first
-    ensureBlogPostsLoaded();
-    
     const blogContent = document.querySelector('.blog-content');
+    
+    // Check if posts are loaded or currently loading
+    if (markdownParser.posts.length === 0 && !isLoadingBlogPosts) {
+        // Posts not loaded and not loading, start loading
+        console.log('Posts not loaded, starting load...');
+        ensureBlogPostsLoaded();
+        
+        // Show loading state
+        blogContent.innerHTML = `
+            <h1>Blog</h1>
+            <div class="blog-posts-container">
+                <p style="color: white; font-size: 1.2rem; text-align: center; padding: 2rem;">Loading blog posts...</p>
+            </div>
+        `;
+        isRenderingBlogList = false;
+        return;
+    } else if (isLoadingBlogPosts) {
+        // Currently loading, show loading state without triggering another load
+        console.log('Posts are loading, showing loading state...');
+        blogContent.innerHTML = `
+            <h1>Blog</h1>
+            <div class="blog-posts-container">
+                <p style="color: white; font-size: 1.2rem; text-align: center; padding: 2rem;">Loading blog posts...</p>
+            </div>
+        `;
+        isRenderingBlogList = false;
+        return;
+    }
+    
+    // Posts are loaded, render them
     blogContent.innerHTML = `
         <h1>Blog</h1>
         <div class="blog-posts-container">
@@ -556,7 +619,10 @@ function showBlogList() {
         blogHeader.classList.remove('animate-in');
         setTimeout(() => {
             blogHeader.classList.add('animate-in');
+            isRenderingBlogList = false; // Reset rendering state after animation
         }, 100);
+    } else {
+        isRenderingBlogList = false; // Reset rendering state if no header
     }
 }
 
@@ -568,27 +634,33 @@ document.addEventListener('DOMContentLoaded', async function() {
         console.log('Blog posts loaded successfully:', markdownParser.posts.length);
         
         // If we're currently on the blog page, refresh the content
-        if (document.body.classList.contains('blog-active')) {
+        if (document.body.classList.contains('blog-active') && !isRenderingBlogList) {
             console.log('Currently on blog page, refreshing content...');
             showBlogList();
         }
     } catch (error) {
         console.error('Error loading blog posts:', error);
+        isLoadingBlogPosts = false; // Reset loading state on error
     }
 });
 
 // Also try to load when the blog page is shown
 function ensureBlogPostsLoaded() {
     console.log('Ensuring blog posts are loaded...');
-    if (markdownParser.posts.length === 0) {
-        console.log('No posts found, loading...');
+    if (markdownParser.posts.length === 0 && !isLoadingBlogPosts) {
+        console.log('No posts found and not loading, starting load...');
         markdownParser.loadBlogPosts().then(() => {
             console.log('Posts loaded, refreshing blog list...');
-            if (document.body.classList.contains('blog-active')) {
+            if (document.body.classList.contains('blog-active') && !isRenderingBlogList) {
                 showBlogList();
             }
         }).catch(error => {
             console.error('Failed to load blog posts:', error);
+            isLoadingBlogPosts = false; // Reset loading state on error
         });
+    } else if (isLoadingBlogPosts) {
+        console.log('Posts are already loading...');
+    } else {
+        console.log('Posts already loaded.');
     }
 }
