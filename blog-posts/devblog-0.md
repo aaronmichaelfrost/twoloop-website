@@ -18,9 +18,11 @@ We're ditching co-op gameplay and exploring more world generation and PvP.
 
 For the past few months, I've been working extremely hard on Fractium outside of my comp sci classes.
 
+<div class="discord-images-row">
 ![New HUD 1](devblog0-images/fps_1.png)
 ![New HUD 2](devblog0-images/fps_2.png)
 ![New HUD 3](devblog0-images/fps_3.png)
+<div class="discord-images-row">
 
 
 ### NICE PICS
@@ -71,7 +73,7 @@ We actually have a very polished interface for base building. Not shown here...
 
 This system is extremely versatile, and these are just some of the bases I generated in one day. There is an entire system for generating these fully destructible bases inhabited by bandits. They have loot and other interactables in them. Too bad we don't have a full time game designer to take advantage of this!
 
-<div class="buildings-row">
+<div class="discord-images-row">
 ![Procedural Building 1](devblog0-images/procgen_building_0.png)
 ![Procedural Building 2](devblog0-images/procgen_building_1.png)
 ![Procedural Building 3](devblog0-images/procgen_building_2.png)
@@ -93,7 +95,7 @@ There are several deployables at the moment: furnace, locker (basically a tool c
 
 ### ISLAND GENERATION
 
-<div class="island-generation">
+<div class="discord-images-row">
 ![Island Generation 1](devblog0-images/island1.gif)
 ![Island Generation 2](devblog0-images/island2.gif)
 </div>
