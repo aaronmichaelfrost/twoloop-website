@@ -2,7 +2,7 @@
 date: 2025-08-23
 cover-image: devblog1-images/cover.png
 title: Devblog 1
-description: Covers first two weeks of work on Fractium after a long break.
+description: Covers first two weeks of work on Fractium after a long break
 ---
 
 # Devblog 1

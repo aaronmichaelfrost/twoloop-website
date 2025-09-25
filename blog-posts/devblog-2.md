@@ -2,7 +2,7 @@
 date: 2025-09-07
 cover-image: devblog2-images/heightmap-2.png
 title: Devblog 2
-description: Two weeks of polish, stress testing, and major infrastructure improvements.
+description: Two weeks of polish, stress testing, and major infrastructure improvements
 ---
 
 # Devblog 2

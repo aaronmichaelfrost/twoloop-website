@@ -1,8 +1,8 @@
 ---
 date: 2023-04-15
-cover-image: devblog0-images/new_game_name.png
+cover-image: devblog0-images/2.png
 title: Devblog 0
-description: From The Last Path to Fractium - proc gen worlds, base building, and more
+description: Proc gen islands, bases, building, and more
 ---
 
 # Devblog 0
