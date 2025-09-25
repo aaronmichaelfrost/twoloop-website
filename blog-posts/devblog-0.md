@@ -1,5 +1,5 @@
 ---
-date: 2023-04-15
+date: 2023-06-24
 cover-image: devblog0-images/2.png
 title: Devblog 0
 description: Proc gen islands, bases, building, and more
