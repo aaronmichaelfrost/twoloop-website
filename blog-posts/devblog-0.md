@@ -23,6 +23,28 @@ For the past few months, I've been working extremely hard on Fractium outside of
 ![New HUD 3](devblog0-images/fps_3.png)
 
 
+### NICE PICS
+
+<div class="discord-images-row">
+![1](devblog0-images/1.png)
+![2](devblog0-images/2.png)
+</div>
+
+<div class="discord-images-row">
+![3](devblog0-images/3.png)
+![4](devblog0-images/4.png)
+</div>
+
+<div class="discord-images-row">
+![5](devblog0-images/5.png)
+![6](devblog0-images/6.png)
+</div>
+
+<div class="discord-images-row">
+![7](devblog0-images/7.png)
+![8](devblog0-images/8.png)
+</div>
+
 ### PROCEDURAL WEAPONS
 
 The HUD for a single procedural weapon. We capture a render texture and cache it off. We use this same image for the kill feed when a player kills another player.
@@ -102,6 +124,55 @@ Rylan came up with some awesome ideas for the cliff rocks. This is an old screen
 
 
 ## CHANGELOG
+
+**9/20/2022**
+◦ Recoil rotation reliably resets  
+
+**9/22/2022**
+◦ Movement acceleration & camera rotation tuning  
+◦ Console autocomplete & durability command  
+◦ Spawn-menu polish; headshot kill sounds  
+◦ Sprint cancels on shot; UI hover tweaks  
+
+**9/23/2022**
+◦ Melee sensitivity curve; revive bug fixed  
+◦ Camera lean while strafing; network cleanup  
+
+**9/24/2022**
+◦ Melee charging system (damage/knockback/FOV curves)  
+◦ Gun/FOV tweaks; laser/trail spawn fixes  
+
+**9/29/2022**
+◦ Look-blend & crouch pose rework; melee hit projection  
+
+**10/1/2022**
+◦ Unity update, gameplay telemetry, perf & build fixes  
+
+**10/3/2022**
+◦ Water shader; Steam post-build upload pipeline  
+
+**10/6/2022**
+◦ HDRP → URP conversion; wide shader/material fix pass  
+
+**10/9–10/10/2022**
+◦ Lighting, skybox, VFX, dynamic occlusion & bug fixes  
+
+**10/21–10/22/2022**
+◦ Recoil and outline shader tweaks; lighting fixes  
+
+**11/18–11/30/2022**
+◦ UI 3.0 work; new ragdoll tech v2 and tweaks  
+
+**1/23/2023**
+◦ Level streaming; navmesh generation; cave entrance monument  
+◦ Worldgen assets prefabbed  
+
+**1/28–1/31/2023**
+◦ Dedicated server build tooling, FTP & automated compression  
+◦ Server console stability; build stripping setup  
+
+**1/29–1/30/2023**
+◦ Client projectile rockets, FX/sound; rockets explode on despawn  
 
 **2/2–2/3/2023**
 ◦ Server browser & paging; server console QoL  
