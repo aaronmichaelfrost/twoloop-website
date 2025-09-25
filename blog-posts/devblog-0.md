@@ -18,11 +18,9 @@ We're ditching co-op gameplay and exploring more world generation and PvP.
 
 For the past few months, I've been working extremely hard on Fractium outside of my comp sci classes.
 
-<div class="discord-images-row">
 ![New HUD 1](devblog0-images/fps_1.png)
 ![New HUD 2](devblog0-images/fps_2.png)
 ![New HUD 3](devblog0-images/fps_3.png)
-<div class="discord-images-row">
 
 
 ### NICE PICS
