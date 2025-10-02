@@ -2502,6 +2502,11 @@
                 </section>
             `;
             
+            // Setup wishlist button handler after content regeneration
+            if (window.setupWishlistButtonHandler) {
+                setTimeout(window.setupWishlistButtonHandler, 100);
+            }
+            
             // Reset and trigger footer animation with more robust approach
             // First, wait for DOM to be ready
             setTimeout(() => {
@@ -3103,6 +3108,23 @@
             // Footer animation is now handled by the checkFooterVisibility function
             // Initial footer visibility check
             setTimeout(checkFooterVisibility, 100);
+            
+            // Prevent wishlist button clicks from bubbling up and triggering navigation
+            function setupWishlistButtonHandler() {
+                const wishlistBtn = document.querySelector('.wishlist-button');
+                if (wishlistBtn) {
+                    wishlistBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        // Let the normal link behavior happen (open Steam in new tab)
+                    });
+                }
+            }
+            
+            // Set up initial handler
+            setupWishlistButtonHandler();
+            
+            // Make setupWishlistButtonHandler available globally for use after content regeneration
+            window.setupWishlistButtonHandler = setupWishlistButtonHandler;
         });
     </script>
 </body>
