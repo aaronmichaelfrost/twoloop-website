@@ -2347,19 +2347,19 @@
                 const loadedImages = window.loadedBackgroundImages || new Set();
                 const isAlreadyLoaded = loadedImages.has(backgroundUrl);
                 
-                // If already loaded, just set it immediately without fade-in
+                // Always ensure background is visible during page switches
+                if (!backgroundContainer.classList.contains('loaded')) {
+                    backgroundContainer.classList.add('loaded');
+                }
+                
+                // If already loaded, just set it immediately
                 if (isAlreadyLoaded) {
                     backgroundContainer.style.backgroundImage = `url('${backgroundUrl}')`;
-                    // Ensure it stays visible
-                    if (!backgroundContainer.classList.contains('loaded')) {
-                        backgroundContainer.classList.add('loaded');
-                    }
                     callback();
                     return;
                 }
                 
                 // New image - keep previous image visible while loading
-                // Don't remove loaded class, just preload in background
                 
                 // Preload the image
                 const img = new Image();
@@ -2367,10 +2367,6 @@
                     // Image fully loaded - now switch to it
                     loadedImages.add(backgroundUrl);
                     backgroundContainer.style.backgroundImage = `url('${backgroundUrl}')`;
-                    // Keep it visible
-                    if (!backgroundContainer.classList.contains('loaded')) {
-                        backgroundContainer.classList.add('loaded');
-                    }
                 };
                 img.onerror = () => {
                     console.warn('Failed to preload background:', backgroundUrl);
