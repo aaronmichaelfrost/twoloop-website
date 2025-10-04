@@ -2358,24 +2358,24 @@
                     return;
                 }
                 
-                // New image - need to fade in
-                // Remove loaded class to fade out to 0 opacity
-                backgroundContainer.classList.remove('loaded');
-                
-                // Set background image
-                backgroundContainer.style.backgroundImage = `url('${backgroundUrl}')`;
+                // New image - keep previous image visible while loading
+                // Don't remove loaded class, just preload in background
                 
                 // Preload the image
                 const img = new Image();
                 img.onload = () => {
-                    // Image fully loaded - add to set and fade in
+                    // Image fully loaded - now switch to it
                     loadedImages.add(backgroundUrl);
-                    backgroundContainer.classList.add('loaded');
+                    backgroundContainer.style.backgroundImage = `url('${backgroundUrl}')`;
+                    // Keep it visible
+                    if (!backgroundContainer.classList.contains('loaded')) {
+                        backgroundContainer.classList.add('loaded');
+                    }
                 };
                 img.onerror = () => {
                     console.warn('Failed to preload background:', backgroundUrl);
-                    // Still fade in even on error
-                    backgroundContainer.classList.add('loaded');
+                    // Still try to set it
+                    backgroundContainer.style.backgroundImage = `url('${backgroundUrl}')`;
                 };
                 img.src = backgroundUrl;
                 
