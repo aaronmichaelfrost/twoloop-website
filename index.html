@@ -393,6 +393,15 @@
             animation: punchIn 0.6s ease-out 0.9s forwards, gradualScale 0.3s ease-out forwards, shimmerGlow 1.5s ease-in-out infinite, rumble 0.1s ease-in-out infinite 0.3s;
         }
 
+        .wishlist-button:active {
+            background-color: #d10000;
+            color: white;
+            border-color: #d10000;
+            transform: translateY(-1px) scale(1.45);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+            opacity: 1 !important;
+        }
+
         /* Gradual scale animation */
         @keyframes gradualScale {
             0% { 
@@ -2335,16 +2344,38 @@
                     return;
                 }
                 
-                // Set background immediately - don't wait for preload
+                const loadedImages = window.loadedBackgroundImages || new Set();
+                const isAlreadyLoaded = loadedImages.has(backgroundUrl);
+                
+                // If already loaded, just set it immediately without fade-in
+                if (isAlreadyLoaded) {
+                    backgroundContainer.style.backgroundImage = `url('${backgroundUrl}')`;
+                    // Ensure it stays visible
+                    if (!backgroundContainer.classList.contains('loaded')) {
+                        backgroundContainer.classList.add('loaded');
+                    }
+                    callback();
+                    return;
+                }
+                
+                // New image - need to fade in
+                // Remove loaded class to fade out to 0 opacity
+                backgroundContainer.classList.remove('loaded');
+                
+                // Set background image
                 backgroundContainer.style.backgroundImage = `url('${backgroundUrl}')`;
                 
-                // Still preload for optimization, but run callback immediately  
+                // Preload the image
                 const img = new Image();
                 img.onload = () => {
-                    // Image fully loaded - no action needed since we already set it
+                    // Image fully loaded - add to set and fade in
+                    loadedImages.add(backgroundUrl);
+                    backgroundContainer.classList.add('loaded');
                 };
                 img.onerror = () => {
                     console.warn('Failed to preload background:', backgroundUrl);
+                    // Still fade in even on error
+                    backgroundContainer.classList.add('loaded');
                 };
                 img.src = backgroundUrl;
                 
@@ -2898,6 +2929,10 @@
             const backgroundContainer = document.querySelector('.background-container');
             bottomGradient.style.opacity = 0.6;
             
+            // Track loaded images to prevent redundant fade-ins
+            const loadedImages = new Set();
+            window.loadedBackgroundImages = loadedImages;
+            
             // Set initial background immediately and preload for optimization
             const initialBg = window.innerWidth <= 1800 ? 'main-bg-static.png' : '7.gif';
             
@@ -2907,7 +2942,8 @@
             // Preload and fade in when loaded
             const preloadImg = new Image();
             preloadImg.onload = () => {
-                // Add loaded class to trigger fade-in from 0 to 1 opacity
+                // Add to loaded set and trigger fade-in from 0 to 1 opacity
+                loadedImages.add(initialBg);
                 backgroundContainer.classList.add('loaded');
             };
             preloadImg.src = initialBg;
