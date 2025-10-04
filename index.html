@@ -191,7 +191,6 @@
             background-position: center;
             background-attachment: fixed;
             background-repeat: no-repeat;
-            transition: all 0.5s ease;
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
             /* Prevent progressive loading appearance */
@@ -202,6 +201,10 @@
 
         .background-container.loaded {
             opacity: 1;
+        }
+        
+        .background-container.no-transition {
+            transition: none !important;
         }
 
         .background-container.scrolled {
@@ -2347,9 +2350,12 @@
                 const loadedImages = window.loadedBackgroundImages || new Set();
                 const isAlreadyLoaded = loadedImages.has(backgroundUrl);
                 
-                // Always ensure background is visible during page switches
+                // Always ensure background is visible and transitions are disabled
                 if (!backgroundContainer.classList.contains('loaded')) {
                     backgroundContainer.classList.add('loaded');
+                }
+                if (!backgroundContainer.classList.contains('no-transition')) {
+                    backgroundContainer.classList.add('no-transition');
                 }
                 
                 // If already loaded, just set it immediately
@@ -2360,11 +2366,10 @@
                 }
                 
                 // New image - keep previous image visible while loading
-                
-                // Preload the image
+                // Start loading in parallel
                 const img = new Image();
                 img.onload = () => {
-                    // Image fully loaded - now switch to it
+                    // Image fully loaded - now switch to it instantly
                     loadedImages.add(backgroundUrl);
                     backgroundContainer.style.backgroundImage = `url('${backgroundUrl}')`;
                 };
@@ -2941,6 +2946,10 @@
                 // Add to loaded set and trigger fade-in from 0 to 1 opacity
                 loadedImages.add(initialBg);
                 backgroundContainer.classList.add('loaded');
+                // After initial fade-in completes, disable transitions
+                setTimeout(() => {
+                    backgroundContainer.classList.add('no-transition');
+                }, 350); // Wait for the 0.3s transition + buffer
             };
             preloadImg.src = initialBg;
             
