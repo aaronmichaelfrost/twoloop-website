@@ -1,6 +1,6 @@
 ---
 date: 2025-10-12
-cover-image: devblog3-images/devblog3-cover.png
+cover-image: devblog3-images/cover.png
 title: Devblog 3
 description: Bug fixes, commands, & antihack
 ---
@@ -9,12 +9,12 @@ description: Bug fixes, commands, & antihack
 
 Bug fixes, commands, & antihack
 
-### Life Update
+### Going Full-Time
 *by Aaron*
 
-After two years of work at Blizzard as a SWE, I've resigned so I can focus my efforts on Fractium now, full time. This update is on the lighter side as I've had to move apartments, again, too.
+Big news: After two years at Blizzard as a SWE, I've resigned! Now, I can focus on Fractium full-time. 
 
-The past two weeks I tackled a number of critical bugs, security/antihack things, and QoL. Going to get some more momentum going now that life is a little more stable. 
+This update covers the past two weeks of critical bug fixes, security improvements, and quality-of-life features. It's lighter than usual since I've been juggling the career transition and moving apartments, but momentum is building now that life is stabilizing.
 
 
 ### Cinema Camera
@@ -27,32 +27,33 @@ In this update I added cinematic camera shake, entity tracking with projected ve
 ![Cinema Camera 2](devblog3-images/cinema2.gif)
 
 
-### Bugs
+### Bug Bash
 
-Working on a project like this, there are a variety of contexts systems must handle:
-* Standalone build vs. editor
-* Steam P2P vs. Dedicated vs. non-steam transport (ex. ParrelSync/Singleplayer)
-* Procedural world vs. dev world
-* UNITY_SERVER vs. !UNITY_SERVER
-* Local player vs. remote player vs. host player
+Fixed **20 bugs** this update, bringing us down to just **21 total** with only **1 critical** remaining.
 
-Fractium supports all of these contexts. For some reason our networking library seems to execute callbacks in a different order in the editor vs. build. So we now handle that. I also fixed an issue with managed stripping preventing our AI from loading due to stripping assembly types that were only referened via reflection. 
+Building a game like Fractium means our systems need to work flawlessly across many different contexts:
+* **Editor vs. Standalone** - Development tools vs. final game builds
+* **Network Types** - Steam P2P, dedicated servers, and local play
+* **World Types** - Procedural generation vs. hand-crafted test worlds  
+* **Player Contexts** - Local, remote, and host players all behave differently
 
-I fixed a ton of bugs this week. We are down to 1 critical bug. I aim to keep the critical bugs to zero moving forwards.
+Each combination creates unique challenges. For example, this week I discovered our networking library executes callbacks in different orders between editor and builds—subtle stuff that can break multiplayer in unexpected ways.
 
-I also set up ParrelSync properly so I can easily fix bugs with Hot Reload on one machine.
+I also tackled a nasty managed stripping bug that only affected release builds, where the compiler was removing AI code it thought was "unused" (but was actually accessed through reflection).
+
+The goal moving forward: **zero critical bugs**. I've also improved our development workflow with ParrelSync, letting me test multiplayer scenarios solo with hot reload.
 
 ![ParrelSync Setup](devblog3-images/parrelsync.png)
 
 
 ### Movement Antihack
 
-I wrote some server modules that verify 3 things:
-* groundedness (flyhack protection)
-* speed 
-* collision (noclip protection)
+Cheaters ruin the fun, so I've built server-side validation for player movement that checks:
+* **Groundedness** - Prevents fly hacking and impossible jumps
+* **Speed limits** - Catches speed hackers moving too fast
+* **Collision detection** - Stops noclip cheats that phase through walls
 
-I tested each of these by simulating clientside cheats, and they indeed work and the game will kick players for moving too fast, jumping too high / floating, or phasing through walls. This works within the antihack violation scoring system I built in the previous update.
+I tested these by simulating common clientside cheats—they work perfectly, automatically kicking players who fail validation. This integrates with the violation scoring system from the previous update, so admins can tally violations and manage enforcement.
 
 
 ### More Console Commands
@@ -70,6 +71,13 @@ If you are an admin in a dev build you can press H to get a debug view of entiti
 
 ![Entity Debug View](devblog3-images/entitydebug.png)
 
+
+### What's Next
+
+Now that I'm full-time and the critical bugs are under control, expect some momentum:
+* **Stress testing** - Pushing toward 250+ concurrent players
+* **New content** - A really cool base building mechanic, and potentially a classic roguelike gamemode
+* **World gen** - We found a way to integrate the original tile system with the proc-gen islands
 
 ## CHANGELOG
 
