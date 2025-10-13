@@ -12,12 +12,12 @@ Bug fixes, commands, & antihack
 ### Going Full-Time
 *by Aaron*
 
-Big news: After two years at Blizzard as a SWE, I've resigned! Now, I can focus on Fractium full-time. 
+Big news: After two years at Blizzard as a SWE, I've resigned! Now, I can focus on Fractium. 
 
 This update covers the past two weeks of critical bug fixes, security improvements, and quality-of-life features. It's lighter than usual since I've been juggling the career transition and moving apartments, but momentum is building now that life is stabilizing.
 
  
-### Cinema Camera
+### 🎬 Cinema Camera
 
 There is a console command `freecam` that server admins can use to noclip around the world.
 
@@ -27,7 +27,7 @@ In this update I added cinematic camera shake, entity tracking with projected ve
 ![Cinema Camera 2](devblog3-images/cinema2.gif)
 
 
-### Bug Bash
+### 🐛 Bug Bash
 
 Fixed **20 bugs** this update, bringing us down to just **21 total** with only **1 critical** remaining.
 
@@ -46,7 +46,7 @@ The goal moving forward: **zero critical bugs**. I've also improved our developm
 ![ParrelSync Setup](devblog3-images/parrelsync.png)
 
 
-### Movement Antihack
+### 🔒 Movement Antihack
 
 I've built server-side validation for player movement that checks:
 * **Groundedness** - Prevents fly hacking and impossible jumps
@@ -56,7 +56,7 @@ I've built server-side validation for player movement that checks:
 I tested these by simulating clientside cheats. The validation works, detection works, and will flag players accordingly. This integrates with the violation scoring system from the previous update, so admins can tally violations and manage enforcement.
 
 
-### More Console Commands
+### 🔧 More Console Commands
 
 ◦ `-fresh` - for dedicated servers, forces new world data 
 ◦ `listbannedplayers` - prints list of banned users to console
@@ -65,14 +65,14 @@ I tested these by simulating clientside cheats. The validation works, detection 
 ◦ `connect` - connects to a server by IP without using the server browser
 
 
-### Entity Debugger
+### 👾 Entity Debugger
 
 If you are an admin in a dev build you can press H to get a debug view of entities.
 
 ![Entity Debug View](devblog3-images/entitydebug.png)
 
 
-### What's Next
+### 📢 What's Next
 
 Now that I'm full-time and the critical bugs are under control, expect some momentum:
 * **Stress testing** - Pushing toward 250+ concurrent players
