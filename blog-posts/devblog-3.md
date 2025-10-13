@@ -23,10 +23,8 @@ There is a console command `freecam` that server admins can use to noclip around
 
 In this update I added cinematic camera shake, entity tracking with projected velocity, and a lot of other controls. We'll use this to make trailers, eventually.
 
-<div class="discord-images-row">
 ![Cinema Camera 1](devblog3-images/cinema1.gif)
 ![Cinema Camera 2](devblog3-images/cinema2.gif)
-</div>
 
 
 ### Bugs
