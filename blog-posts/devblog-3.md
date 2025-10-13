@@ -16,7 +16,7 @@ Big news: After two years at Blizzard as a SWE, I've resigned! Now, I can focus 
 
 This update covers the past two weeks of critical bug fixes, security improvements, and quality-of-life features. It's lighter than usual since I've been juggling the career transition and moving apartments, but momentum is building now that life is stabilizing.
 
-
+ 
 ### Cinema Camera
 
 There is a console command `freecam` that server admins can use to noclip around the world.
