@@ -2,7 +2,7 @@
 date: 2025-10-12
 cover-image: devblog3-images/cover.png
 title: Devblog 3
-description: Bug fixes, commands, & antihack
+description: Life update, bug fixes, commands, and more anticheat
 ---
 
 # Devblog 3
