@@ -31,13 +31,13 @@ In this update I added cinematic camera shake, entity tracking with projected ve
 
 Fixed **20 bugs** this update, bringing us down to just **21 total** with only **1 critical** remaining.
 
-Building a game like Fractium means our systems need to work flawlessly across many different contexts:
+Bugs come out of all cracks and crevices because our systems need to work flawlessly across many contexts:
 * **Editor vs. Standalone** - Development tools vs. final game builds
 * **Network Types** - Steam P2P, dedicated servers, and local play
 * **World Types** - Procedural generation vs. hand-crafted test worlds  
 * **Player Contexts** - Local, remote, and host players all behave differently
 
-Each combination creates unique challenges. For example, this week I discovered our networking library executes callbacks in different orders between editor and builds—subtle stuff that can break multiplayer in unexpected ways.
+Each combination creates unique challenges. For example, this week I discovered our networking library executes callbacks in different orders between editor and builds—subtle things like this break multiplayer in unexpected ways that are hard to track down.
 
 I also tackled a nasty managed stripping bug that only affected release builds, where the compiler was removing AI code it thought was "unused" (but was actually accessed through reflection).
 
@@ -48,12 +48,12 @@ The goal moving forward: **zero critical bugs**. I've also improved our developm
 
 ### Movement Antihack
 
-Cheaters ruin the fun, so I've built server-side validation for player movement that checks:
+I've built server-side validation for player movement that checks:
 * **Groundedness** - Prevents fly hacking and impossible jumps
 * **Speed limits** - Catches speed hackers moving too fast
 * **Collision detection** - Stops noclip cheats that phase through walls
 
-I tested these by simulating common clientside cheats—they work perfectly, automatically kicking players who fail validation. This integrates with the violation scoring system from the previous update, so admins can tally violations and manage enforcement.
+I tested these by simulating clientside cheats. The validation works, detection works, and will flag players accordingly. This integrates with the violation scoring system from the previous update, so admins can tally violations and manage enforcement.
 
 
 ### More Console Commands
