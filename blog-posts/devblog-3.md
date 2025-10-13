@@ -31,7 +31,7 @@ In this update I added cinematic camera shake, entity tracking with projected ve
 
 Fixed **20 bugs** this update, bringing us down to just **21 total** with only **1 critical** remaining.
 
-Bugs come out of all cracks and crevices because our systems need to work flawlessly across many contexts:
+Bugs come out of all cracks and crevices because our systems work in many contexts:
 * **Editor vs. Standalone** - Development tools vs. final game builds
 * **Network Types** - Steam P2P, dedicated servers, and local play
 * **World Types** - Procedural generation vs. hand-crafted test worlds  
