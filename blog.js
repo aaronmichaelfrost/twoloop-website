@@ -341,32 +341,35 @@ class MarkdownParser {
 
         this.posts = [];
 
-        for (const filename of blogPosts) {
+        const results = await Promise.all(blogPosts.map(async (filename) => {
             try {
                 console.log(`Fetching ${filename}...`);
                 const response = await fetch(`blog-posts/${filename}`);
                 console.log(`Response for ${filename}:`, response.status, response.ok);
-                
+
                 if (response.ok) {
                     const content = await response.text();
                     console.log(`Content length for ${filename}:`, content.length);
                     const { metadata, content: markdownContent } = this.parseFrontmatter(content);
                     const htmlContent = this.markdownToHtml(markdownContent);
-                    
-                    this.posts.push({
+                    console.log(`Successfully loaded ${filename}`);
+                    return {
                         filename: filename.replace('.md', ''),
                         metadata,
                         content: htmlContent,
                         slug: filename.replace('.md', '')
-                    });
-                    console.log(`Successfully loaded ${filename}`);
+                    };
                 } else {
                     console.error(`Failed to fetch ${filename}: ${response.status} ${response.statusText}`);
+                    return null;
                 }
             } catch (error) {
                 console.error(`Error loading ${filename}:`, error);
+                return null;
             }
-        }
+        }));
+
+        this.posts = results.filter(p => p !== null);
 
         // Sort posts by date (newest first)
         this.posts.sort((a, b) => new Date(b.metadata.date) - new Date(a.metadata.date));
@@ -403,7 +406,7 @@ class MarkdownParser {
                             <div class="loading-spinner"></div>
                             Loading...
                         </div>
-                        <img src="${post.metadata['cover-image'].startsWith('http') || post.metadata['cover-image'].startsWith('/') ? post.metadata['cover-image'] : 'blog-posts/' + post.metadata['cover-image']}" alt="${post.metadata.title}" onload="handleImageLoad(this)" onerror="handleImageError(this)">` : 
+                        <img src="${post.metadata['cover-image'].startsWith('http') || post.metadata['cover-image'].startsWith('/') ? post.metadata['cover-image'] : 'https://cdn.jsdelivr.net/gh/aaronmichaelfrost/twoloop-website@main/blog-posts/' + post.metadata['cover-image']}" alt="${post.metadata.title}" onload="handleImageLoad(this)" onerror="handleImageError(this)">` : 
                         '<div class="blog-png-placeholder">No cover image</div>'
                     }
                 </div>
