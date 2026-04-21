@@ -216,6 +216,9 @@ class DocsSystem {
             return placeholder;
         });
 
+        // Horizontal rules (must be processed before paragraphs)
+        html = html.replace(/^---$/gm, '<hr>');
+
         // Tables
         html = this.parseMarkdownTables(html);
 
