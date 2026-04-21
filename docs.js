@@ -39,7 +39,7 @@ class DocsSystem {
 
     async loadDocsList() {
         const docFiles = [
-            { title: 'Dedicated Servers', slug: 'dedicated-servers', order: 1 },
+            { title: 'Game Hosting', slug: 'dedicated-servers', order: 1 },
             { title: 'Console Commands', slug: 'console-commands', order: 2 },
             { title: 'Item Wiki', slug: 'item-wiki', order: 3 }
         ];
@@ -116,6 +116,7 @@ class DocsSystem {
             this.currentDoc = {
                 slug,
                 title: frontmatter.title || slug,
+                lastUpdated: frontmatter.last_updated || null,
                 content: content
             };
 
@@ -178,10 +179,15 @@ class DocsSystem {
         if (!content) return;
 
         const htmlContent = this.markdownToHtml(this.currentDoc.content);
+        const lastUpdatedHtml = this.currentDoc.lastUpdated
+            ? `<p class="docs-last-updated">Last updated: ${this.currentDoc.lastUpdated}</p>`
+            : '';
+        // Inject last-updated immediately after the first <h1>
+        const htmlWithTimestamp = htmlContent.replace(/(<h1[^>]*>.*?<\/h1>)/, `$1${lastUpdatedHtml}`);
         content.innerHTML = `
             <div class="docs-content-wrapper">
                 <article class="docs-article">
-                    ${htmlContent}
+                    ${htmlWithTimestamp}
                 </article>
             </div>
         `;
