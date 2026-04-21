@@ -3296,20 +3296,19 @@
             document.querySelector('meta[name="twitter:description"]').setAttribute('content', description);
             document.querySelector('meta[name="twitter:image"]').setAttribute('content', image);
             
-            // Update image dimensions for better social media display
-            if (page === 'blog' && post && window.markdownParser) {
-                const blogPost = window.markdownParser.posts.find(p => p.slug === post);
-                if (blogPost && blogPost.metadata['cover-image']) {
-                    // Blog post cover images might have different dimensions
-                    // Set generic dimensions that work well for most platforms
+            // Update image dimensions to match the actual image
+            (function() {
+                const img = new Image();
+                img.onload = function() {
+                    document.querySelector('meta[property="og:image:width"]').setAttribute('content', String(img.naturalWidth));
+                    document.querySelector('meta[property="og:image:height"]').setAttribute('content', String(img.naturalHeight));
+                };
+                img.onerror = function() {
                     document.querySelector('meta[property="og:image:width"]').setAttribute('content', '1200');
                     document.querySelector('meta[property="og:image:height"]').setAttribute('content', '630');
-                }
-            } else {
-                // Default playtest.png dimensions
-                document.querySelector('meta[property="og:image:width"]').setAttribute('content', '1200');
-                document.querySelector('meta[property="og:image:height"]').setAttribute('content', '630');
-            }
+                };
+                img.src = image;
+            })();
             
             // Update page title
             document.title = title;
