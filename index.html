@@ -1700,6 +1700,240 @@
             }
         }
 
+        /* Roadmap Styles */
+        .roadmap-container {
+            display: none;
+            min-height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            overflow-y: auto;
+            padding-top: 100px;
+            padding-bottom: 4rem;
+        }
+
+        body.roadmap-active .background-container {
+            filter: blur(8px) grayscale(100%) sepia(60%) hue-rotate(-50deg) saturate(6) brightness(0.4) !important;
+            background-image: url('rload3.png') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
+            transform: scale(1.1) !important;
+        }
+
+        body.roadmap-active::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom,
+                rgba(0, 0, 0, 0.2) 0%,
+                rgba(0, 0, 0, 0.4) 50%,
+                rgba(0, 0, 0, 0.7) 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .roadmap-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .roadmap-content h1 {
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.15) 0%,
+                rgba(255, 255, 255, 0.15) 45%,
+                rgba(255, 255, 255, 1) 50%,
+                rgba(255, 255, 255, 0.15) 55%,
+                rgba(255, 255, 255, 0.15) 100%
+            );
+            background-size: 150% 100%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShimmer 4s linear infinite;
+        }
+
+        .roadmap-subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.8rem;
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+
+        .roadmap-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            position: relative;
+        }
+
+        .roadmap-timeline::before {
+            content: '';
+            position: absolute;
+            left: 119px;
+            top: 12px;
+            bottom: 12px;
+            width: 1px;
+            background: rgba(255,255,255,0.15);
+        }
+
+        .roadmap-span {
+            display: flex;
+            gap: 0;
+            margin-bottom: 0;
+        }
+
+        .roadmap-label {
+            width: 120px;
+            min-width: 120px;
+            padding-top: 1rem;
+            padding-right: 20px;
+            text-align: right;
+            position: relative;
+        }
+
+        .roadmap-label-text {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.3;
+        }
+
+        .roadmap-label::after {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: 1.25rem;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+
+        .roadmap-body {
+            flex: 1;
+            padding: 0.6rem 0 1.8rem 28px;
+            border-left: none;
+        }
+
+        .roadmap-section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: rgba(255,100,100,0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.6rem;
+        }
+
+        .roadmap-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .roadmap-item {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px;
+            padding: 0.55rem 0.85rem;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .roadmap-item:hover {
+            background: rgba(255,255,255,0.07);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .roadmap-item-title {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.85);
+            margin-bottom: 0.15rem;
+        }
+
+        .roadmap-item-desc {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.45);
+            font-weight: 300;
+            line-height: 1.4;
+        }
+
+        .roadmap-idea-block {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 1rem 1.1rem;
+            margin-top: 1rem;
+        }
+
+        .roadmap-idea-block-title {
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .roadmap-ideas-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .roadmap-idea-tag {
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-weight: 300;
+        }
+
+        @media (max-width: 1800px) {
+            .roadmap-content {
+                padding: 0 25px !important;
+            }
+
+            .roadmap-timeline::before {
+                left: 79px;
+            }
+
+            .roadmap-label {
+                width: 80px;
+                min-width: 80px;
+            }
+
+            .roadmap-label-text {
+                font-size: 0.65rem;
+            }
+
+            .roadmap-item-title {
+                font-size: 0.8rem;
+            }
+
+            .roadmap-item-desc {
+                font-size: 0.7rem;
+            }
+        }
+
         /* Documentation Styles */
         .docs-container {
             display: none;
@@ -2217,6 +2451,7 @@
                 <a href="#" class="nav-link active" id="aboutLink">about</a>
                 <a href="#" class="nav-link" id="blogLink">blog</a>
                 <a href="#" class="nav-link" id="docsLink">docs</a>
+                <a href="#" class="nav-link" id="roadmapLink">roadmap</a>
                 <svg class="steam-icon" viewBox="0 0 24 24" fill="white" onclick="window.open('https://store.steampowered.com/app/1551700/Fractium', '_blank')">
                     <path d="M11.979 0C5.678 0 0.511 4.86 0.022 11.037l6.432 2.658c0.545-0.371 1.203-0.59 1.912-0.59 0.063 0 0.125 0.004 0.188 0.006l2.861-4.142c0-0.016-0.002-0.032-0.002-0.049 0-2.68 2.198-4.854 4.904-4.854 2.701 0 4.898 2.174 4.898 4.854 0 2.684-2.197 4.854-4.898 4.854-0.025 0-0.049-0.002-0.074-0.002l-4.104 2.918c0.002 0.046 0.003 0.091 0.003 0.137 0 1.872-1.543 3.389-3.441 3.389-1.614 0-2.969-1.118-3.332-2.621L0.427 14.27C0.778 21.637 6.344 24 11.979 24c6.624 0 11.999-5.375 11.999-12S18.603 0 11.979 0zM7.54 18.21l-1.473-0.61c0.262 0.543 0.714 0.999 1.314 1.25 1.297 0.544 2.796-0.061 3.342-1.357 0.263-0.628 0.263-1.326 0-1.953s-0.714-1.108-1.342-1.371c-0.628-0.263-1.297-0.263-1.925 0l1.52 0.628c0.956 0.397 1.406 1.505 1.009 2.461-0.397 0.956-1.505 1.406-2.445 1.009v-0.057zM17.615 8.717c0-1.786-1.421-3.24-3.168-3.24s-3.168 1.454-3.168 3.24c0 1.786 1.421 3.24 3.168 3.24s3.168-1.454 3.168-3.240zm-5.284 0c0-1.166 0.946-2.112 2.116-2.112 1.17 0 2.116 0.946 2.116 2.112 0 1.166-0.946 2.112-2.116 2.112-1.17 0-2.116-0.946-2.116-2.112z"/>
                 </svg>
@@ -2250,6 +2485,205 @@
             <h1>Blog</h1>
             <div class="blog-posts-container">
                 <!-- Blog posts will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Roadmap page -->
+    <div class="roadmap-container" id="roadmapContainer">
+        <div class="roadmap-content">
+            <h1>Roadmap</h1>
+            <p class="roadmap-subtitle">2026 development plan &mdash; ideas &amp; upcoming features</p>
+            <div class="roadmap-timeline">
+
+                <!-- May – Jun -->
+                <div class="roadmap-span">
+                    <div class="roadmap-label">
+                        <div class="roadmap-label-text">May<br>Jun</div>
+                    </div>
+                    <div class="roadmap-body">
+                        <div class="roadmap-section-title">Alpha Foundation</div>
+                        <div class="roadmap-items">
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Exotic Animals</div>
+                                <div class="roadmap-item-desc">Elephant, rattlesnake, giraffe, sabertooth, bunny, bear &mdash; wildlife across the world.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Hunger, Thirst &amp; Meat</div>
+                                <div class="roadmap-item-desc">Survival basics. Vendors and water tanks as non-violent work &amp; storage deployables.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Redo Character</div>
+                                <div class="roadmap-item-desc">Overhauled player character model and animations.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Door Locks</div>
+                                <div class="roadmap-item-desc">Lockable doors for base security.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Ceiling Lights</div>
+                                <div class="roadmap-item-desc">Deployable ceiling-mounted lighting.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Weather &mdash; Rain / Blizzard / Sandstorm</div>
+                                <div class="roadmap-item-desc">Dynamic weather events that affect visibility and survival.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Jul – Aug -->
+                <div class="roadmap-span">
+                    <div class="roadmap-label">
+                        <div class="roadmap-label-text">Jul<br>Aug</div>
+                    </div>
+                    <div class="roadmap-body">
+                        <div class="roadmap-section-title">Economy &amp; Social</div>
+                        <div class="roadmap-items">
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Drug Trade &amp; Crystal Farming</div>
+                                <div class="roadmap-item-desc">Crystal-based currency. Meth lab deployable, ability to smoke crystals &mdash; screen-space color effect &amp; wobble, temporarily see ore through walls and be undetected by crystal zombies.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Bandit Economy &amp; Safe Zone Spawn</div>
+                                <div class="roadmap-item-desc">Spawn in a bandit-controlled safe zone. Do normal jobs to earn your first equipment. Pay fines, serve jail time or live in constant danger from a long-term &ldquo;wanted&rdquo; system.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Laptop &mdash; Crypto / Stock Market</div>
+                                <div class="roadmap-item-desc">Deployable laptop to trade crypto and stocks in-game.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Vending Machines</div>
+                                <div class="roadmap-item-desc">Player-operated or bandit-run storefronts.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Organization Building Sign</div>
+                                <div class="roadmap-item-desc">Customizable text sign. Register a business, pay taxes.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Whiteboards</div>
+                                <div class="roadmap-item-desc">Deployable whiteboard for free-form drawing.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sep – Oct -->
+                <div class="roadmap-span">
+                    <div class="roadmap-label">
+                        <div class="roadmap-label-text">Sep<br>Oct</div>
+                    </div>
+                    <div class="roadmap-body">
+                        <div class="roadmap-section-title">Combat &amp; Deployables</div>
+                        <div class="roadmap-items">
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Mechs That React to Sound</div>
+                                <div class="roadmap-item-desc">AI patrol mechs with audio-detection logic.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Gas Masks</div>
+                                <div class="roadmap-item-desc">Wearable protection against toxic environments.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Tranquilizer Dart Rifle</div>
+                                <div class="roadmap-item-desc">Puts targets to sleep &mdash; required for restraint mechanics.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Hand / Neck Cuffs &amp; Enslavement</div>
+                                <div class="roadmap-item-desc">Players must be asleep or in a surrender state first. Enslavement camps for caught players &mdash; work your way out to earn a gun. Bandit slaves that mine for you.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Binoculars</div>
+                                <div class="roadmap-item-desc">Long-range reconnaissance item.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Spotlight Deployable</div>
+                                <div class="roadmap-item-desc">Placeable controllable spotlight for base defense or events.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Cameras</div>
+                                <div class="roadmap-item-desc">Deployable surveillance cameras linked to monitors.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Cage Deployable</div>
+                                <div class="roadmap-item-desc">Trap and hold players or animals.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Peacekeeper Mode Turret</div>
+                                <div class="roadmap-item-desc">Turret with a non-lethal / peacekeeper setting.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Speaker / Megaphone</div>
+                                <div class="roadmap-item-desc">Broadcast a recorded voice message on repeat across the area.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nov – Dec -->
+                <div class="roadmap-span">
+                    <div class="roadmap-label">
+                        <div class="roadmap-label-text">Nov<br>Dec</div>
+                    </div>
+                    <div class="roadmap-body">
+                        <div class="roadmap-section-title">World &amp; Endgame</div>
+                        <div class="roadmap-items">
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Modular Flying Bases</div>
+                                <div class="roadmap-item-desc">Construct and navigate airborne modular bases.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Apartment Monument</div>
+                                <div class="roadmap-item-desc">Multi-floor apartment complex as a key world monument.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Global Events for Top-Tier Loot</div>
+                                <div class="roadmap-item-desc">Server-wide events analogous to airdrops &mdash; high-risk, high-reward.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Large AI Data Centers</div>
+                                <div class="roadmap-item-desc">Heavily guarded, raidable data centers run by bandits to power spider patrol mech brains.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Nuke Aftermath Lore</div>
+                                <div class="roadmap-item-desc">World-building through environmental storytelling of a post-nuke setting.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Wasteland Terrain Under Islands</div>
+                                <div class="roadmap-item-desc">Below-island world with occasional shrubs, trees, and rocks.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Rival Bandit Gang / Opposition Base</div>
+                                <div class="roadmap-item-desc">A second bandit faction with their own base &mdash; creating the classic drug lord vs. police dynamic.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Bandit Police Force</div>
+                                <div class="roadmap-item-desc">Work for the bandit police: abduct wanted criminals for pay. Creates the Arma Altis Life economy balance.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Assassin Bandits for Hire</div>
+                                <div class="roadmap-item-desc">Contract AI or player assassins to hunt targets.</div>
+                            </div>
+                            <div class="roadmap-item">
+                                <div class="roadmap-item-title">Endgame &mdash; Raid the Bandit Government</div>
+                                <div class="roadmap-item-desc">Culminating raid on the bandit governing structure.</div>
+                            </div>
+                        </div>
+
+                        <div class="roadmap-idea-block">
+                            <div class="roadmap-idea-block-title">Also Exploring</div>
+                            <div class="roadmap-ideas-list">
+                                <span class="roadmap-idea-tag">Modular conveyor belts</span>
+                                <span class="roadmap-idea-tag">Scattered proc bandit bases</span>
+                                <span class="roadmap-idea-tag">Signs in another language</span>
+                                <span class="roadmap-idea-tag">Your own private spot on the map</span>
+                                <span class="roadmap-idea-tag">Ducktaping player mouths</span>
+                                <span class="roadmap-idea-tag">Muffled voice chat</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -2305,6 +2739,7 @@
             const mainContent = document.getElementById('mainContent');
             const blogPage = document.getElementById('blogPage');
             const docsContainer = document.getElementById('docsContainer');
+            const roadmapContainer = document.getElementById('roadmapContainer');
             const scrollArrow = document.getElementById('scrollArrow');
             const body = document.body;
             const backgroundContainer = document.querySelector('.background-container');
@@ -2386,9 +2821,28 @@
             }
             
             // Remove all page classes
-            body.classList.remove('blog-active', 'docs-active');
+            body.classList.remove('blog-active', 'docs-active', 'roadmap-active');
             
-            if (pageId === 'blog') {
+            if (pageId === 'roadmap') {
+                preloadAndSwitch('rload3.png', () => {
+                    mainContent.style.display = 'none';
+                    blogPage.style.display = 'none';
+                    docsContainer.style.display = 'none';
+                    roadmapContainer.style.display = 'block';
+                    body.classList.add('roadmap-active');
+                    scrollArrow.classList.remove('visible');
+                    scrollArrow.style.display = 'none';
+                    backgroundContainer.style.backgroundSize = 'cover';
+                    backgroundContainer.style.backgroundPosition = 'center';
+                    backgroundContainer.style.backgroundRepeat = 'no-repeat';
+                    backgroundContainer.style.backgroundAttachment = 'fixed';
+                    backgroundContainer.style.filter = 'blur(8px) grayscale(100%) sepia(60%) hue-rotate(-50deg) saturate(6) brightness(0.4)';
+                    backgroundContainer.style.transform = '';
+                    backgroundOverlay.style.opacity = '0';
+                    backgroundContainer.classList.add('mobile-zoom');
+                    if (window.updateSidebarVisibility) window.updateSidebarVisibility();
+                });
+            } else if (pageId === 'blog') {
                 showLoadingState();
                 
                 // Preload blog background (now sets immediately)
@@ -2396,6 +2850,7 @@
                     mainContent.style.display = 'none';
                     blogPage.style.display = 'block';
                     docsContainer.style.display = 'none';
+                    if (roadmapContainer) roadmapContainer.style.display = 'none';
                     body.classList.add('blog-active');
                     scrollArrow.classList.remove('visible');
                     scrollArrow.style.display = 'none';
@@ -2437,6 +2892,7 @@
                 preloadAndSwitch('bg.png', () => {
                     mainContent.style.display = 'none';
                     blogPage.style.display = 'none';
+                    if (roadmapContainer) roadmapContainer.style.display = 'none';
                     docsContainer.style.display = 'block';
                     body.classList.add('docs-active');
                     scrollArrow.classList.remove('visible');
@@ -2471,6 +2927,7 @@
                     mainContent.style.display = 'block';
                     blogPage.style.display = 'none';
                     docsContainer.style.display = 'none';
+                    if (roadmapContainer) roadmapContainer.style.display = 'none';
                     scrollArrow.style.display = 'block';
                     
                     // Generate about content
@@ -2608,6 +3065,14 @@
             setActiveLink('docsLink');
         });
 
+        document.getElementById('roadmapLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            updateUrl('roadmap');
+            updateMetaTags('roadmap');
+            showPage('roadmap');
+            setActiveLink('roadmapLink');
+        });
+
         // Logo click handler - go to about page
         document.querySelector('.logo').addEventListener('click', (e) => {
             e.preventDefault();
@@ -2687,9 +3152,10 @@
     <script>
         // Blur effect on scroll
         window.addEventListener('scroll', function() {
-            // Skip blur changes if on blog page, docs page, or wishlist button is hovered
+            // Skip blur changes if on blog page, docs page, roadmap page, or wishlist button is hovered
             if (document.body.classList.contains('blog-active') || 
                 document.body.classList.contains('docs-active') ||
+                document.body.classList.contains('roadmap-active') ||
                 document.querySelector('.background-container').classList.contains('wishlist-hover')) {
                 return;
             }
@@ -2801,6 +3267,10 @@
                     url += `&doc=${doc}`;
                 }
                 // Use default playtest.png for docs
+            } else if (page === 'roadmap') {
+                title = `Roadmap - ${SITE_CONFIG.siteName}`;
+                description = 'twoloop games 2026 development roadmap';
+                url = `${baseUrl}?page=roadmap`;
             }
             // All other pages use default playtest.png
             
@@ -2910,6 +3380,10 @@
                 }
                 // Update meta tags for docs
                 updateMetaTags(page, doc, null);
+            } else if (page === 'roadmap') {
+                setActiveLink('roadmapLink');
+                showPage('roadmap');
+                updateMetaTags('roadmap', null, null);
             } else {
                 setActiveLink('aboutLink');
                 showPage('about');
@@ -3088,6 +3562,7 @@
                 // Don't cycle if on blog page, docs page, or mobile device
                 if (document.body.classList.contains('blog-active') || 
                     document.body.classList.contains('docs-active') ||
+                    document.body.classList.contains('roadmap-active') ||
                     window.innerWidth <= 1800) {
                     return;
                 }
@@ -3110,8 +3585,8 @@
             // Handle window resize for background switching
             window.addEventListener('resize', function() {
                 if (!document.body.classList.contains('blog-active') && 
-                    !document.body.classList.contains('docs-active')) {
-                    // On about page, switch background based on screen size
+                    !document.body.classList.contains('docs-active') &&
+                    !document.body.classList.contains('roadmap-active')) {
                     const backgroundContainer = document.querySelector('.background-container');
                     if (window.innerWidth <= 1800) {
                         backgroundContainer.style.backgroundImage = "url('main-bg-static.png')";
