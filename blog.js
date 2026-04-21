@@ -1,3 +1,32 @@
+// Performance timing for blog page load diagnostics
+const blogPerf = {
+    _start: performance.now(),
+    _marks: [],
+    mark(label) {
+        const now = performance.now();
+        const elapsed = (now - this._start).toFixed(1);
+        const delta = this._marks.length > 0 ? (now - this._marks[this._marks.length - 1].time).toFixed(1) : elapsed;
+        this._marks.push({ label, time: now });
+        console.log(`[PERF +${elapsed}ms Δ${delta}ms] ${label}`);
+    },
+    summary() {
+        console.log('\n=== BLOG LOAD PERFORMANCE SUMMARY ===');
+        this._marks.forEach((m, i) => {
+            const elapsed = (m.time - this._start).toFixed(1);
+            const delta = i > 0 ? (m.time - this._marks[i - 1].time).toFixed(1) : elapsed;
+            console.log(`  ${elapsed}ms (Δ${delta}ms) - ${m.label}`);
+        });
+        const total = (this._marks[this._marks.length - 1].time - this._start).toFixed(1);
+        console.log(`  TOTAL: ${total}ms`);
+        console.log('======================================\n');
+    },
+    reset() {
+        this._start = performance.now();
+        this._marks = [];
+    }
+};
+window.blogPerf = blogPerf;
+
 // Image loading handlers
 function handleImageLoad(img) {
     console.log('Image loaded successfully:', img.src);
@@ -46,9 +75,11 @@ class MarkdownParser {
     // Load author links mapping
     async loadAuthorLinks() {
         try {
+            blogPerf.mark('loadAuthorLinks: fetch start');
             const response = await fetch('author-links.json');
             if (response.ok) {
                 this.authorLinks = await response.json();
+                blogPerf.mark('loadAuthorLinks: loaded');
                 console.log('Author links loaded:', this.authorLinks);
             }
         } catch (error) {
@@ -304,6 +335,8 @@ class MarkdownParser {
     // Load and parse all blog posts
     async loadBlogPosts() {
         console.log('Loading blog posts...');
+        blogPerf.reset();
+        blogPerf.mark('loadBlogPosts: start');
         
         // Prevent concurrent loading attempts
         if (isLoadingBlogPosts) {
@@ -321,10 +354,12 @@ class MarkdownParser {
         // Fetch the list of blog posts from the server
         let blogPosts = [];
         try {
+            blogPerf.mark('fetchBlogList: fetch start');
             console.log('Fetching blog post list from /api/blog-posts...');
             const response = await fetch('/api/blog-posts');
             if (response.ok) {
                 blogPosts = await response.json();
+                blogPerf.mark('fetchBlogList: received ' + blogPosts.length + ' posts');
                 console.log('Blog post files found:', blogPosts);
             } else {
                 console.error('Failed to fetch blog post list:', response.status, response.statusText);
@@ -341,17 +376,23 @@ class MarkdownParser {
 
         this.posts = [];
 
+        blogPerf.mark('fetchAllPosts: start (parallel)');
         const results = await Promise.all(blogPosts.map(async (filename) => {
             try {
+                blogPerf.mark(`fetch[${filename}]: request start`);
                 console.log(`Fetching ${filename}...`);
                 const response = await fetch(`blog-posts/${filename}`);
+                blogPerf.mark(`fetch[${filename}]: response ${response.status}`);
                 console.log(`Response for ${filename}:`, response.status, response.ok);
 
                 if (response.ok) {
                     const content = await response.text();
+                    blogPerf.mark(`fetch[${filename}]: read ${content.length} chars`);
                     console.log(`Content length for ${filename}:`, content.length);
                     const { metadata, content: markdownContent } = this.parseFrontmatter(content);
+                    blogPerf.mark(`fetch[${filename}]: frontmatter parsed`);
                     const htmlContent = this.markdownToHtml(markdownContent);
+                    blogPerf.mark(`fetch[${filename}]: markdown→HTML done`);
                     console.log(`Successfully loaded ${filename}`);
                     return {
                         filename: filename.replace('.md', ''),
@@ -369,10 +410,14 @@ class MarkdownParser {
             }
         }));
 
+        blogPerf.mark('fetchAllPosts: all fetches complete');
         this.posts = results.filter(p => p !== null);
 
         // Sort posts by date (newest first)
         this.posts.sort((a, b) => new Date(b.metadata.date) - new Date(a.metadata.date));
+        
+        blogPerf.mark('loadBlogPosts: done (' + this.posts.length + ' posts)');
+        blogPerf.summary();
         
         // Mark loading as complete
         isLoadingBlogPosts = false;
@@ -533,6 +578,7 @@ function showBlogPost(slug) {
 }
 
 function showBlogList() {
+    blogPerf.mark('showBlogList: called');
     console.log('showBlogList called, posts count:', markdownParser.posts.length);
     
     // Prevent concurrent rendering
@@ -587,12 +633,16 @@ function showBlogList() {
     }
     
     // Posts are loaded, render them
+    blogPerf.mark('showBlogList: generating HTML');
+    const listHtml = markdownParser.generateBlogList();
+    blogPerf.mark('showBlogList: HTML generated, inserting into DOM');
     blogContent.innerHTML = `
         <h1>Blog</h1>
         <div class="blog-posts-container">
-            ${markdownParser.generateBlogList()}
+            ${listHtml}
         </div>
     `;
+    blogPerf.mark('showBlogList: DOM updated');
 
     // Preload all blog post images
     markdownParser.posts.forEach(post => {
@@ -631,6 +681,7 @@ function showBlogList() {
 
 // Initialize blog posts when the page loads
 document.addEventListener('DOMContentLoaded', async function() {
+    blogPerf.mark('DOMContentLoaded fired');
     console.log('DOM loaded, initializing blog...');
     try {
         await markdownParser.loadBlogPosts();
