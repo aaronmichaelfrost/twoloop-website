@@ -51,6 +51,7 @@
     <link rel="preload" as="image" href="7.gif">
     <link rel="preload" as="image" href="dload2.png">
     <link rel="preload" as="image" href="rload3.png">
+    <link rel="preload" as="image" href="bg.png">
     <script src="docs.js" defer></script>
     
     <style>
@@ -3408,6 +3409,15 @@
             // Track loaded images to prevent redundant fade-ins
             const loadedImages = new Set();
             window.loadedBackgroundImages = loadedImages;
+
+            // Pre-warm the set with all images that were already preloaded via <link rel="preload">
+            // This prevents the black flash when switching to blog/docs/roadmap for the first time
+            const preloadedAssets = ['dload2.png', 'rload3.png', 'bg.png', '7.gif', 'main-bg-static.png'];
+            preloadedAssets.forEach(src => {
+                const probe = new Image();
+                probe.onload = () => loadedImages.add(src);
+                probe.src = src;
+            });
             
             // Set initial background immediately and preload for optimization
             const initialBg = window.innerWidth <= 1800 ? 'main-bg-static.png' : '7.gif';
