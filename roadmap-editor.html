@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Roadmap Editor — twoloop</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #0e0e0e;
+            color: #ddd;
+            min-height: 100vh;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #161616;
+            border-bottom: 1px solid #2a2a2a;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        header h1 { font-size: 14px; font-weight: 700; color: #fff; margin-right: 6px; }
+
+        .btn {
+            padding: 7px 14px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: opacity 0.15s;
+        }
+        .btn:hover { opacity: 0.82; }
+        .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+        .btn-primary   { background: #c00; color: #fff; }
+        .btn-secondary { background: #2a2a2a; color: #bbb; border: 1px solid #3a3a3a; }
+
+        #fileInput { display: none; }
+
+        #status {
+            margin-left: auto;
+            font-size: 12px;
+            color: #555;
+        }
+        #status.ok  { color: #4caf50; }
+        #status.err { color: #f44336; }
+
+        main {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 24px 20px 60px;
+        }
+
+        /* ── span card ─────────────────────────────── */
+        .span-card {
+            background: #181818;
+            border: 1px solid #272727;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            overflow: hidden;
+        }
+
+        .span-header {
+            background: #1f1f1f;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #2a2a2a;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .field-label {
+            font-size: 11px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .span-label-input {
+            width: 90px;
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            color: #eee;
+            padding: 5px 9px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        .span-title-input {
+            flex: 1;
+            min-width: 160px;
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            color: #eee;
+            padding: 5px 9px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        .span-controls {
+            margin-left: auto;
+            display: flex;
+            gap: 5px;
+        }
+
+        /* ── items ─────────────────────────────────── */
+        .span-items { padding: 10px 14px; }
+
+        .item-row {
+            background: #222;
+            border: 1px solid #2e2e2e;
+            border-radius: 7px;
+            padding: 9px 10px;
+            margin-bottom: 7px;
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .item-fields {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .item-top-row {
+            display: flex;
+            gap: 7px;
+            align-items: center;
+        }
+
+        .item-title-input {
+            flex: 1;
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            color: #eee;
+            padding: 5px 9px;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+
+        .item-priority {
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            color: #eee;
+            padding: 5px 7px;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .item-priority option { background: #222; }
+
+        .item-desc-input {
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            color: #ccc;
+            padding: 5px 9px;
+            border-radius: 5px;
+            font-size: 12px;
+            width: 100%;
+            resize: vertical;
+            min-height: 46px;
+            line-height: 1.4;
+        }
+
+        .item-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        /* ── icon buttons ───────────────────────────── */
+        .icon-btn {
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            color: #888;
+            width: 26px;
+            height: 26px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s, color 0.15s;
+            flex-shrink: 0;
+        }
+        .icon-btn:hover     { background: #3a3a3a; color: #eee; }
+        .icon-btn.del:hover { background: #4a1a1a; color: #f88; border-color: #c44; }
+
+        /* ── ideas section ──────────────────────────── */
+        .span-ideas {
+            border-top: 1px solid #242424;
+            padding: 10px 14px;
+            background: #1a1a1a;
+        }
+
+        .ideas-label {
+            font-size: 11px;
+            color: #4a4a4a;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 6px;
+        }
+
+        .ideas-textarea {
+            background: #2a2a2a;
+            border: 1px solid #333;
+            color: #888;
+            padding: 6px 9px;
+            border-radius: 5px;
+            font-size: 12px;
+            width: 100%;
+            resize: vertical;
+            min-height: 40px;
+        }
+
+        /* ── add buttons ────────────────────────────── */
+        .add-item-btn {
+            background: transparent;
+            border: 1px dashed #333;
+            color: #555;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            width: 100%;
+            margin-top: 4px;
+            transition: border-color 0.15s, color 0.15s;
+        }
+        .add-item-btn:hover { border-color: #555; color: #999; }
+
+        .add-span-btn {
+            background: transparent;
+            border: 2px dashed #252525;
+            color: #444;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            width: 100%;
+            transition: border-color 0.15s, color 0.15s;
+        }
+        .add-span-btn:hover { border-color: #444; color: #777; }
+
+        /* ── priority badge preview ─────────────────── */
+        .badge-preview {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            margin-left: 4px;
+            display: none;
+            vertical-align: middle;
+        }
+        .badge-preview.must   { display: inline; background: rgba(200,0,0,0.2);   color: #ff6b6b; border: 1px solid rgba(200,0,0,0.4); }
+        .badge-preview.should { display: inline; background: rgba(255,120,0,0.15); color: #ffa94d; border: 1px solid rgba(255,120,0,0.3); }
+        .badge-preview.nice   { display: inline; background: rgba(255,255,255,0.05); color: #777; border: 1px solid rgba(255,255,255,0.1); }
+
+        input:focus, textarea:focus, select:focus { outline: 1px solid #555; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>roadmap editor</h1>
+    <label class="btn btn-secondary" for="fileInput">open index.html</label>
+    <input type="file" id="fileInput" accept=".html">
+    <button class="btn btn-primary" id="saveBtn" disabled>save &amp; download</button>
+    <span id="status">no file loaded</span>
+</header>
+
+<main>
+    <div id="spansContainer"></div>
+    <button class="add-span-btn" id="addSpanBtn" style="display:none">+ add time span</button>
+</main>
+
+<script>
+'use strict';
+
+// ── state ────────────────────────────────────────────────────────────────────
+let fileContent = '';
+let spans = [];
+
+// ── file load ─────────────────────────────────────────────────────────────────
+document.getElementById('fileInput').addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    fileContent = await file.text();
+    spans = parseRoadmap(fileContent);
+    renderEditor();
+    document.getElementById('addSpanBtn').style.display = 'block';
+    document.getElementById('saveBtn').disabled = false;
+    setStatus(`loaded: ${file.name}`, 'ok');
+    // reset input so the same file can be re-opened
+    e.target.value = '';
+});
+
+// ── parse ─────────────────────────────────────────────────────────────────────
+function parseRoadmap(html) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const timeline = doc.querySelector('.roadmap-timeline');
+    if (!timeline) { setStatus('no .roadmap-timeline found in file', 'err'); return []; }
+
+    return Array.from(timeline.querySelectorAll('.roadmap-span')).map(spanEl => {
+        // label: "May<br>Jun" → "May / Jun"
+        const labelEl = spanEl.querySelector('.roadmap-label-text');
+        const label = labelEl
+            ? labelEl.innerHTML.replace(/<br\s*\/?>/gi, ' / ').trim()
+            : '';
+
+        const sectionTitle = spanEl.querySelector('.roadmap-section-title')?.textContent.trim() || '';
+
+        const items = Array.from(spanEl.querySelectorAll('.roadmap-item')).map(el => {
+            // clone title element and strip the priority badge before reading text
+            const titleClone = el.querySelector('.roadmap-item-title')?.cloneNode(true);
+            titleClone?.querySelector('.roadmap-priority')?.remove();
+            const title = titleClone?.textContent.trim() || '';
+            const desc     = el.querySelector('.roadmap-item-desc')?.textContent.trim() || '';
+            const priority = el.dataset.priority || '';
+            return { title, desc, priority };
+        });
+
+        const ideas = Array.from(spanEl.querySelectorAll('.roadmap-idea-tag'))
+            .map(t => t.textContent.trim());
+
+        return { label, sectionTitle, items, ideas };
+    });
+}
+
+// ── render ────────────────────────────────────────────────────────────────────
+function renderEditor() {
+    const container = document.getElementById('spansContainer');
+    container.innerHTML = '';
+    spans.forEach((span, si) => container.appendChild(createSpanCard(span, si)));
+}
+
+function createSpanCard(span, si) {
+    const card = document.createElement('div');
+    card.className = 'span-card';
+
+    // header
+    const header = document.createElement('div');
+    header.className = 'span-header';
+    header.innerHTML = `
+        <span class="field-label">period</span>
+        <input class="span-label-input" data-field="label"
+               value="${ea(span.label)}" placeholder="May / Jun" title="e.g. May / Jun">
+        <span class="field-label">section</span>
+        <input class="span-title-input" data-field="sectionTitle"
+               value="${ea(span.sectionTitle)}" placeholder="Section title">
+        <div class="span-controls">
+            <button class="icon-btn" title="Move up"   onclick="moveSpan(${si},-1)">↑</button>
+            <button class="icon-btn" title="Move down" onclick="moveSpan(${si}, 1)">↓</button>
+            <button class="icon-btn del" title="Delete span" onclick="deleteSpan(${si})">✕</button>
+        </div>`;
+    card.appendChild(header);
+
+    // items
+    const itemsWrap = document.createElement('div');
+    itemsWrap.className = 'span-items';
+    span.items.forEach((item, ii) => itemsWrap.appendChild(createItemRow(item, si, ii)));
+
+    const addItemBtn = document.createElement('button');
+    addItemBtn.className = 'add-item-btn';
+    addItemBtn.textContent = '+ add item';
+    addItemBtn.onclick = () => addItem(si);
+    itemsWrap.appendChild(addItemBtn);
+    card.appendChild(itemsWrap);
+
+    // ideas
+    const ideasWrap = document.createElement('div');
+    ideasWrap.className = 'span-ideas';
+    ideasWrap.innerHTML = `
+        <div class="ideas-label">also exploring — comma separated tags</div>
+        <textarea class="ideas-textarea" data-field="ideas"
+                  placeholder="tag1, tag2, tag3">${eh(span.ideas.join(', '))}</textarea>`;
+    card.appendChild(ideasWrap);
+
+    return card;
+}
+
+function createItemRow(item, si, ii) {
+    const p = item.priority;
+    const badgeHTML = p
+        ? `<span class="badge-preview ${p}">${priorityLabel(p)}</span>`
+        : `<span class="badge-preview"></span>`;
+
+    const row = document.createElement('div');
+    row.className = 'item-row';
+    row.innerHTML = `
+        <div class="item-fields">
+            <div class="item-top-row">
+                <input class="item-title-input" data-field="title"
+                       value="${ea(item.title)}" placeholder="Item title">
+                ${badgeHTML}
+                <select class="item-priority" data-field="priority"
+                        onchange="updateBadge(this)">
+                    <option value=""      ${!p         ?'selected':''}>— none —</option>
+                    <option value="must"  ${p==='must'  ?'selected':''}>MUST</option>
+                    <option value="should"${p==='should'?'selected':''}>SHOULD HAVE</option>
+                    <option value="nice"  ${p==='nice'  ?'selected':''}>NICE TO HAVE</option>
+                </select>
+            </div>
+            <textarea class="item-desc-input" data-field="desc"
+                      placeholder="Description (optional)">${eh(item.desc)}</textarea>
+        </div>
+        <div class="item-controls">
+            <button class="icon-btn" title="Move up"   onclick="moveItem(${si},${ii},-1)">↑</button>
+            <button class="icon-btn" title="Move down" onclick="moveItem(${si},${ii}, 1)">↓</button>
+            <button class="icon-btn del" title="Delete" onclick="deleteItem(${si},${ii})">✕</button>
+        </div>`;
+    return row;
+}
+
+// update badge preview immediately on select change (no full re-render needed)
+window.updateBadge = function(select) {
+    const badge = select.closest('.item-top-row').querySelector('.badge-preview');
+    if (!badge) return;
+    badge.className = 'badge-preview ' + select.value;
+    badge.textContent = priorityLabel(select.value);
+};
+
+// ── mutations ─────────────────────────────────────────────────────────────────
+function syncFromDOM() {
+    const cards = document.getElementById('spansContainer').querySelectorAll('.span-card');
+    spans = Array.from(cards).map(card => {
+        const label        = card.querySelector('[data-field="label"]').value.trim();
+        const sectionTitle = card.querySelector('[data-field="sectionTitle"]').value.trim();
+        const items = Array.from(card.querySelectorAll('.item-row')).map(row => ({
+            title:    row.querySelector('[data-field="title"]').value.trim(),
+            desc:     row.querySelector('[data-field="desc"]').value.trim(),
+            priority: row.querySelector('[data-field="priority"]').value,
+        }));
+        const ideasRaw = card.querySelector('[data-field="ideas"]').value;
+        const ideas = ideasRaw.split(',').map(s => s.trim()).filter(Boolean);
+        return { label, sectionTitle, items, ideas };
+    });
+}
+
+window.moveSpan = function(si, dir) {
+    syncFromDOM();
+    const ni = si + dir;
+    if (ni < 0 || ni >= spans.length) return;
+    [spans[si], spans[ni]] = [spans[ni], spans[si]];
+    renderEditor();
+};
+
+window.deleteSpan = function(si) {
+    if (!confirm('Delete this entire time span?')) return;
+    syncFromDOM();
+    spans.splice(si, 1);
+    renderEditor();
+};
+
+window.moveItem = function(si, ii, dir) {
+    syncFromDOM();
+    const ni = ii + dir;
+    if (ni < 0 || ni >= spans[si].items.length) return;
+    [spans[si].items[ii], spans[si].items[ni]] = [spans[si].items[ni], spans[si].items[ii]];
+    renderEditor();
+};
+
+window.deleteItem = function(si, ii) {
+    syncFromDOM();
+    spans[si].items.splice(ii, 1);
+    renderEditor();
+};
+
+window.addItem = function(si) {
+    syncFromDOM();
+    spans[si].items.push({ title: '', desc: '', priority: '' });
+    renderEditor();
+    // focus new title
+    const cards = document.querySelectorAll('.span-card');
+    const newRow = cards[si]?.querySelectorAll('.item-row');
+    newRow?.[newRow.length - 1]?.querySelector('.item-title-input')?.focus();
+};
+
+document.getElementById('addSpanBtn').addEventListener('click', () => {
+    syncFromDOM();
+    spans.push({ label: '/ ', sectionTitle: 'New Phase', items: [], ideas: [] });
+    renderEditor();
+    setTimeout(() => {
+        document.getElementById('spansContainer').lastElementChild?.scrollIntoView({ behavior: 'smooth' });
+    }, 50);
+});
+
+// ── save ──────────────────────────────────────────────────────────────────────
+document.getElementById('saveBtn').addEventListener('click', () => {
+    syncFromDOM();
+
+    const startMarker = '    <!-- Roadmap page -->';
+    const endMarker   = '\n    <!-- Documentation page -->';
+    const start = fileContent.indexOf(startMarker);
+    const end   = fileContent.indexOf(endMarker);
+
+    if (start === -1 || end === -1) {
+        setStatus('Error: could not find roadmap markers in index.html', 'err');
+        return;
+    }
+
+    let newContent = fileContent.slice(0, start)
+        + generateRoadmapSection(spans)
+        + fileContent.slice(end);
+
+    newContent = ensurePriorityCSS(newContent);
+
+    // download
+    const blob = new Blob([newContent], { type: 'text/html' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'index.html';
+    a.click();
+    URL.revokeObjectURL(url);
+
+    fileContent = newContent;
+    setStatus('downloaded — replace your index.html with the file', 'ok');
+});
+
+// ── generate HTML ─────────────────────────────────────────────────────────────
+function generateRoadmapSection(spans) {
+    const timeline = spans.map(span => {
+        const parts = span.label.split('/').map(s => s.trim());
+        const labelHTML = parts.length >= 2
+            ? `${parts[0]}<br>${parts[1]}`
+            : parts[0] || '';
+
+        const itemsHTML = span.items.map(item => {
+            const badge = item.priority
+                ? `<span class="roadmap-priority ${item.priority}">${priorityLabel(item.priority)}</span>`
+                : '';
+            const dp = item.priority ? ` data-priority="${item.priority}"` : '';
+            return (
+`                            <div class="roadmap-item"${dp}>
+                                <div class="roadmap-item-title">${eh(item.title)}${badge}</div>
+                                <div class="roadmap-item-desc">${eh(item.desc)}</div>
+                            </div>`
+            );
+        }).join('\n');
+
+        let ideasHTML = '';
+        if (span.ideas.length) {
+            const tags = span.ideas.map(t => `                                <span class="roadmap-idea-tag">${eh(t)}</span>`).join('\n');
+            ideasHTML = `\n\n                        <div class="roadmap-idea-block">
+                            <div class="roadmap-idea-block-title">Also Exploring</div>
+                            <div class="roadmap-ideas-list">
+${tags}
+                            </div>
+                        </div>`;
+        }
+
+        const comment = span.label.replace(' / ', ' – ');
+        return (
+`                <!-- ${comment} -->
+                <div class="roadmap-span">
+                    <div class="roadmap-label">
+                        <div class="roadmap-label-text">${labelHTML}</div>
+                    </div>
+                    <div class="roadmap-body">
+                        <div class="roadmap-section-title">${eh(span.sectionTitle)}</div>
+                        <div class="roadmap-items">
+${itemsHTML}
+                        </div>${ideasHTML}
+                    </div>
+                </div>`
+        );
+    }).join('\n\n');
+
+    return (
+`    <!-- Roadmap page -->
+    <div class="roadmap-container" id="roadmapContainer">
+        <div class="roadmap-content">
+            <h1>Roadmap</h1>
+            <p class="roadmap-subtitle">2026 development plan &mdash; ideas &amp; upcoming features</p>
+            <div class="roadmap-timeline">
+
+${timeline}
+
+            </div>
+        </div>
+    </div>`
+    );
+}
+
+function ensurePriorityCSS(content) {
+    if (content.includes('.roadmap-priority {')) return content;
+    const css = `
+        .roadmap-priority { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 8px; vertical-align: middle; white-space: nowrap; }
+        .roadmap-priority.must   { background: rgba(200,0,0,0.2);    color: #ff6b6b; border: 1px solid rgba(200,0,0,0.4); }
+        .roadmap-priority.should { background: rgba(255,120,0,0.15); color: #ffa94d; border: 1px solid rgba(255,120,0,0.3); }
+        .roadmap-priority.nice   { background: rgba(255,255,255,0.05); color: #777;  border: 1px solid rgba(255,255,255,0.1); }`;
+    // insert just before </style> (first occurrence, inside <head>)
+    return content.replace('</style>\n</head>', css + '\n    </style>\n</head>');
+}
+
+// ── helpers ───────────────────────────────────────────────────────────────────
+function eh(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+function ea(str) {
+    return eh(str).replace(/"/g, '&quot;');
+}
+function priorityLabel(p) {
+    return { must: 'MUST', should: 'SHOULD HAVE', nice: 'NICE TO HAVE' }[p] || '';
+}
+function setStatus(msg, cls) {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.className = cls || '';
+}
+</script>
+</body>
+</html>
