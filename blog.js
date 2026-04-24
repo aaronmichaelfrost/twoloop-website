@@ -679,24 +679,8 @@ function showBlogList() {
     }
 }
 
-// Initialize blog posts when the page loads
-document.addEventListener('DOMContentLoaded', async function() {
-    blogPerf.mark('DOMContentLoaded fired');
-    console.log('DOM loaded, initializing blog...');
-    try {
-        await markdownParser.loadBlogPosts();
-        console.log('Blog posts loaded successfully:', markdownParser.posts.length);
-        
-        // If we're currently on the blog page, refresh the content
-        if (document.body.classList.contains('blog-active') && !isRenderingBlogList) {
-            console.log('Currently on blog page, refreshing content...');
-            showBlogList();
-        }
-    } catch (error) {
-        console.error('Error loading blog posts:', error);
-        isLoadingBlogPosts = false; // Reset loading state on error
-    }
-});
+// Blog posts are loaded on demand when the user navigates to the blog page.
+// See ensureBlogPostsLoaded() and showBlogList().
 
 // Also try to load when the blog page is shown
 function ensureBlogPostsLoaded() {
