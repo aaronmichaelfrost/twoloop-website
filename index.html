@@ -2441,6 +2441,11 @@
                 transform: scale(1.05);
             }
         }
+    
+        .roadmap-priority { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 8px; vertical-align: middle; white-space: nowrap; }
+        .roadmap-priority.must   { background: rgba(200,0,0,0.2);    color: #ff6b6b; border: 1px solid rgba(200,0,0,0.4); }
+        .roadmap-priority.should { background: rgba(255,120,0,0.15); color: #ffa94d; border: 1px solid rgba(255,120,0,0.3); }
+        .roadmap-priority.nice   { background: rgba(255,255,255,0.05); color: #777;  border: 1px solid rgba(255,255,255,0.1); }
     </style>
 </head>
 </head>
@@ -2555,12 +2560,16 @@
                                 <div class="roadmap-item-title">Better localized bird / tree ambience<span class="roadmap-priority should">SHOULD HAVE</span></div>
                                 <div class="roadmap-item-desc"></div>
                             </div>
-                            <div class="roadmap-item">
-                                <div class="roadmap-item-title">Pickup-able essentials for healing (e.g. mushrooms / cloth for banda)</div>
+                            <div class="roadmap-item" data-priority="should">
+                                <div class="roadmap-item-title">Pickup-able essentials for healing (e.g. mushrooms / cloth for banda)<span class="roadmap-priority should">SHOULD HAVE</span></div>
                                 <div class="roadmap-item-desc"></div>
                             </div>
-                            <div class="roadmap-item">
-                                <div class="roadmap-item-title">Skin color based on steam ID</div>
+                            <div class="roadmap-item" data-priority="should">
+                                <div class="roadmap-item-title">Skin color based on steam ID<span class="roadmap-priority should">SHOULD HAVE</span></div>
+                                <div class="roadmap-item-desc"></div>
+                            </div>
+                            <div class="roadmap-item" data-priority="should">
+                                <div class="roadmap-item-title">Language Localization<span class="roadmap-priority should">SHOULD HAVE</span></div>
                                 <div class="roadmap-item-desc"></div>
                             </div>
                         </div>

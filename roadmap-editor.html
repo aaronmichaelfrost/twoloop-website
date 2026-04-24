@@ -603,12 +603,12 @@ ${timeline}
 function ensurePriorityCSS(content) {
     if (content.includes('.roadmap-priority {')) return content;
     const css = `
-        .roadmap-priority { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 8px; vertical-align: middle; white-space: nowrap; }
+        .roadmap-priority { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 8px; vertical-align: middle; white-space: nowrap; }
         .roadmap-priority.must   { background: rgba(200,0,0,0.2);    color: #ff6b6b; border: 1px solid rgba(200,0,0,0.4); }
         .roadmap-priority.should { background: rgba(255,120,0,0.15); color: #ffa94d; border: 1px solid rgba(255,120,0,0.3); }
         .roadmap-priority.nice   { background: rgba(255,255,255,0.05); color: #777;  border: 1px solid rgba(255,255,255,0.1); }`;
-    // insert just before </style> (first occurrence, inside <head>)
-    return content.replace('</style>\n</head>', css + '\n    </style>\n</head>');
+    // Use regex so \r\n (Windows) and \n both match
+    return content.replace(/<\/style>\s*<\/head>/i, css + '\n    </style>\n</head>');
 }
 
 // ── helpers ───────────────────────────────────────────────────────────────────
