@@ -1866,6 +1866,14 @@
             border-color: rgba(255,255,255,0.15);
         }
 
+        .roadmap-item[data-completed="true"] {
+            opacity: 0.4;
+        }
+
+        .roadmap-item[data-completed="true"] .roadmap-item-title {
+            text-decoration: line-through;
+        }
+
         .roadmap-item-title {
             font-size: 0.85rem;
             font-weight: 500;
@@ -2544,11 +2552,11 @@
                                 <div class="roadmap-item-title">Redo Character<span class="roadmap-priority must">MUST</span></div>
                                 <div class="roadmap-item-desc">Overhauled player character model and animations.</div>
                             </div>
-                            <div class="roadmap-item" data-priority="must">
-                                <div class="roadmap-item-title">Door Locks<span class="roadmap-priority must">MUST</span></div>
+                            <div class="roadmap-item" data-priority="must" data-completed="true">
+                                <div class="roadmap-item-title">Biometric Lock<span class="roadmap-priority must">MUST</span></div>
                                 <div class="roadmap-item-desc">Lockable doors for base security.</div>
                             </div>
-                            <div class="roadmap-item" data-priority="should">
+                            <div class="roadmap-item" data-priority="should" data-completed="true">
                                 <div class="roadmap-item-title">Ceiling Lights<span class="roadmap-priority should">SHOULD HAVE</span></div>
                                 <div class="roadmap-item-desc">Deployable ceiling-mounted lighting.</div>
                             </div>

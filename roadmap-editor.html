@@ -199,6 +199,11 @@
         }
         .icon-btn:hover     { background: #3a3a3a; color: #eee; }
         .icon-btn.del:hover { background: #4a1a1a; color: #f88; border-color: #c44; }
+        .icon-btn.done-btn { color: #555; }
+        .icon-btn.done-btn.active { color: #4caf50; border-color: #4caf50; background: rgba(76,175,80,0.1); }
+
+        .item-row.completed { opacity: 0.45; }
+        .item-row.completed .item-title-input { text-decoration: line-through; color: #888; }
 
         /* ── ideas section ──────────────────────────── */
         .span-ideas {
@@ -333,8 +338,9 @@ function parseRoadmap(html) {
             titleClone?.querySelector('.roadmap-priority')?.remove();
             const title = titleClone?.textContent.trim() || '';
             const desc     = el.querySelector('.roadmap-item-desc')?.textContent.trim() || '';
-            const priority = el.dataset.priority || '';
-            return { title, desc, priority };
+            const priority  = el.dataset.priority  || '';
+            const completed = el.dataset.completed === 'true';
+            return { title, desc, priority, completed };
         });
 
         const ideas = Array.from(spanEl.querySelectorAll('.roadmap-idea-tag'))
@@ -402,8 +408,9 @@ function createItemRow(item, si, ii) {
         ? `<span class="badge-preview ${p}">${priorityLabel(p)}</span>`
         : `<span class="badge-preview"></span>`;
 
+    const done = !!item.completed;
     const row = document.createElement('div');
-    row.className = 'item-row';
+    row.className = 'item-row' + (done ? ' completed' : '');
     row.innerHTML = `
         <div class="item-fields">
             <div class="item-top-row">
@@ -422,12 +429,21 @@ function createItemRow(item, si, ii) {
                       placeholder="Description (optional)">${eh(item.desc)}</textarea>
         </div>
         <div class="item-controls">
+            <button class="icon-btn done-btn${done ? ' active' : ''}" data-field="completed"
+                    title="Toggle completed" onclick="toggleDone(this)">✓</button>
             <button class="icon-btn" title="Move up"   onclick="moveItem(${si},${ii},-1)">↑</button>
             <button class="icon-btn" title="Move down" onclick="moveItem(${si},${ii}, 1)">↓</button>
             <button class="icon-btn del" title="Delete" onclick="deleteItem(${si},${ii})">✕</button>
         </div>`;
     return row;
 }
+
+// toggle completed state without full re-render
+window.toggleDone = function(btn) {
+    const row = btn.closest('.item-row');
+    const active = btn.classList.toggle('active');
+    row.classList.toggle('completed', active);
+};
 
 // update badge preview immediately on select change (no full re-render needed)
 window.updateBadge = function(select) {
@@ -444,9 +460,10 @@ function syncFromDOM() {
         const label        = card.querySelector('[data-field="label"]').value.trim();
         const sectionTitle = card.querySelector('[data-field="sectionTitle"]').value.trim();
         const items = Array.from(card.querySelectorAll('.item-row')).map(row => ({
-            title:    row.querySelector('[data-field="title"]').value.trim(),
-            desc:     row.querySelector('[data-field="desc"]').value.trim(),
-            priority: row.querySelector('[data-field="priority"]').value,
+            title:     row.querySelector('[data-field="title"]').value.trim(),
+            desc:      row.querySelector('[data-field="desc"]').value.trim(),
+            priority:  row.querySelector('[data-field="priority"]').value,
+            completed: row.querySelector('[data-field="completed"]')?.classList.contains('active') ?? false,
         }));
         const ideasRaw = card.querySelector('[data-field="ideas"]').value;
         const ideas = ideasRaw.split(',').map(s => s.trim()).filter(Boolean);
@@ -547,9 +564,10 @@ function generateRoadmapSection(spans) {
             const badge = item.priority
                 ? `<span class="roadmap-priority ${item.priority}">${priorityLabel(item.priority)}</span>`
                 : '';
-            const dp = item.priority ? ` data-priority="${item.priority}"` : '';
+            const dp  = item.priority  ? ` data-priority="${item.priority}"` : '';
+            const dc  = item.completed ? ` data-completed="true"`            : '';
             return (
-`                            <div class="roadmap-item"${dp}>
+`                            <div class="roadmap-item"${dp}${dc}>
                                 <div class="roadmap-item-title">${eh(item.title)}${badge}</div>
                                 <div class="roadmap-item-desc">${eh(item.desc)}</div>
                             </div>`
