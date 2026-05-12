@@ -364,13 +364,13 @@ class MarkdownParser {
             } else {
                 console.error('Failed to fetch blog post list:', response.status, response.statusText);
                 // Fallback to hardcoded list if API fails
-                blogPosts = ['devblog-0.md', 'devblog-1.md', 'devblog-2.md', 'devblog-3.md'];
+                blogPosts = ['devblog-0.md', 'devblog-1.md', 'devblog-2.md', 'devblog-3.md', 'devblog-4.md'];
                 console.log('Using fallback blog post list:', blogPosts);
             }
         } catch (error) {
             console.error('Error fetching blog post list:', error);
             // Fallback to hardcoded list if API fails
-            blogPosts = ['devblog-0.md', 'devblog-1.md', 'devblog-2.md', 'devblog-3.md'];
+            blogPosts = ['devblog-0.md', 'devblog-1.md', 'devblog-2.md', 'devblog-3.md', 'devblog-4.md'];
             console.log('Using fallback blog post list:', blogPosts);
         }
 
