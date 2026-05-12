@@ -23,6 +23,10 @@ This is about 80% done now, and I plan to also provide access for players who wa
 
 ![World running via automated pipeline](devblog4-images/world_running_on_fully_automated_provision_pipeline.png)
 
+And here's what the server host panel looks like — live resource usage, RCON console, and game config in one place:
+
+![Numa.cloud server dashboard](devblog4-images/numa_dash.png)
+
 
 
 ### 💡 New Deployable: Ceiling Lamp
@@ -40,6 +44,14 @@ We just use a few raycasts to ensure both supports are touching the ceiling.
 It is kind of big for the box it comes in. Maybe we'll fix that in the future:
 
 ![Ceiling Lamp — pick up from world](devblog4-images/ceilinglamp_world_item_hover.png)
+
+Shipping a deployable to this standard involves more than it looks:
+* Item (inventory, world pickup, health, etc.)
+* Deployable logic (placement, structural dependency)
+* LODs
+* Sounds (looping hum + on/off switch)
+* Networking & interaction (server authoritative)
+* State serialization (save/load persistence)
 
 
 ### 🔐 New Deployable: Biometric Code Lock
@@ -63,13 +75,27 @@ Quick demo vid:
 
 <div class="discord-images-row"><video controls loop muted playsinline style="width:100%;border-radius:4px;"><source src="https://cdn.jsdelivr.net/gh/aaronmichaelfrost/twoloop-website@main/blog-posts/devblog4-images/codelock_long_video_example_compressed.mp4" type="video/mp4"></video></div>
 
+Same story under the hood, plus a few extras:
+* Item (inventory, world pickup, health, etc.)
+* Deployable logic (placement, structural dependency)
+* LODs
+* Sounds (looping hum + on/off switch)
+* Networking & interaction (server authoritative & validated)
+* State serialization (save/load persistence)
+* Custom CCTV shader (render texture feed on the panel display)
+
 
 ### 🏗️ Item Wiki Update
 
 Small update: the item wiki and console command documentation are now **generated directly from game source files**. So I just run a script, and the website becomes up to date.
 
 
-### 🐛 Bug Bash — Bugs Hit Zero
+### � Roadmap
+
+We now have a (subject to change) roadmap up on the website. [Check it out here](https://www.twoloop.net/?page=roadmap).
+
+
+### �🐛 Bug Bash — Bugs Hit Zero
 
 I fixed a ton of bugs and general issues, like resolution scaling. 
 
@@ -83,68 +109,68 @@ Main Learnings:
 
 **10/13/2025**
 
-* Fixed hitmarker starting visible when joining as a non-host
+* 🐛 Fixed hitmarker starting visible when joining as a non-host
 
 **12/9/2025**
 
-* Removed motion blur setting — doesn't interact cleanly with scope and screen effects
+* 🐛 Removed motion blur setting — doesn't interact cleanly with scope and screen effects
 
 **12/15/2025**
 
-* Fixed dead player appearing as standing character instead of ragdoll/invisible when joining a session
+* 🐛 Fixed dead player appearing as standing character instead of ragdoll/invisible when joining a session
 
 **4/8/2026**
 
-* NPCs are now always upright, no longer matching terrain slopes
-* Build stripper now does proper cleanup on asset folders
-* Fixed NPCs not facing heading direction while navigating to a threat point
+* 🐛 NPCs are now always upright, no longer matching terrain slopes
+* 🐛 Build stripper now does proper cleanup on asset folders
+* 🐛 Fixed NPCs not facing heading direction while navigating to a threat point
 
 **4/10/2026**
 
-* Smoothed hipfire-to-ADS camera transition; less jarring
+* 🐛 Smoothed hipfire-to-ADS camera transition; less jarring
 
 **4/11/2026**
 
-* Fixed bug where other players' projectiles spawned from the wrong gun endpoint
+* 🐛 Fixed bug where other players' projectiles spawned from the wrong gun endpoint
 
 **4/12/2026**
 
-* Fixed forest being too bright during daytime
-* Fixed corrupted vegetation system and conditional rendering issue
-* Reduced massive scale of new forest tree models
-* Fixed overly pale skin tones
+* 🐛 Fixed forest being too bright during daytime
+* 🐛 Fixed corrupted vegetation system and conditional rendering issue
+* 🐛 Reduced massive scale of new forest tree models
+* 🐛 Fixed overly pale skin tones
 
 **4/21/2026**
 
-* Item wiki and console command wiki now built automatically from game files
+* ⭐ Item wiki and console command wiki now built automatically from game files
 
 **4/22/2026**
 
-* Fixed hitmarker starting visible in build
-* Fixed crosshair appearing when closing inventory without a weapon equipped
-* Fixed pointer appearing black instead of white in standalone build
-* Fixed: closing and reopening the menu too quickly could prevent it from reopening
-* Resolution scaling now works for persistent menu and loading screen
+* 🐛 Fixed hitmarker starting visible in build
+* 🐛 Fixed crosshair appearing when closing inventory without a weapon equipped
+* 🐛 Fixed pointer appearing black instead of white in standalone build
+* 🐛 Fixed: closing and reopening the menu too quickly could prevent it from reopening
+* 🐛 Resolution scaling now works for persistent menu and loading screen
 
 **4/23/2026**
 
-* Fixed resolution scaling on F1 console / spawn menu UI
-* Fixed resolution scaling on HUD UI
-* Fixed resolution scaling on inventory UI
-* Fixed more UI tweening determinism issues
-* **BUGS AT ZERO**
+* 🐛 Resolution scaling fixed on F1 console / spawn menu UI
+* 🐛 Resolution scaling fixed on HUD UI
+* 🐛 Resolution scaling fixed on inventory UI
+* 🐛 Fixed more UI tweening determinism issues
+* **BUGS AT ZERO 🎊**
 
 **4/25/2026**
 
-* Fixed hotbar select bug using number keys
-* Finished ceiling lamp deployable — it's in the game
-* Fixed "RATE" showing incorrectly for deployables in the hover inspector
+* 🐛 Fixed hotbar select bug using number keys
+* ⭐ Finished new ceiling lamp deployable — it's in the game
+* 🐛 Fixed "RATE" showing incorrectly for deployables in the hover inspector
 
 **4/27/2026**
 
-* Fixed deployable placement bounds validation bug
-* Turret deployable now correctly indicates its placement direction
+* 🐛 Fixed deployable placement bounds validation bug
+* 🐛 Turret deployable now correctly indicates its placement direction
 
 **4/29/2026**
 
-* New deployable: biometric code lock complete
+* ⭐ New deployable: biometric code lock complete
