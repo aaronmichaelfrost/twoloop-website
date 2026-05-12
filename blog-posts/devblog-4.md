@@ -2,7 +2,7 @@
 date: 2026-05-12
 cover-image: devblog4-images/world_running_on_fully_automated_provision_pipeline.png
 title: Devblog 4
-description: Bugs hit zero, two new deployables ship, and the world boots with one click.
+description: Biometric Lock, Ceiling Lamp, Roadmap, & Server Infrastructure
 ---
 
 # Devblog 4
@@ -62,10 +62,7 @@ The second new deployable is the **Biometric Code Lock** — a door-mounted devi
 
 When an authorized player looks at the lock, the light turns green, and that side of the door unlocks for all players. The screen shows your player's face via a live render texture. 
 
-<div class="discord-images-row">
-![Code Lock — green, authorized](devblog4-images/codelock-world-screenshot.jpg)
-![Code Lock — close up](devblog4-images/codelock_closeup.png)
-</div>
+![Code Lock in the world — glowing green](devblog4-images/codelock_closeup.png)
 
 To authorize yourself, just type in the code. It initializes to `0000` — so change it fast:
 
@@ -73,7 +70,7 @@ To authorize yourself, just type in the code. It initializes to `0000` — so ch
 
 Quick demo vid:
 
-<div class="discord-images-row"><video controls loop muted playsinline style="width:100%;border-radius:4px;"><source src="https://cdn.jsdelivr.net/gh/aaronmichaelfrost/twoloop-website@main/blog-posts/devblog4-images/codelock_long_video_example_compressed.mp4" type="video/mp4"></video></div>
+<div class="blog-content-image"><video controls loop muted playsinline preload="metadata" style="display:block;width:100%;aspect-ratio:16/9;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2);"><source src="https://cdn.jsdelivr.net/gh/aaronmichaelfrost/twoloop-website@main/blog-posts/devblog4-images/codelock_long_video_example_compressed.mp4" type="video/mp4"></video></div>
 
 Same story under the hood, plus a few extras:
 * Item (inventory, world pickup, health, etc.)

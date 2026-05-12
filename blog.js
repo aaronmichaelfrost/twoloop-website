@@ -56,13 +56,16 @@ function handleImageError(img) {
 function handleContentImageLoad(img) {
     console.log('Content image loaded successfully:', img.src);
     img.style.opacity = '1';
-    const shimmer = img.parentElement.querySelector('.image-shimmer');
+    const wrap = img.parentElement; // .img-wrap
+    const shimmer = wrap.querySelector('.image-shimmer');
     if (shimmer) shimmer.remove();
+    const caption = wrap.querySelector('.img-caption');
+    if (caption) caption.style.opacity = '1';
 }
 
 function handleContentImageError(img) {
     console.error('Content image failed to load:', img.src);
-    const container = img.parentElement;
+    const container = img.closest('.blog-content-image') || img.parentElement;
     container.innerHTML = '<div style="color: rgba(255,255,255,0.4); font-size: 0.9rem; padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">Failed to load image: ' + img.src + '</div>';
 }
 
@@ -134,7 +137,8 @@ class MarkdownParser {
             // If the image path doesn't start with http, https, or /, prepend CDN URL
             const imageSrc = (src.startsWith('http') || src.startsWith('/')) ? src : `https://cdn.jsdelivr.net/gh/aaronmichaelfrost/twoloop-website@main/blog-posts/${src}`;
             console.log('Processing image:', src, '→', imageSrc);
-            return `<div class="blog-content-image"><div class="image-shimmer"></div><img src="${imageSrc}" alt="${alt}" style="opacity: 0; transition: opacity 0.3s ease;" onload="handleContentImageLoad(this)" onerror="handleContentImageError(this)"></div>`;
+            const captionHtml = alt ? `<div class="img-caption">${alt}</div>` : '';
+            return `<div class="blog-content-image"><div class="img-wrap"><div class="image-shimmer"></div><img src="${imageSrc}" alt="${alt}" style="opacity: 0; transition: opacity 0.3s ease;" onload="handleContentImageLoad(this)" onerror="handleContentImageError(this)">${captionHtml}</div></div>`;
         });
 
         // Process discord-images-row divs specially
@@ -142,7 +146,8 @@ class MarkdownParser {
             // Extract all images from within the div and process them
             const processedContent = content.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (imgMatch, alt, src) => {
                 const imageSrc = (src.startsWith('http') || src.startsWith('/')) ? src : `https://cdn.jsdelivr.net/gh/aaronmichaelfrost/twoloop-website@main/blog-posts/${src}`;
-                return `<div class="blog-content-image"><div class="image-shimmer"></div><img src="${imageSrc}" alt="${alt}" style="opacity: 0; transition: opacity 0.3s ease;" onload="handleContentImageLoad(this)" onerror="handleContentImageError(this)"></div>`;
+                const captionHtml = alt ? `<div class="img-caption">${alt}</div>` : '';
+                return `<div class="blog-content-image"><div class="img-wrap"><div class="image-shimmer"></div><img src="${imageSrc}" alt="${alt}" style="opacity: 0; transition: opacity 0.3s ease;" onload="handleContentImageLoad(this)" onerror="handleContentImageError(this)">${captionHtml}</div></div>`;
             });
             return `<div class="discord-images-row">${processedContent}</div>`;
         });
