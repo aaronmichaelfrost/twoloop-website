@@ -938,6 +938,7 @@
         .blog-content-image {
             margin: 1.5rem 0;
             text-align: center;
+            position: relative;
         }
 
         .blog-content-image img {
@@ -946,6 +947,31 @@
             border-radius: 8px;
             box-shadow: 0 4px 16px rgba(0,0,0,0.2);
             object-fit: cover;
+        }
+
+        /* Shimmer placeholder shown while images load */
+        .image-shimmer {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            max-height: 300px;
+            border-radius: 8px;
+            background: linear-gradient(90deg,
+                rgba(255,255,255,0.04) 0%,
+                rgba(255,255,255,0.04) 30%,
+                rgba(255,255,255,0.10) 50%,
+                rgba(255,255,255,0.04) 70%,
+                rgba(255,255,255,0.04) 100%);
+            background-size: 250% 100%;
+            animation: shimmer-pan 1.6s ease-in-out infinite;
+        }
+
+        @keyframes shimmer-pan {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .discord-images-row .image-shimmer {
+            max-height: 200px;
         }
 
         /* Discord images row styling */

@@ -35,7 +35,7 @@ It casts shadows, and can be turned on and off.
 
 We just use a few raycasts to ensure both supports are touching the ceiling. 
 
-![Ceiling lamp placement](devblog4-images/light_deployable_placement_algorithm.gif)
+<div class="blog-content-image"><video autoplay loop muted playsinline style="max-width:100%;max-height:300px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2);"><source src="https://cdn.jsdelivr.net/gh/aaronmichaelfrost/twoloop-website@main/blog-posts/devblog4-images/light_deployable_placement_algorithm.mp4" type="video/mp4"></video></div>
 
 It is kind of big for the box it comes in. Maybe we'll fix that in the future:
 
