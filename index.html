@@ -1917,6 +1917,9 @@
             border-radius: 6px;
             padding: 0.55rem 0.85rem;
             transition: background 0.2s ease, border-color 0.2s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
         }
 
         .roadmap-item:hover {
@@ -1944,6 +1947,59 @@
             color: rgba(255,255,255,0.45);
             font-weight: 300;
             line-height: 1.4;
+        }
+
+        .roadmap-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .roadmap-vote-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex-shrink: 0;
+            padding-top: 1px;
+        }
+
+        .roadmap-vote-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            background: none;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 4px;
+            color: rgba(255,255,255,0.35);
+            font-size: 0.68rem;
+            padding: 2px 7px;
+            cursor: pointer;
+            transition: all 0.15s;
+            line-height: 1.4;
+            white-space: nowrap;
+            user-select: none;
+            min-width: 42px;
+            font-family: inherit;
+        }
+
+        .roadmap-vote-btn:hover {
+            border-color: rgba(255,255,255,0.25);
+            color: rgba(255,255,255,0.7);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .roadmap-vote-btn.voted-up {
+            border-color: rgba(100,200,100,0.5);
+            color: rgba(100,200,100,0.9);
+            background: rgba(100,200,100,0.08);
+            cursor: default;
+        }
+
+        .roadmap-vote-btn.voted-down {
+            border-color: rgba(220,100,80,0.5);
+            color: rgba(220,100,80,0.9);
+            background: rgba(220,100,80,0.08);
+            cursor: default;
         }
 
         .roadmap-idea-block {
@@ -2945,6 +3001,7 @@
                     blogPage.style.display = 'none';
                     docsContainer.style.display = 'none';
                     roadmapContainer.style.display = 'block';
+                    if (window.initRoadmapVotes) window.initRoadmapVotes();
                     body.classList.add('roadmap-active');
                     scrollArrow.classList.remove('visible');
                     scrollArrow.style.display = 'none';
@@ -3777,6 +3834,114 @@
             // Make setupWishlistButtonHandler available globally for use after content regeneration
             window.setupWishlistButtonHandler = setupWishlistButtonHandler;
         });
+    </script>
+
+    <script>
+        // Roadmap voting — Upstash Redis REST
+        (function () {
+            const UPSTASH_URL = 'https://improved-fish-123529.upstash.io';
+            const UPSTASH_TOKEN = 'gQAAAAAAAeKJAAIgcDI5MjYzMmY3ZDMyMjM0OGU2OGMyOWVmOWExYmMxOWE1Mw';
+            let initialized = false;
+
+            function slugify(text) {
+                return text.toLowerCase().trim()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-+|-+$/g, '')
+                    .substring(0, 60);
+            }
+
+            async function initRoadmapVotes() {
+                if (initialized) return;
+                initialized = true;
+
+                const items = Array.from(document.querySelectorAll('.roadmap-item'));
+                const slugs = [];
+
+                items.forEach(function (item) {
+                    var titleEl = item.querySelector('.roadmap-item-title');
+                    if (!titleEl) return;
+                    var clone = titleEl.cloneNode(true);
+                    var priority = clone.querySelector('.roadmap-priority');
+                    if (priority) priority.remove();
+                    var slug = slugify(clone.textContent);
+                    slugs.push(slug);
+                    item.dataset.voteSlug = slug;
+
+                    // Wrap existing children in .roadmap-item-content
+                    var content = document.createElement('div');
+                    content.className = 'roadmap-item-content';
+                    while (item.firstChild) content.appendChild(item.firstChild);
+                    item.appendChild(content);
+
+                    // Build vote buttons
+                    var voted = localStorage.getItem('roadmap_voted:' + slug);
+                    var wrap = document.createElement('div');
+                    wrap.className = 'roadmap-vote-buttons';
+                    wrap.innerHTML =
+                        '<button class="roadmap-vote-btn vote-up' + (voted === 'up' ? ' voted-up' : '') + '" title="Upvote">' +
+                        '\uD83D\uDC4D <span class="vote-count">\u00B7</span></button>' +
+                        '<button class="roadmap-vote-btn vote-down' + (voted === 'down' ? ' voted-down' : '') + '" title="Downvote">' +
+                        '\uD83D\uDC4E <span class="vote-count">\u00B7</span></button>';
+                    item.appendChild(wrap);
+
+                    wrap.querySelector('.vote-up').addEventListener('click', function () { castVote(item, slug, 'up'); });
+                    wrap.querySelector('.vote-down').addEventListener('click', function () { castVote(item, slug, 'down'); });
+                });
+
+                // Batch-fetch all counts via Upstash pipeline
+                if (!slugs.length) return;
+                var pipeline = [];
+                slugs.forEach(function (s) {
+                    pipeline.push(['GET', 'roadmap:up:' + s]);
+                    pipeline.push(['GET', 'roadmap:down:' + s]);
+                });
+
+                try {
+                    var res = await fetch(UPSTASH_URL + '/pipeline', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + UPSTASH_TOKEN,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(pipeline)
+                    });
+                    if (!res.ok) throw new Error(res.status);
+                    var results = await res.json();
+                    items.forEach(function (item, i) {
+                        var up = parseInt((results[i * 2] || {}).result) || 0;
+                        var down = parseInt((results[i * 2 + 1] || {}).result) || 0;
+                        var counts = item.querySelectorAll('.vote-count');
+                        if (counts[0]) counts[0].textContent = up;
+                        if (counts[1]) counts[1].textContent = down;
+                    });
+                } catch (e) {
+                    console.warn('Roadmap votes: could not load counts', e);
+                }
+            }
+
+            async function castVote(item, slug, direction) {
+                if (localStorage.getItem('roadmap_voted:' + slug)) return;
+                localStorage.setItem('roadmap_voted:' + slug, direction);
+
+                var btn = item.querySelector('.vote-' + direction);
+                btn.classList.add(direction === 'up' ? 'voted-up' : 'voted-down');
+
+                try {
+                    var key = encodeURIComponent('roadmap:' + direction + ':' + slug);
+                    var res = await fetch(UPSTASH_URL + '/incr/' + key, {
+                        headers: { 'Authorization': 'Bearer ' + UPSTASH_TOKEN }
+                    });
+                    if (!res.ok) throw new Error(res.status);
+                    var data = await res.json();
+                    var countEl = btn.querySelector('.vote-count');
+                    if (countEl) countEl.textContent = data.result;
+                } catch (e) {
+                    console.warn('Roadmap votes: sync failed', e);
+                }
+            }
+
+            window.initRoadmapVotes = initRoadmapVotes;
+        })();
     </script>
 </body>
 </html>
