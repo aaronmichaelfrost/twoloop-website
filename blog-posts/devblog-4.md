@@ -27,7 +27,7 @@ The first new deployable is the **Ceiling Lamp** — you'll actually need this o
 
 We just use a few raycasts to ensure both supports are touching the ceiling. 
 
-<div class="blog-content-image"><video autoplay loop muted playsinline style="max-width:100%;max-height:300px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2);"><source src="https://cdn.jsdelivr.net/gh/aaronmichaelfrost/twoloop-website@main/blog-posts/devblog4-images/light_deployable_placement_algorithm.mp4" type="video/mp4"></video></div>
+<div class="blog-content-image"><iframe width="100%" height="315" src="https://www.youtube.com/embed/4d8Q1PWoOBI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2);"></iframe></div>
 
 Shipping a deployable to this standard involves more than it looks:
 * Item (inventory, world pickup, health, etc.)
