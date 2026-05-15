@@ -9,41 +9,25 @@ description: Biometric Lock, Ceiling Lamp, Roadmap, & Server Infrastructure
 
 Two new deployables. Zero bugs. One click world deployment.
 
-### 🏗️ One-Click World Deployment
-*by Aaron*
 
-For years, I was concerned about how we'd manage a fleet of dedicated gameservers: Keeping infastructure in sync, scaling up, and managing each game server.
+### New Roadmap
 
-So I decided to put an end to these worries, and built a one-click pipeline that works with any Unity game to:
-- purchase and configure baremetal infastructure
-- install game builds and orchestrate a fleet (easy scale up/down)
-- manage survival game lifecycle via one panel (wipes, RCON, save rollbacks, in-game observability, etc.)
+Please vote on what you like / dislike! This is a systems based survival game.
 
-This is about 80% done now, and I plan to also provide access for players who want to host their own worlds. The screenshot below is a real game world running entirely via the new pipeline; a Windows game build running on a Linux server.
-
-![World running via automated pipeline](devblog4-images/world_running_on_fully_automated_provision_pipeline.png)
-
-And here's what the server host panel looks like — live resource usage, RCON console, and game config in one place:
-
-![Numa.cloud server dashboard](devblog4-images/numa_dash.png)
+[Check it out here](https://www.twoloop.net/?page=roadmap).
+![Roadmap](devblog4-images/roadmap.png)
 
 
 
 ### 💡 New Deployable: Ceiling Lamp
 
-The first new deployable is the **Ceiling Lamp** — you'll actually need this when we make it properly dark inside the bases.
+The first new deployable is the **Ceiling Lamp** — you'll actually need this once we make it properly dark inside the bases.
 
 ![Ceiling lamp in a dark room](devblog4-images/ceilinglamp_cinematic_screenshot.png)
-
-It casts shadows, and can be turned on and off. 
 
 We just use a few raycasts to ensure both supports are touching the ceiling. 
 
 <div class="blog-content-image"><video autoplay loop muted playsinline style="max-width:100%;max-height:300px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2);"><source src="https://cdn.jsdelivr.net/gh/aaronmichaelfrost/twoloop-website@main/blog-posts/devblog4-images/light_deployable_placement_algorithm.mp4" type="video/mp4"></video></div>
-
-It is kind of big for the box it comes in. Maybe we'll fix that in the future:
-
-![Ceiling Lamp — pick up from world](devblog4-images/ceilinglamp_world_item_hover.png)
 
 Shipping a deployable to this standard involves more than it looks:
 * Item (inventory, world pickup, health, etc.)
@@ -52,6 +36,7 @@ Shipping a deployable to this standard involves more than it looks:
 * Sounds (looping hum + on/off switch)
 * Networking & interaction (server authoritative)
 * State serialization (save/load persistence)
+
 
 
 ### 🔐 New Deployable: Biometric Code Lock
@@ -82,22 +67,40 @@ Same story under the hood, plus a few extras:
 * Custom CCTV shader (render texture feed on the panel display)
 
 
-### 🏗️ Item Wiki Update
 
-Small update: the item wiki and console command documentation are now **generated directly from game source files**. So I just run a script, and the website becomes up to date.
+### 🏗️ Making Game Servers
+*by Aaron*
+
+For years, I was concerned about how we'd manage a fleet of dedicated gameservers: Keeping infastructure in sync, scaling up, and managing each.
+
+So I built a one-click pipeline that works with any Unity game to:
+- purchase and configure baremetal infastructure
+- install game builds and orchestrate a fleet (easy scale up/down)
+- manage survival game lifecycle via one panel (wipes, RCON, save rollbacks, in-game observability, etc.)
+
+This is almost done. Players will also get access.
+
+![World running via automated pipeline](devblog4-images/world_running_on_fully_automated_provision_pipeline.png)
+
+It's called numa.cloud, and should work with any Unity game:
+
+![Numa.cloud server dashboard](devblog4-images/numa_dash.png)
 
 
-### � Roadmap
 
-We now have a (subject to change) roadmap up on the website. [Check it out here](https://www.twoloop.net/?page=roadmap).
+### 🏗️ Item Wiki 
+
+Now it gets **generated directly from game source files**.
 
 
-### �🐛 Bug Bash — Bugs Hit Zero
+
+
+### Bug Bash — Bugs Hit Zero
 
 I fixed a ton of bugs and general issues, like resolution scaling. 
 
 Main Learnings:
-- The "Aspect Ratio Fitter" component makes resolution scaling easier than I thought
+- "Aspect Ratio Fitter" component makes resolution scaling easier than I thought
 - You should ALWAYS consider using Physics.SyncTransforms before doing any sort of collision checks, like spherecasting, spherecheck, etc., otherwise, it can't really be trusted to be up to date, especially if you are depending on positional data for deterministic initialization, or something like that (we were, which might actually be it's own code smell).
 
 
