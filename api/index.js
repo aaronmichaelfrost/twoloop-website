@@ -52,11 +52,11 @@ module.exports = (req, res) => {
             if (metadata.title) {
                 title = `${metadata.title} - twoloop`;
                 description = metadata.description || 'twoloop games blog post';
-                const coverImage = metadata['cover-image'];
-                if (coverImage) {
-                    image = (coverImage.startsWith('http') || coverImage.startsWith('//'))
-                        ? coverImage
-                        : `${baseUrl}/blog-posts/${coverImage}`;
+                const socialImage = metadata['social-image'] || metadata['cover-image'];
+                if (socialImage) {
+                    image = (socialImage.startsWith('http') || socialImage.startsWith('//'))
+                        ? socialImage
+                        : `${baseUrl}/blog-posts/${encodeURIComponent(socialImage).replace(/%2F/g, '/')}`;
                 }
                 ogUrl = `${baseUrl}/?page=blog&post=${encodeURIComponent(post)}`;
             }
