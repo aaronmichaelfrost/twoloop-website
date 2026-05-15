@@ -10,9 +10,11 @@ description: Biometric Lock, Ceiling Lamp, Roadmap, & Server Infrastructure
 Two new deployables. Zero bugs. One click world deployment.
 
 
-### New Roadmap
+### Your Vote Matters
 
-Please vote on what you like / dislike! This is a systems based survival game.
+Please vote on what you like / dislike on our new roadmap! This is a systems based survival game. 
+
+At the moment, I just tossed all my ideas into Claude, and it gave me this timeline. So, things will look a lot different soon as we actually begin to plan things.
 
 [Check it out here](https://www.twoloop.net/?page=roadmap).
 ![Roadmap](devblog4-images/roadmap.png)
@@ -21,7 +23,7 @@ Please vote on what you like / dislike! This is a systems based survival game.
 
 ### 💡 New Deployable: Ceiling Lamp
 
-The first new deployable is the **Ceiling Lamp** — you'll actually need this once we make it properly dark inside the bases.
+The first new deployable is the **Ceiling Lamp** — you'll probably want some lighting once we make it properly dark inside the bases.
 
 ![Ceiling lamp in a dark room](devblog4-images/ceilinglamp_cinematic_screenshot.png)
 
@@ -47,9 +49,9 @@ The second new deployable is the **Biometric Code Lock** — a door-mounted devi
 
 ![Biometric Code Lock — pick up from world](devblog4-images/codelock-world-item-hover.png)
 
-When an authorized player looks at the lock, the light turns green, and that side of the door unlocks for all players. The screen shows your player's face via a live render texture. 
+When an authorized player looks at the lock, the light turns green, and that side of the door unlocks for all players.
 
-![Code Lock in the world — glowing green](devblog4-images/codelock_closeup.png)
+![Display shows your player's face via a live render texture.](devblog4-images/codelock_closeup.png)
 
 To authorize yourself, just type in the code. It initializes to `0000` — so change it fast:
 
