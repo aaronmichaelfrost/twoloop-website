@@ -893,6 +893,31 @@
             text-decoration: none;
         }
 
+        .blog-share-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: rgba(255,255,255,0.5);
+            padding: 3px 5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: color 0.2s ease, background 0.2s ease;
+            flex-shrink: 0;
+            margin-left: 0.4rem;
+            vertical-align: middle;
+        }
+
+        .blog-share-btn:hover {
+            color: rgba(255,255,255,1);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .blog-share-btn.copied {
+            color: rgba(100,220,130,1);
+        }
+
         .blog-post-content {
             max-width: 680px;
             margin: 0 auto;

@@ -561,6 +561,17 @@ function showBlogPost(slug) {
         </div>
     `;
 
+    // Inject share button into the first h1 in the post content
+    const firstH1 = blogContent.querySelector('.blog-post-content h1');
+    if (firstH1) {
+        const shareBtn = document.createElement('button');
+        shareBtn.className = 'blog-share-btn';
+        shareBtn.title = 'Copy link';
+        shareBtn.setAttribute('onclick', `copyBlogLink('${post.slug}')`);
+        shareBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
+        firstH1.appendChild(shareBtn);
+    }
+
     // Update background for individual post
     const backgroundContainer = document.querySelector('.background-container');
     if (coverImageSrc) {
@@ -585,6 +596,39 @@ function showBlogPost(slug) {
     }
 
     setupYouTubeAutoplay();
+}
+
+function copyBlogLink(slug) {
+    const url = window.location.origin + '/?page=blog&post=' + slug;
+    const btn = document.querySelector('.blog-share-btn');
+
+    const showCopied = () => {
+        if (btn) {
+            btn.classList.add('copied');
+            setTimeout(() => btn.classList.remove('copied'), 2000);
+        }
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(showCopied).catch(() => {
+            fallbackCopy(url);
+            showCopied();
+        });
+    } else {
+        fallbackCopy(url);
+        showCopied();
+    }
+}
+
+function fallbackCopy(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try { document.execCommand('copy'); } catch (e) { /* silent fail */ }
+    document.body.removeChild(textArea);
 }
 
 function setupYouTubeAutoplay() {
