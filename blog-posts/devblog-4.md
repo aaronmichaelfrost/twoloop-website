@@ -27,7 +27,7 @@ The first new deployable is the **Ceiling Lamp** — you'll actually need this o
 
 We just use a few raycasts to ensure both supports are touching the ceiling. 
 
-<div class="blog-content-image"><iframe width="100%" height="315" src="https://www.youtube.com/embed/qJlYEJp2gWI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2);"></iframe></div>
+<div class="blog-content-image"><iframe width="100%" height="315" src="https://www.youtube.com/embed/qJlYEJp2gWI?enablejsapi=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2);"></iframe></div>
 
 Shipping a deployable to this standard involves more than it looks:
 * Item (inventory, world pickup, health, etc.)
@@ -43,6 +43,8 @@ Shipping a deployable to this standard involves more than it looks:
 
 The second new deployable is the **Biometric Code Lock** — a door-mounted device that combines a live facial recognition feed with a numeric access code.
 
+<div class="blog-content-image"><iframe width="100%" height="315" src="https://www.youtube.com/embed/4d8Q1PWoOBI?enablejsapi=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2);"></iframe></div>
+
 ![Biometric Code Lock — pick up from world](devblog4-images/codelock-world-item-hover.png)
 
 When an authorized player looks at the lock, the light turns green, and that side of the door unlocks for all players. The screen shows your player's face via a live render texture. 
@@ -52,10 +54,6 @@ When an authorized player looks at the lock, the light turns green, and that sid
 To authorize yourself, just type in the code. It initializes to `0000` — so change it fast:
 
 ![Change access code interface](devblog4-images/codelock-user-interface.png)
-
-Quick demo vid:
-
-<div class="blog-content-image"><iframe width="100%" height="315" src="https://www.youtube.com/embed/4d8Q1PWoOBI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2);"></iframe></div>
 
 Same story under the hood, plus a few extras:
 * Item (inventory, world pickup, health, etc.)

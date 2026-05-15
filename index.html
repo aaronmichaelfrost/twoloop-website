@@ -3505,43 +3505,31 @@
             if (page === 'blog') {
                 setActiveLink('blogLink');
                 showPage('blog');
-                // If a specific blog post is requested, load it
-                if (post && window.markdownParser) {
-                    // Wait for blog system to be ready, then load specific post
-                    setTimeout(() => {
-                        // Check if the post exists in the loaded posts
-                        const blogPost = window.markdownParser.posts.find(p => p.slug === post);
-                        if (blogPost) {
-                            // Directly call showBlogPost instead of trying to click DOM elements
+                // If a specific blog post is requested, load it directly
+                if (post) {
+                    window.pendingBlogPost = post;
+                    (window.blogPostsPromise || Promise.resolve()).then(() => {
+                        window.pendingBlogPost = null;
+                        if (window.showBlogPost) {
                             window.showBlogPost(post);
                         } else {
-                            // Post not found, wait for posts to load and try again
-                            setTimeout(() => {
-                                const retryPost = window.markdownParser.posts.find(p => p.slug === post);
-                                if (retryPost) {
-                                    window.showBlogPost(post);
-                                } else {
-                                    console.error('Blog post not found:', post);
-                                    // Fallback to blog list
-                                    window.showBlogList();
-                                }
-                            }, 1000);
+                            console.error('Blog post not found:', post);
+                            if (window.showBlogList) window.showBlogList();
                         }
-                    }, 500);
-                    
-                    // Wait for blog posts to load, then update meta tags
+                    });
                     waitForBlogPostsAndUpdateMeta(page, doc, post);
                 } else {
-                    // No specific post requested, show blog list
-                    setTimeout(() => {
+                    // No specific post requested, show blog list once posts are ready
+                    window.pendingBlogPost = null;
+                    (window.blogPostsPromise || Promise.resolve()).then(() => {
                         if (window.showBlogList) {
                             window.showBlogList();
                         }
-                    }, 300);
-                    // Update meta tags for blog list
+                    });
                     updateMetaTags('blog', null, null);
                 }
             } else if (page === 'docs') {
+                window.pendingBlogPost = null;
                 setActiveLink('docsLink');
                 showPage('docs');
                 // If a specific doc is requested, load it
@@ -3553,10 +3541,12 @@
                 // Update meta tags for docs
                 updateMetaTags(page, doc, null);
             } else if (page === 'roadmap') {
+                window.pendingBlogPost = null;
                 setActiveLink('roadmapLink');
                 showPage('roadmap');
                 updateMetaTags('roadmap', null, null);
             } else {
+                window.pendingBlogPost = null;
                 setActiveLink('aboutLink');
                 showPage('about');
                 // Update meta tags for about page

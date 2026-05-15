@@ -347,8 +347,8 @@ class MarkdownParser {
         
         // Prevent concurrent loading attempts
         if (isLoadingBlogPosts) {
-            console.log('Blog posts already loading, skipping...');
-            return this.posts;
+            console.log('Blog posts already loading, returning existing promise...');
+            return blogPostsLoadingPromise || Promise.resolve(this.posts);
         }
         
         isLoadingBlogPosts = true;
@@ -494,6 +494,7 @@ window.areBlogPostsLoaded = function() {
 let currentPage = 'about';
 let isLoadingBlogPosts = false; // Add loading state tracking
 let isRenderingBlogList = false; // Add rendering state tracking
+let blogPostsLoadingPromise = null; // Stored promise for blog post loading
 
 // Expose loading state functions globally for debugging
 window.getBlogLoadingState = function() {
@@ -582,6 +583,34 @@ function showBlogPost(slug) {
         backgroundContainer.style.filter = "blur(8px) grayscale(0%) saturate(100%)";
         backgroundContainer.style.transform = "scale(1.1)";
     }
+
+    setupYouTubeAutoplay();
+}
+
+function setupYouTubeAutoplay() {
+    const iframes = document.querySelectorAll('.blog-post-content iframe[src*="youtube.com/embed"]');
+    if (!iframes.length) return;
+
+    iframes.forEach(iframe => {
+        // Ensure enablejsapi is set
+        const url = new URL(iframe.src);
+        url.searchParams.set('enablejsapi', '1');
+        url.searchParams.set('mute', '1');
+        iframe.src = url.toString();
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const iframe = entry.target;
+            if (entry.isIntersecting) {
+                iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            } else {
+                iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            }
+        });
+    }, { threshold: 0.5 });
+
+    iframes.forEach(iframe => observer.observe(iframe));
 }
 
 function showBlogList() {
@@ -636,6 +665,12 @@ function showBlogList() {
             </div>
         `;
         isRenderingBlogList = false;
+        // Re-render when loading completes
+        (blogPostsLoadingPromise || Promise.resolve()).then(() => {
+            if (document.body.classList.contains('blog-active') && !window.pendingBlogPost) {
+                showBlogList();
+            }
+        });
         return;
     }
     
@@ -694,18 +729,29 @@ function ensureBlogPostsLoaded() {
     console.log('Ensuring blog posts are loaded...');
     if (markdownParser.posts.length === 0 && !isLoadingBlogPosts) {
         console.log('No posts found and not loading, starting load...');
-        markdownParser.loadBlogPosts().then(() => {
+        blogPostsLoadingPromise = markdownParser.loadBlogPosts();
+        window.blogPostsPromise = blogPostsLoadingPromise;
+        blogPostsLoadingPromise.then(() => {
             console.log('Posts loaded, refreshing blog list...');
-            if (document.body.classList.contains('blog-active') && !isRenderingBlogList) {
+            if (document.body.classList.contains('blog-active') && !isRenderingBlogList && !window.pendingBlogPost) {
                 showBlogList();
             }
         }).catch(error => {
             console.error('Failed to load blog posts:', error);
-            isLoadingBlogPosts = false; // Reset loading state on error
+            isLoadingBlogPosts = false;
         });
-    } else if (isLoadingBlogPosts) {
-        console.log('Posts are already loading...');
+    } else if (isLoadingBlogPosts && blogPostsLoadingPromise) {
+        console.log('Posts are already loading, attaching to existing promise...');
+        blogPostsLoadingPromise.then(() => {
+            if (document.body.classList.contains('blog-active') && !isRenderingBlogList && !window.pendingBlogPost) {
+                showBlogList();
+            }
+        });
     } else {
         console.log('Posts already loaded.');
     }
 }
+
+// Start loading blog posts immediately so they are ready when needed
+blogPostsLoadingPromise = markdownParser.loadBlogPosts();
+window.blogPostsPromise = blogPostsLoadingPromise;
