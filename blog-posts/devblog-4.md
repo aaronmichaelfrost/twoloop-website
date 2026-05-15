@@ -1,6 +1,7 @@
 ---
 date: 2026-05-15
 cover-image: devblog4-images/Unity_4jqltOtsBV.png
+social-image: devblog4-images/blog4-social.png
 title: Devblog 4
 description: Biometric Lock, Ceiling Lamp, Roadmap, & Server Infrastructure
 ---
