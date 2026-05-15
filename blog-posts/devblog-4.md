@@ -1,6 +1,6 @@
 ---
 date: 2026-05-15
-cover-image: devblog4-images/world_running_on_fully_automated_provision_pipeline.png
+cover-image: devblog4-images/Unity_4jqltOtsBV.png
 title: Devblog 4
 description: Biometric Lock, Ceiling Lamp, Roadmap, & Server Infrastructure
 ---
