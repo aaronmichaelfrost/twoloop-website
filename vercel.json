@@ -1,10 +1,12 @@
 {
-  "rewrites": {
-    "beforeFiles": [
-      {
-        "source": "/",
-        "destination": "/api/index"
-      }
-    ]
-  }
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "index.html,blog-posts/**"
+    }
+  },
+  "routes": [
+    { "src": "^/$", "dest": "/api/index" },
+    { "handle": "filesystem" }
+  ]
 }
+
