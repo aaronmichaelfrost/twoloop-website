@@ -918,6 +918,30 @@
             color: rgba(100,220,130,1);
         }
 
+        .blog-link-toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(0);
+            background: rgba(30,30,30,0.92);
+            backdrop-filter: blur(10px);
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+            font-weight: 400;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.12);
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .blog-link-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-6px);
+        }
+
         .blog-post-content {
             max-width: 680px;
             margin: 0 auto;

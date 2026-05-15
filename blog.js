@@ -568,7 +568,7 @@ function showBlogPost(slug) {
         shareBtn.className = 'blog-share-btn';
         shareBtn.title = 'Copy link';
         shareBtn.setAttribute('onclick', `copyBlogLink('${post.slug}')`);
-        shareBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
+        shareBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`;
         firstH1.appendChild(shareBtn);
     }
 
@@ -600,23 +600,28 @@ function showBlogPost(slug) {
 
 function copyBlogLink(slug) {
     const url = window.location.origin + '/?page=blog&post=' + slug;
-    const btn = document.querySelector('.blog-share-btn');
 
-    const showCopied = () => {
-        if (btn) {
-            btn.classList.add('copied');
-            setTimeout(() => btn.classList.remove('copied'), 2000);
+    const showToast = () => {
+        let toast = document.querySelector('.blog-link-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.className = 'blog-link-toast';
+            toast.textContent = 'Link copied';
+            document.body.appendChild(toast);
         }
+        clearTimeout(toast._hideTimer);
+        toast.classList.add('show');
+        toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 2000);
     };
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(showCopied).catch(() => {
+        navigator.clipboard.writeText(url).then(showToast).catch(() => {
             fallbackCopy(url);
-            showCopied();
+            showToast();
         });
     } else {
         fallbackCopy(url);
-        showCopied();
+        showToast();
     }
 }
 
