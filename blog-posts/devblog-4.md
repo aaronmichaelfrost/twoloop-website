@@ -1,6 +1,6 @@
 ---
 date: 2026-05-15
-cover-image: devblog4-images/Unity_4jqltOtsBV.png
+cover-image: devblog4-images/Unity_4jqltOtsBV.jpg
 social-image: devblog4-images/blog4-social2.png
 title: Devblog 4
 description: Biometric Lock, Ceiling Lamp, Roadmap, & Server Infrastructure
@@ -26,7 +26,7 @@ At the moment, I just tossed all my ideas into Claude, and it gave me this timel
 
 The first new deployable is the **Ceiling Lamp** — you'll probably want some lighting once we make it properly dark inside the bases.
 
-![Ceiling lamp in a dark room](devblog4-images/ceilinglamp_cinematic_screenshot.png)
+![Ceiling lamp in a dark room](devblog4-images/ceilinglamp_cinematic_screenshot.jpg)
 
 We just use a few raycasts to ensure both supports are touching the ceiling. 
 
@@ -48,15 +48,15 @@ The second new deployable is the **Biometric Code Lock** — a door-mounted devi
 
 <div class="blog-content-image"><iframe width="100%" height="315" src="https://www.youtube.com/embed/4d8Q1PWoOBI?enablejsapi=1&controls=0&loop=1&playlist=4d8Q1PWoOBI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2);"></iframe></div>
 
-![Biometric Code Lock — pick up from world](devblog4-images/codelock-world-item-hover.png)
+![Biometric Code Lock — pick up from world](devblog4-images/codelock-world-item-hover.jpg)
 
 When an authorized player looks at the lock, the light turns green, and that side of the door unlocks for all players.
 
-![Display shows your player's face via a live render texture.](devblog4-images/codelock_closeup.png)
+![Display shows your player's face via a live render texture.](devblog4-images/codelock_closeup.jpg)
 
 To authorize yourself, just type in the code. It initializes to `0000` — so change it fast:
 
-![Change access code interface](devblog4-images/codelock-user-interface.png)
+![Change access code interface](devblog4-images/codelock-user-interface.jpg)
 
 Same story under the hood, plus a few extras:
 * Item (inventory, world pickup, health, etc.)
@@ -81,7 +81,7 @@ So I built a one-click pipeline that works with any Unity game to:
 
 This is almost done. Players will also get access.
 
-![World running via automated pipeline](devblog4-images/world_running_on_fully_automated_provision_pipeline.png)
+![World running via automated pipeline](devblog4-images/world_running_on_fully_automated_provision_pipeline.jpg)
 
 It's called numa.cloud, and should work with any Unity game:
 
