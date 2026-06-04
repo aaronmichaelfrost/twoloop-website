@@ -63,8 +63,6 @@ Updates include:
 
 We tested the server-side validation ourselves and can see it working, kicking players past a violation threshold, and notifying Discord with each violation.
 
-![DiscordKick](devblog2-images/discord-kick.png)
-
 ### NEW WEBSITE
 Before, I was using a Wordpress template. Now, we're using something arguably worse: raw HTML, CSS, and Javascript.
 
@@ -104,7 +102,7 @@ We’ve found lots of bugs (**at least 41** total so far) and are talking about 
 **8/27/2025**
 ◦ Improved anti-hack logging on melee LOS  
 ◦ Console spawn menu now uses look direction  
-◦ Added server args: `antihack.enforcementlevel` (kick/ban), `antihack.maxviolation` (threshold), Discord alerts  
+◦ Added configurable anti-hack enforcement level, violation threshold, and Discord alerts  
 
 **8/28/2025**
 ◦ First stress test with 25 players  
@@ -113,7 +111,7 @@ We’ve found lots of bugs (**at least 41** total so far) and are talking about 
 ◦ Stress test: 250+ NPCs, 3 players, 800 items, full stability  
 
 **8/30/2025**
-◦ Added violation score decay (`-antihackdecaypermin`, default 50)  
+◦ Added violation score decay  
 ◦ Anti-hack bypassed when cheats enabled  
 
 **9/1/2025**

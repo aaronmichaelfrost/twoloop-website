@@ -43,9 +43,6 @@ I made it async and do fake spinning to show the game isn't frozen. Unfortunatel
 
 ![Async Loading](devblog1-images/asyncload.gif)
 
-### GAMEPLAY LOOP
-From a birds-eye view, the gameplay loop is now complete. You live, die, respawn, rage-quit, and do it again from scratch every few weeks, like Rust.
-
 ### DISCORD
 Now, when players send feedback or their game crashes, it surfaces in our Discord channel. Also, game server admins can specify webhooks for sending logs and anti-cheat logs to.
 

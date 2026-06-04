@@ -43,8 +43,6 @@ I also tackled a nasty managed stripping bug that only affected release builds, 
 
 The goal moving forward: **zero critical bugs**. I've also improved our development workflow with ParrelSync, letting me test multiplayer scenarios solo with hot reload.
 
-![ParrelSync Setup](devblog3-images/parrelsync.png)
-
 
 ### 🔒 Movement Antihack
 
@@ -68,8 +66,6 @@ I tested these by simulating clientside cheats. The validation works, detection 
 ### 👾 Entity Debugger
 
 If you are an admin in a dev build you can press H to get a debug view of entities.
-
-![Entity Debug View](devblog3-images/entitydebug.png)
 
 
 ### 📢 What's Next
